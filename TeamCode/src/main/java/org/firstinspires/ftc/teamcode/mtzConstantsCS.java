@@ -11,11 +11,11 @@ package org.firstinspires.ftc.teamcode;
  * v202 Corrections on 01Feb2022
  *
  ***********************************************/
-public class mtzConstantsPP {
+public class mtzConstantsCS {
 // Adjustments for efficiency
     public static final double driveEfficiency =1.0;
     public static final double strafeEfficiency = 1.0;
-    public static final double turnEfficiency = 55.6;
+    public static final double turnEfficiency = 69;
     public static final double armRotationEfficiency = 1.0;
     public static final double armExtensionEfficiency = 1.0;
 // Debug Delay
@@ -64,26 +64,32 @@ public class mtzConstantsPP {
     public static final double clawOpenPosition = 0;
     public static final double clawClosedPosition = 1;
     //Double Claw
+
+
     public static final double leftClawOpenDuckPosition = .2;
     public static final double leftClawOpenBoxPosition = .15;
     public static final double leftClawOpenBallPosition = .1;
     public static final double leftClawMaxOpenPosition = 0;
-    public static double leftClawOpenPosition = leftClawOpenBoxPosition;
     public static final double leftClawDuckPosition = .5;
     public static final double leftClawBoxPosition = .35;
     public static final double leftClawBallPosition = .2;
     public static final double leftClawMaxClosedPosition = 0;
-    public static double leftClawClosedPosition = leftClawBoxPosition;
     public static final double rightClawOpenDuckPosition = .2;
     public static final double rightClawOpenBoxPosition = .15;
     public static final double rightClawOpenBallPosition = .1;
     public static final double rightClawMaxOpenPosition = 0;
-    public static double rightClawOpenPosition = rightClawOpenBoxPosition;
     public static final double rightClawDuckPosition = .5;
     public static final double rightClawBoxPosition = .35;
     public static final double rightClawBallPosition = .1;
-    public static double rightClawClosedPosition = rightClawBoxPosition;
     public static final double rightClawMaxClosedPosition = 0;
+
+
+    public static double rightClawClosedPosition = .35;
+    public static double leftClawClosedPosition = .35;
+    public static double rightClawOpenPosition = .5;
+    public static double leftClawOpenPosition = .5;
+
+
 
     public static final double blockThrowerDownPosition = 0.55;
     public static final double blockThrowerUpPosition = 1.0;

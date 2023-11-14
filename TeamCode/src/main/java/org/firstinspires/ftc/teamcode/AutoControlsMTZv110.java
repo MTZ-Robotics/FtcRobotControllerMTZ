@@ -16,7 +16,6 @@ import android.graphics.Color;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -30,8 +29,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import java.io.IOException;
 
-@Autonomous(name ="Auto Controls v106", group = "Bottom")
-@Disabled
+@Autonomous(name ="Auto Controls v110", group = "Bottom")
+//@Disabled
 
 /****
  * This class is intended to be a sub class to run the robot autonomously.
@@ -46,10 +45,14 @@ import java.io.IOException;
  * v104 Fine tuned paths and added right side to Shannon & Lucy
  * v105 Competition Updates during meet 2
  * v106 Adding in Gyro
+ * v107 Correcting Gyro at 30Jan2023 Practice
+ * v108 From 2023
+ * v109 Added paths for Center Stage without sensing
+ * v110 Last update before test code added
  *
  */
 
-public class AutoControlsMTZv106 extends LinearOpMode {
+public class AutoControlsMTZv110 extends LinearOpMode {
 
 
     /**************
@@ -59,7 +62,7 @@ public class AutoControlsMTZv106 extends LinearOpMode {
      **************/
     private static final double defaultDriveSpeed = 0.1;
     private static final double defaultTurnSpeed = 0.1;
-    private static final int defaultPauseTime = 300;
+    private static final int defaultPauseTime = 2300;
 
     /**********************
      * These variables are the constants in path commands
@@ -75,8 +78,6 @@ public class AutoControlsMTZv106 extends LinearOpMode {
     private static final double driveDistanceAdjustment = .85;
     private int allianceReverser = 1;
 
-    //double orientationGain = 0.00000000001;
-    double orientationGain = 1*10^-11;
 
     /******************
      * Declare the gyro
@@ -218,7 +219,7 @@ public class AutoControlsMTZv106 extends LinearOpMode {
 
         //Paths written for Blue alliance and reverse turns if on Red alliance
         allianceReverser=1;
-        if (alliance=="Red") {
+        if (alliance=="Blue") {
             allianceReverser=-1;
         }
         /************************************************************
@@ -235,7 +236,7 @@ public class AutoControlsMTZv106 extends LinearOpMode {
          * Default Path
          ******************/
         if (pathToRun=="default"){
-            pathToRun="Gyro Code";
+            pathToRun="Backdrop";
         }
 
         /*****************************************************************************
@@ -478,7 +479,7 @@ public class AutoControlsMTZv106 extends LinearOpMode {
              * Path Start
              ************/
             RaiseArm(14, defaultPauseTime);
-            Drive(24, defaultDriveSpeed, defaultPauseTime);
+            Drive(22, defaultDriveSpeed, defaultPauseTime);
             if (rightColorSensor.red() > rightColorSensor.green() && rightColorSensor.red() > rightColorSensor.blue()) {
                 //Red is largest
                 telemetry.log().add("Red Sensed");
@@ -489,6 +490,7 @@ public class AutoControlsMTZv106 extends LinearOpMode {
                 rightClaw.setPosition(rightClawMaxOpenPosition);
                 Thread.sleep(1000);
                 Drive(-2, defaultDriveSpeed, defaultPauseTime);
+                RaiseArm(10, defaultPauseTime);
                 Strafe(-28, defaultDriveSpeed, defaultPauseTime);
 
             }
@@ -501,10 +503,10 @@ public class AutoControlsMTZv106 extends LinearOpMode {
                 leftClaw.setPosition(leftClawMaxOpenPosition);
                 rightClaw.setPosition(rightClawMaxOpenPosition);
                 Thread.sleep(1000);
-                RaiseArm(8, defaultPauseTime);
+                RaiseArm(10, defaultPauseTime);
                 Strafe(8, defaultDriveSpeed * 3, defaultPauseTime);
             }
-            else if (rightColorSensor.blue() > rightColorSensor.red() && rightColorSensor.blue() > rightColorSensor.green()) {
+            else/* (rightColorSensor.blue() > rightColorSensor.red() && rightColorSensor.blue() > rightColorSensor.green())*/ {
                 // blue is largest
                 telemetry.log().add("Blue sensed.");
                 Drive(4.2, defaultDriveSpeed, defaultPauseTime);
@@ -513,7 +515,7 @@ public class AutoControlsMTZv106 extends LinearOpMode {
                 leftClaw.setPosition(leftClawMaxOpenPosition);
                 rightClaw.setPosition(rightClawMaxOpenPosition);
                 Thread.sleep(1000);
-                RaiseArm(8, defaultPauseTime);
+                RaiseArm(10, defaultPauseTime);
                 Strafe(38, defaultDriveSpeed, defaultPauseTime);
             }
         }
@@ -574,57 +576,22 @@ public class AutoControlsMTZv106 extends LinearOpMode {
         }
         else if (pathToRun == "Gyro Code" ) {
             /*****************
-             * Path Branch Lucy Path *
+             * Path Branch Gyro Code *
              ****************/
-            Logging.log("Running Path Branch Lucy Path[");
+            Logging.log("Running Path Branch Gyro Code[");
             /************************************
              * Path set up -- Add to each path
              ***********************************/
             //Robot Setup Notes
-            telemetry.log().add("Line up notes should be entered in. ");
+            telemetry.log().add("Line up notes should be entered in. Testing Gyro");
             waitForStart();
             /************
              * Path Start
              ************/
-            RaiseArm(14, defaultPauseTime);
-            Drive(24, defaultDriveSpeed, defaultPauseTime);
-            if (rightColorSensor.red() > rightColorSensor.green() && rightColorSensor.red() > rightColorSensor.blue()) {
-                //Red is largest
-                telemetry.log().add("Red Sensed");
-                Drive(4.2, defaultDriveSpeed, defaultPauseTime);
-                Strafe(-10.2, defaultDriveSpeed, defaultPauseTime);
-                RaiseArm(-8, defaultPauseTime);
-                leftClaw.setPosition(leftClawMaxOpenPosition);
-                rightClaw.setPosition(rightClawMaxOpenPosition);
-                Thread.sleep(1000);
-                Drive(-2, defaultDriveSpeed, defaultPauseTime);
-                Strafe(-28, defaultDriveSpeed, defaultPauseTime);
 
-            }
-            else if (rightColorSensor.green() > rightColorSensor.red() && rightColorSensor.green() > rightColorSensor.blue()) {
-                //green is largest
-                telemetry.log().add("Green Sensed");
-                Drive(4.2, defaultDriveSpeed, defaultPauseTime);
-                Strafe(-10.2, defaultDriveSpeed, defaultPauseTime);
-                RaiseArm(-8, defaultPauseTime);
-                leftClaw.setPosition(leftClawMaxOpenPosition);
-                rightClaw.setPosition(rightClawMaxOpenPosition);
-                Thread.sleep(1000);
-                RaiseArm(8, defaultPauseTime);
-                Strafe(8, defaultDriveSpeed * 3, defaultPauseTime);
-            }
-            else if (rightColorSensor.blue() > rightColorSensor.red() && rightColorSensor.blue() > rightColorSensor.green()) {
-                // blue is largest
-                telemetry.log().add("Blue sensed.");
-                Drive(4.2, defaultDriveSpeed, defaultPauseTime);
-                Strafe(-10.2, defaultDriveSpeed, defaultPauseTime);
-                RaiseArm(-8, defaultPauseTime);
-                leftClaw.setPosition(leftClawMaxOpenPosition);
-                rightClaw.setPosition(rightClawMaxOpenPosition);
-                Thread.sleep(1000);
-                RaiseArm(8, defaultPauseTime);
-                Strafe(38, defaultDriveSpeed, defaultPauseTime);
-            }
+            //RaiseArm(4, defaultPauseTime);
+            DriveGyro(240, defaultDriveSpeed/4, defaultPauseTime);
+            //RaiseArm(-3, defaultPauseTime);
         }
 
         else if (pathToRun == "ArmTest") {
@@ -645,6 +612,88 @@ public class AutoControlsMTZv106 extends LinearOpMode {
 
 
         }
+
+        else if (pathToRun == "Backdrop" || pathToRun == "Audience"){
+            /*****************
+             * Path Branch 4 *
+             ****************/
+            Logging.log("Running Path Branch 4");
+            /************************************
+             * Path set up -- Add to each path
+             ***********************************/
+            //Robot Setup Notes
+            telemetry.log().add("Line up notes should be entered in. ");
+            waitForStart();
+
+            sleep(1000);
+
+            double ExtraDistance = 0;
+            if (pathToRun == "Audience"){
+                ExtraDistance = 40;
+            }
+            Drive(48, defaultDriveSpeed, defaultPauseTime);
+            Drive(-32, defaultDriveSpeed, defaultPauseTime);
+            Turn(90,defaultTurnSpeed, defaultPauseTime);
+            Strafe(15, defaultDriveSpeed, defaultPauseTime);
+            Strafe(-6, defaultDriveSpeed, defaultPauseTime);
+            Drive(24 + ExtraDistance, defaultDriveSpeed, defaultPauseTime);
+            Strafe(-26, defaultDriveSpeed, defaultPauseTime);
+            //leftClaw.setPosition(leftClawMaxOpenPosition);
+            //Strafe(10.2, defaultDriveSpeed, defaultPauseTime);
+            //Strafe(10.2, defaultDriveSpeed, defaultPauseTime);
+
+            //if camera senses left
+                //Drive(4.2, defaultDriveSpeed, defaultPauseTime); forward
+                //Strafe(28, defaultDriveSpeed, defaultPauseTime); right
+                //Drive(4.2, defaultDriveSpeed, defaultPauseTime); forward
+                //Turn(-180,defaultTurnSpeed,0); face left
+                //Drive(4.2, defaultDriveSpeed, defaultPauseTime); forward
+                //Drive(4.2, defaultDriveSpeed, defaultPauseTime); back
+                //Turn(-180,defaultTurnSpeed,0); face right
+                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); till wall
+                //Strafe(28, defaultDriveSpeed, defaultPauseTime); seperate from wall
+                //Drive(4.2 + ExtraDistance, defaultDriveSpeed, defaultPauseTime); forward
+                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); to sense first april tag
+                //leftClaw.setPosition(leftClawMaxOpenPosition);
+                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); go right
+                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); go left to get out of the way
+
+
+
+
+            //if camera senses straight
+                //Drive(4.2, defaultDriveSpeed, defaultPauseTime); forward
+                //Drive(4.2, defaultDriveSpeed, defaultPauseTime); back
+                //Turn(-180,defaultTurnSpeed,0);
+                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); till wall
+                //Strafe(28, defaultDriveSpeed, defaultPauseTime); seperate from wall
+                //Drive(4.2 + ExtraDistance, defaultDriveSpeed, defaultPauseTime); forward
+                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); to sense second april tag
+                //leftClaw.setPosition(leftClawMaxOpenPosition);
+                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); go right to park
+                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); go left to get out of the way
+
+
+
+
+            //if camera senses right
+                //Drive(4.2, defaultDriveSpeed, defaultPauseTime); forward
+                //Strafe(28, defaultDriveSpeed, defaultPauseTime); left
+                //Drive(4.2, defaultDriveSpeed, defaultPauseTime); forward
+                //Turn(-180,defaultTurnSpeed,0); face right
+                //Drive(4.2, defaultDriveSpeed, defaultPauseTime); forward
+                //Drive(4.2, defaultDriveSpeed, defaultPauseTime); back
+                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); till wall
+                //Strafe(28, defaultDriveSpeed, defaultPauseTime); seperate from wall
+                //Drive(4.2 + ExtraDistance, defaultDriveSpeed, defaultPauseTime); forward
+                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); to sense left april tag
+                //leftClaw.setPosition(leftClawMaxOpenPosition);
+                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); go right
+                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); go left to get out of the way
+
+
+        }
+
         else if (pathToRun=="Calibrate") {
             /************************************
              * Path set up -- Add to each path
@@ -842,11 +891,11 @@ public class AutoControlsMTZv106 extends LinearOpMode {
             Thread.sleep(pause);
         }
     }
-    public void Strafe(double leftDistance, double power, int pause) throws InterruptedException {
+    public void Strafe(double rightDistance, double power, int pause) throws InterruptedException {
         //Left is positive
         if (opModeIsActive()) {
             StopAndResetDriveEncoders();
-            StrafeByInches(leftDistance);
+            StrafeByInches(rightDistance);
             RunDriveToPosition();
             DrivePower(power);
             while (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy()) {
@@ -927,21 +976,24 @@ public class AutoControlsMTZv106 extends LinearOpMode {
          * power: how strong the motors should be targeting
          *
          */
+
+        double targetDistance = inches * conversionTicksToInches*driveDistanceAdjustment;
+        int i = 0;
+        double splitDistance;
+        angles = imuForDisplay.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        double originalHeading = angles.firstAngle;
+
+        //double orientationGain = 1*(10^-15);
+        double orientationGain = 0.00000001;
+        int stepJump = 100;
         while(opModeIsActive()) {
-            double targetDistance = inches * conversionTicksToInches*driveDistanceAdjustment;
-            int i = 0;
-            double splitDistance;
-            angles = imuForDisplay.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            double originalHeading = angles.firstAngle;
-
-
             while (targetDistance > 0) {
-                if (targetDistance > 50) {
+                if (targetDistance > stepJump) {
                     //split the target distance up so error can be adjusted
                     if (i < 3) {
-                        splitDistance = 80;
+                        splitDistance = stepJump - 20;
                     } else {
-                        splitDistance = 100;
+                        splitDistance = stepJump;
                     }
                 } else {
                     //use up all of the target distance and go slow
@@ -953,15 +1005,24 @@ public class AutoControlsMTZv106 extends LinearOpMode {
 
                 //Tell the motors the intended distance
                 frontLeft.setTargetPosition((int) (splitDistance));
+                frontRight.setTargetPosition((int) (splitDistance));
+                backLeft.setTargetPosition((int) (splitDistance));
+                backRight.setTargetPosition((int) (splitDistance));
 
                 // Only drive to the distance for one motor,
                 // otherwise the other motors will still want to finish their count
                 // and throw the orientation wacky at the end
 
                 frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                /*
                 frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                 */
 
                 //Get the current orientation
                 angles = imuForDisplay.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -972,26 +1033,51 @@ public class AutoControlsMTZv106 extends LinearOpMode {
                 //Set the motor power based on the error noted on the imu with gain
 
                 //Subtract Error on Left
-                frontLeft.setPower(motorPower - orientationError * orientationGain);
-                backLeft.setPower(motorPower - orientationError * orientationGain);
+                frontLeft.setPower(motorPower - (orientationError * orientationGain));
+                backLeft.setPower(motorPower - (orientationError * orientationGain));
 
                 //Add error on right
-                frontRight.setPower(motorPower + orientationError * orientationGain);
-                backRight.setPower(motorPower + orientationError * orientationGain);
+                frontRight.setPower(motorPower + (orientationError * orientationGain));
+                backRight.setPower(motorPower + (orientationError * orientationGain));
 
 
                 //increase the counters for the next iteration of the loop
                 targetDistance = targetDistance - splitDistance;
+                double frontLeftInches = frontLeft.getCurrentPosition();
+                double frontRightInches = frontRight.getCurrentPosition();
+                double backLeftInches = backLeft.getCurrentPosition();
+                double backRightInches = backRight.getCurrentPosition();
+
                 while (frontLeft.isBusy()) {
+                    /*
+                    telemetry.clear();
+
+                    telemetry.addLine()
+                            .addData("Front Left Ticks ", (int) frontLeftInches + "   Power: " + "%.1f", frontLeft.getPower());
+                    telemetry.addLine()
+                            .addData("Front Right Ticks: ", (int) frontRightInches + "   Power: " + "%.1f", frontRight.getPower());
+                    telemetry.addLine()
+                            .addData("Back Left Ticks: ", (int) backLeftInches + "   Power: " + "%.1f", backLeft.getPower());
+                    telemetry.addLine()
+                            .addData("Back Right Ticks: ", (int) backRightInches + "   Power: " + "%.1f", backRight.getPower());
+
+
+                     */
                     telemetry.addData("Target Distance: ", targetDistance);
                     telemetry.addData("Original Heading: ", originalHeading);
                     telemetry.addData("Orientation Error: ", orientationError);
+                    telemetry.addData("Loop Iteration: ", i);
                     telemetry.update();
                 }
-                StopAndResetDriveEncoders();
+                //DisplayDriveTelemetry();
+                //StopAndResetDriveEncoders();
+                frontLeft.setPower(0);
+                frontRight.setPower(0);
+                backLeft.setPower(0);
+                backRight.setPower(0);
 
                 //wait for humans to read
-                //sleep(500);
+                sleep(1000);
 
                 i = i + 1;
             }

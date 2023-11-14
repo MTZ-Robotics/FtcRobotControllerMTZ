@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.defaultDriveSpeed;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultDriveSpeed;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name="Red Right Strafe", group ="A_Top")
 //@Disabled

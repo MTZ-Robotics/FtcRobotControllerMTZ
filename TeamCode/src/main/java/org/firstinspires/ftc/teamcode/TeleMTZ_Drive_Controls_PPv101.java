@@ -10,6 +10,7 @@ import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmExtensionP
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmLowerPower;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmPower;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultDriveSpeed;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultFlywheelSpeed;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultPauseTime;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.driveBump;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.driveFastRatio;
@@ -24,31 +25,14 @@ import static org.firstinspires.ftc.teamcode.mtzConstantsCS.greenWarningTime;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightAboveLevel;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightDistance;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightLevel;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawBallPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawBoxPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawDuckPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawMaxClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawMaxOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawOpenBallPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawOpenBoxPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawOpenDuckPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawOpenPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.maxArmDegrees;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.maxArmExtensionInches;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.minArmDegrees;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.minArmExtensionInches;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.prorate;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.redWarningTime;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawBallPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawBoxPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawDuckPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawMaxClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawMaxOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawOpenBallPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawOpenBoxPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawOpenDuckPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawOpenPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackDistanceArray;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackDistanceAtHome;
@@ -65,13 +49,6 @@ import static org.firstinspires.ftc.teamcode.mtzConstantsCS.turnBump;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.wristConversionToServo;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.yellowWarningTime;
 
-//Coach Scherer added below
-
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.AnalogInput;
-
-//end of additions
-
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -79,7 +56,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="TeleMTZ_Drive_PP_CoachTest", group ="Bottom")
+@TeleOp(name="TeleMTZ_Drive_PP v101", group ="Bottom")
 
 //@Disabled
 
@@ -89,10 +66,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *
  *
  * v100 Copied from Last Year
+ * v101 Updates during meet 1
  *
  */
 
-public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
+public class TeleMTZ_Drive_Controls_PPv101 extends LinearOpMode {
 
     /********************************
      * Robot Configuration Flags
@@ -138,23 +116,6 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
     private DcMotor flywheel;
     private Servo leftClaw;
     private Servo rightClaw;
-
-    //coach added below
-    private AnalogInput switchC0;
-    private AnalogInput switchC1;
-    private DigitalChannel lightE1green;
-    private DigitalChannel lightE1red;
-    private DigitalChannel lightE2green;
-    private DigitalChannel lightE2red;
-    private DigitalChannel lightE3green;
-    private DigitalChannel lightE3red;
-    private DigitalChannel lightE4green;
-    private DigitalChannel lightE4red;
-
-
-
-    //end of additions
-
     double drivePower;
     double blPower;
     double brPower;
@@ -331,33 +292,6 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
          * and initialize would not be able to happen until the timer starts for driver controlled period
          **********************************/
 
-        //Coach Additions below
-        // Get the LED colors and touch sensor from the hardwaremap
-        lightE1red = hardwareMap.get(DigitalChannel.class, "lightE1red");
-        lightE1green = hardwareMap.get(DigitalChannel.class, "lightE1green");
-        lightE2red = hardwareMap.get(DigitalChannel.class, "lightE2red");
-        lightE2green = hardwareMap.get(DigitalChannel.class, "lightE2green");
-        lightE3red = hardwareMap.get(DigitalChannel.class, "lightE3red");
-        lightE3green = hardwareMap.get(DigitalChannel.class, "lightE3green");
-        lightE4red = hardwareMap.get(DigitalChannel.class, "lightE4red");
-        lightE4green = hardwareMap.get(DigitalChannel.class, "lightE4green");
-        switchC0 = hardwareMap.get(AnalogInput.class, "switchC0");
-        switchC1 = hardwareMap.get(AnalogInput.class, "switchC1");
-
-        // change LED mode from input to output
-        lightE1red.setMode(DigitalChannel.Mode.OUTPUT);
-        lightE1green.setMode(DigitalChannel.Mode.OUTPUT);
-        lightE2red.setMode(DigitalChannel.Mode.OUTPUT);
-        lightE2green.setMode(DigitalChannel.Mode.OUTPUT);
-        lightE3red.setMode(DigitalChannel.Mode.OUTPUT);
-        lightE3green.setMode(DigitalChannel.Mode.OUTPUT);
-        lightE4red.setMode(DigitalChannel.Mode.OUTPUT);
-        lightE4green.setMode(DigitalChannel.Mode.OUTPUT);
-
-
-        //End of additions
-
-
 
         /***********************************************
          * Tell driver station that initialization is complete
@@ -371,23 +305,12 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
                 redWarningTime+", " +
                 endGameStart
         );
-        telemetry.log().add("Switch 0 Voltage = "+switchC0.getVoltage()+" V");
-        telemetry.log().add("Switch 1 Voltage = "+switchC1.getVoltage()+" V");
-
-
-
-
-
-
 
         /************* Press Play Button ***********************/
 
         waitForStart();
 
         /************ START ***************/
-
-
-
 
         if(hasLightsHub) {
             //Use a gentle pattern during the normal part of the match
@@ -404,53 +327,9 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
              *
              * TeleOp Loops From Here to the End of controlRobot
              *
-             * Loops very often to see if controls are still the same
+             * Loops often to see if controls are still the same
              *
              ****************************************************************/
-
-            //Coach Additions Below
-
-
-            if (switchC0.getVoltage()>0.5){
-                //Switch is off
-                //off
-                lightE1red.setState(true);
-                lightE1green.setState(true);
-                //red
-                lightE2red.setState(true);
-                lightE2green.setState(false);
-                //green
-                lightE3red.setState(false);
-                lightE3green.setState(true);
-                //orange
-                lightE4red.setState(false);
-                lightE4green.setState(false);
-            } else {
-                //green
-                lightE1red.setState(false);
-                lightE1green.setState(true);
-                //orange
-                lightE2red.setState(false);
-                lightE2green.setState(false);
-                //off
-                lightE3red.setState(true);
-                lightE3green.setState(true);
-                //red
-                lightE4red.setState(true);
-                lightE4green.setState(false);
-            }
-            if(switchC1.getVoltage()>0.5){
-                //wire is connected to positive
-            } else {
-                //wire is not connected to positive
-            }
-
-
-
-            //End of Additions
-
-
-
 
             /***********************
              * Gather Button Input *
@@ -489,8 +368,8 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
                 ballClawSpacingStatus.update(gamepad2.x);             //Ball Claw Spacing
                 duckClawSpacingStatus.update(gamepad2.b);             //Duck Claw Spacing
                 openClawSpacingStatus.update(gamepad2.a);             //Open Claw
-                handAssist = gamepad2.right_stick_y;             //Ride Height/Drop to 0
-                sideShiftClaw = gamepad2.right_stick_x;             //Claw SIde Shift
+                //handAssist = gamepad2.right_stick_y;             //Ride Height/Drop to 0
+                //sideShiftClaw = gamepad2.right_stick_x;             //Claw SIde Shift
 /*************           End     Freight Frenzy R1     Updates            **************/
             }
             else if (controlPadMap=="Freight Frenzy L1") {
@@ -525,11 +404,10 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
                 ballClawSpacingStatus.update(gamepad2.x);             //Ball Claw Spacing
                 duckClawSpacingStatus.update(gamepad2.b);             //Duck Claw Spacing
                 openClawSpacingStatus.update(gamepad2.a);             //Open Claw
-                handAssist = gamepad2.right_stick_y;             //Ride Height/Drop to 0
+                ////handAssist = gamepad2.right_stick_y;             //Ride Height/Drop to 0
                 sideShiftClaw = gamepad2.right_stick_x;             //Claw SIde Shift
 /*************           End     Freight Frenzy L1     Updates            **************/
-            }
-            else {
+            } else {
 
                 /***********************************
                  * Control Pad Map Selection Error *
@@ -566,6 +444,7 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
             /**************************
              * Chassis drive controls *
              *************************/
+            turnStick = turnStick * .85;
             blPower = drivePower * ((-driveStick2 + -driveStick1 + strafeStick) - turnStick);
             brPower = drivePower * ((-driveStick2 + -driveStick1 - strafeStick) + turnStick);
             flPower = drivePower * ((-driveStick2 + -driveStick1 + strafeStick) + turnStick);
@@ -628,6 +507,8 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
                     /**********
                      * Arm Power
                      **********/
+
+
                     arm.setPower(-1 * (defaultArmPower * (handVerticalStick) - armAssistLevel));
                 } else {
 
@@ -717,35 +598,9 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
 
 
 
-                if(openClawSpacingStatus.clickedDown){
-                    leftClawOpenPosition = leftClawMaxOpenPosition;
-                    rightClawOpenPosition = rightClawMaxOpenPosition;
-                    leftClawClosedPosition = leftClawMaxClosedPosition;
-                    rightClawClosedPosition = rightClawMaxClosedPosition;
-                    tempLightsTimer = endGameTimer.seconds()+1;
-                    tempLightsPattern = RevBlinkinLedDriver.BlinkinPattern.CONFETTI;
-                } else if(duckClawSpacingStatus.clickedDown){
-                    leftClawOpenPosition = leftClawOpenDuckPosition;
-                    rightClawOpenPosition = rightClawOpenDuckPosition;
-                    leftClawClosedPosition = leftClawDuckPosition;
-                    rightClawClosedPosition = rightClawDuckPosition;
-                    tempLightsTimer = endGameTimer.seconds()+1;
-                    tempLightsPattern = RevBlinkinLedDriver.BlinkinPattern.WHITE;
-                } else if(boxClawSpacingStatus.clickedDown){
-                    leftClawOpenPosition = leftClawOpenBoxPosition;
-                    rightClawOpenPosition = rightClawOpenBoxPosition;
-                    leftClawClosedPosition = leftClawBoxPosition;
-                    rightClawClosedPosition = rightClawBoxPosition;
-                    tempLightsTimer = endGameTimer.seconds()+1;
-                    tempLightsPattern = RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD;
-                } else if(ballClawSpacingStatus.clickedDown){
-                    leftClawOpenPosition = leftClawOpenBallPosition;
-                    rightClawOpenPosition = rightClawOpenBallPosition;
-                    leftClawClosedPosition = leftClawBallPosition;
-                    rightClawClosedPosition = rightClawBallPosition;
-                    tempLightsTimer = endGameTimer.seconds()+1;
-                    tempLightsPattern = RevBlinkinLedDriver.BlinkinPattern.STROBE_BLUE;
-                }
+
+
+
 
                 if(clawClose>0.95){clawRemainClosed = true; }
                 if(clawOpen>0.95){clawRemainClosed = false;}
@@ -754,8 +609,10 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
                     rightClaw.setPosition(rightClawClosedPosition);
                 } else {
                     //Close claw to prorated level of (close trigger - open trigger) * (Closed position - Open position) + Open Position
-                    leftClaw.setPosition(leftClawOpenPosition + prorate(clawClose, 0, 1, leftClawClosedPosition, leftClawOpenPosition));
-                    rightClaw.setPosition(rightClawOpenPosition + prorate(clawClose, 0, 1, rightClawClosedPosition, rightClawOpenPosition));
+                    //leftClaw.setPosition(leftClawOpenPosition + prorate(clawClose, 0, 1, leftClawClosedPosition, leftClawOpenPosition));
+                    //rightClaw.setPosition(rightClawOpenPosition + prorate(clawClose, 0, 1, rightClawClosedPosition, rightClawOpenPosition));
+                    leftClaw.setPosition(leftClawOpenPosition);
+                    rightClaw.setPosition(rightClawOpenPosition);
                 }
 
 
@@ -769,6 +626,40 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
                  ******************/
                 //leftClaw.setPosition(clawClose);
                 //rightClaw.setPosition(clawClose);
+
+                /**********************
+                 * Flywheel Controls
+                 *********************/
+                if (alliance=="Red") {
+                    //allianceReverser=-1;
+                    flywheel.setDirection(DcMotor.Direction.REVERSE);
+                }
+                if(flywheel2Status.isDown) {
+                    //Accelerate by setting the initial speed when the button is first pressed and continue adding speed until the max speed is reached
+                    //Initial Speed
+                    if(flywheel2Status.clickedDown){
+                        flywheel.setPower(defaultFlywheelSpeed);
+                    }
+                    //Max Speed Check
+                    if(flywheel.getPower()<defaultFlywheelSpeed*1.5){
+                        //Add A little speed each time through the loop (If on the backwards alliance, it will add more in the negative direction)
+                        flywheel.setPower(flywheel.getPower() + 0.001);
+                    }
+
+                } else if(flywheel1Status.isDown) {
+                    //Accelerate by setting the initial speed when the button is first pressed and continue adding speed until the max speed is reached
+                    //Initial Speed
+                    if(flywheel1Status.clickedDown){
+                        flywheel.setPower(defaultFlywheelSpeed);
+                    }
+                    //Max Speed Check
+                    if(flywheel.getPower()<defaultFlywheelSpeed){
+                        //Add A little speed each time through the loop (If on the backwards alliance, it will add more in the negative direction)
+                        flywheel.setPower(flywheel.getPower() + 0.001);
+                    }
+                } else {
+                    flywheel.setPower(0);
+                }
 
             }
 
@@ -1130,10 +1021,6 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
         telemetry.clearAll();
         telemetry.addLine()
                 .addData("Timer: ", endGameTimer.toString());
-        telemetry.addLine()
-                .addData("Switch C0 Voltage: ",switchC0.getVoltage());
-        telemetry.addLine()
-                .addData("Switch C1 Voltage: ",switchC1.getVoltage());
         telemetry.addLine()
                 .addData("Blinkin: ", pattern);
         telemetry.addLine()

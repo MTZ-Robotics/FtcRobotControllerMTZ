@@ -1,15 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.defaultArmPower;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.leftClawBoxPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.leftClawMaxOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.rightClawBoxPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.rightClawMaxOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.sampleDetectionPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.ticksPerDegreeArm;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.ticksPerDegreeTurnChassis;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.ticksPerInchExtension;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.ticksPerRevolution1150;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmPower;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawClosedPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawMaxOpenPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawOpenPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawClosedPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawMaxOpenPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.sampleDetectionPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerDegreeArm;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerDegreeTurnChassis;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchExtension;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerRevolution1150;
 
 import android.graphics.Color;
 
@@ -207,8 +208,8 @@ public class AutoControlsMTZv107 extends LinearOpMode {
         //Leaving it in to see if the arm behaves better after being reset
         StopAndResetAllEncoders();
 
-        leftClaw.setPosition(leftClawBoxPosition);
-        rightClaw.setPosition(rightClawBoxPosition);
+        leftClaw.setPosition(leftClawClosedPosition);
+        rightClaw.setPosition(rightClawClosedPosition);
         //}
         telemetry.log().clear();
         telemetry.update();
@@ -269,7 +270,7 @@ public class AutoControlsMTZv107 extends LinearOpMode {
                 Drive(-40, defaultDriveSpeed/2, defaultPauseTime);
                 Strafe(-12, defaultDriveSpeed, defaultPauseTime);
                 Drive(4 * allianceReverser, defaultDriveSpeed * 0.9, defaultPauseTime); //Slide over to wall, probably going over the black thing
-                leftClaw.setPosition(leftClawMaxOpenPosition);  //Open Claw to pick up cone
+                leftClaw.setPosition(leftClawOpenPosition);  //Open Claw to pick up cone
                 rightClaw.setPosition(rightClawMaxOpenPosition); //Open Claw to pick up cone
                 Strafe(12,defaultDriveSpeed, defaultPauseTime);
             }

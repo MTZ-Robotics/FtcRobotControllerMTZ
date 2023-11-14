@@ -1,70 +1,54 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.armExtensionCollapsedLength;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.armExtensionInchesAtHome;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.armLengthDesired;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.armPivotHeight;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.armRotationDegreesAtHome;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.defaultArmExtensionPower;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.defaultFlywheelSpeed;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.defaultPauseTime;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.findStackDistance;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.findStackLevel;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.handAssistRideHeightAboveLevel;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.handAssistRideHeightDistance;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.handAssistRideHeightLevel;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.maxArmDegrees;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.maxArmExtensionInches;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.minArmDegrees;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.minArmExtensionInches;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.stackDistanceArray;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.stackDistanceAtHome;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.stackHeightAboveLevelArray;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.stackHeightOnLevelArray;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.stackLevelAtHome;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.ticksPerInchExtension;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.wristConversionToServo;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.defaultArmAssistLevel;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.defaultArmLowerPower;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.defaultArmPower;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.defaultDriveSpeed;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.driveBump;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.driveFastRatio;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.driveSlowRatio;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.endGameOver;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.endGameStart;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.endGameWarning;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.endGameWarning2;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.greenWarningTime;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.leftClawBallPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.leftClawBoxPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.leftClawClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.leftClawDuckPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.leftClawMaxClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.leftClawMaxOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.leftClawOpenBallPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.leftClawOpenBoxPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.leftClawOpenDuckPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.leftClawOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.prorate;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.redWarningTime;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.rightClawBallPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.rightClawBoxPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.rightClawClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.rightClawDuckPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.rightClawMaxClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.rightClawMaxOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.rightClawOpenBallPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.rightClawOpenBoxPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.rightClawOpenDuckPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.rightClawOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.strafeBump;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.ticksPerDegreeArm;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.ticksPerDegreeTurnChassis;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.ticksPerInchWheelDrive;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.ticksPerInchWheelStrafe;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.turnBump;
-import static org.firstinspires.ftc.teamcode.mtzConstantsPP.yellowWarningTime;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armExtensionCollapsedLength;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armExtensionInchesAtHome;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armLengthDesired;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armPivotHeight;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armRotationDegreesAtHome;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmExtensionPower;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultFlywheelSpeed;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultPauseTime;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.findStackDistance;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.findStackLevel;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightAboveLevel;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightDistance;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightLevel;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.maxArmDegrees;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.maxArmExtensionInches;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.minArmDegrees;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.minArmExtensionInches;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackDistanceArray;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackDistanceAtHome;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackHeightAboveLevelArray;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackHeightOnLevelArray;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackLevelAtHome;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchExtension;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.wristConversionToServo;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmAssistLevel;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmLowerPower;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmPower;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultDriveSpeed;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.driveBump;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.driveFastRatio;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.driveSlowRatio;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.endGameOver;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.endGameStart;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.endGameWarning;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.endGameWarning2;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.greenWarningTime;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawClosedPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawOpenPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.prorate;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.redWarningTime;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawClosedPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawOpenPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.strafeBump;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerDegreeArm;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerDegreeTurnChassis;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchWheelDrive;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchWheelStrafe;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.turnBump;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.yellowWarningTime;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -83,6 +67,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *
  *
  * v100 Copied from Last Year
+ * v101 Updates during meet 1
+ * v102
  *
  */
 
@@ -384,8 +370,8 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
                 ballClawSpacingStatus.update(gamepad2.x);             //Ball Claw Spacing
                 duckClawSpacingStatus.update(gamepad2.b);             //Duck Claw Spacing
                 openClawSpacingStatus.update(gamepad2.a);             //Open Claw
-                handAssist = gamepad2.right_stick_y;             //Ride Height/Drop to 0
-                sideShiftClaw = gamepad2.right_stick_x;             //Claw SIde Shift
+                //handAssist = gamepad2.right_stick_y;             //Ride Height/Drop to 0
+                //sideShiftClaw = gamepad2.right_stick_x;             //Claw SIde Shift
 /*************           End     Freight Frenzy R1     Updates            **************/
             }
             else if (controlPadMap=="Freight Frenzy L1") {
@@ -420,7 +406,7 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
                 ballClawSpacingStatus.update(gamepad2.x);             //Ball Claw Spacing
                 duckClawSpacingStatus.update(gamepad2.b);             //Duck Claw Spacing
                 openClawSpacingStatus.update(gamepad2.a);             //Open Claw
-                handAssist = gamepad2.right_stick_y;             //Ride Height/Drop to 0
+                ////handAssist = gamepad2.right_stick_y;             //Ride Height/Drop to 0
                 sideShiftClaw = gamepad2.right_stick_x;             //Claw SIde Shift
 /*************           End     Freight Frenzy L1     Updates            **************/
             } else {
@@ -460,6 +446,7 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
             /**************************
              * Chassis drive controls *
              *************************/
+            turnStick = turnStick * .85;
             blPower = drivePower * ((-driveStick2 + -driveStick1 + strafeStick) - turnStick);
             brPower = drivePower * ((-driveStick2 + -driveStick1 - strafeStick) + turnStick);
             flPower = drivePower * ((-driveStick2 + -driveStick1 + strafeStick) + turnStick);
@@ -561,7 +548,7 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
                  * Stacker Controls
                  ***********************/
                 if(hasAuxMotorsAndServos) {
-                    armRotationDegrees = (arm.getCurrentPosition() / mtzConstantsPP.ticksPerDegreeArm) + armRotationDegreesAtHome;
+                    armRotationDegrees = (arm.getCurrentPosition() / mtzConstantsCS.ticksPerDegreeArm) + armRotationDegreesAtHome;
                     armExtensionInches = armExtension.getCurrentPosition() / ticksPerInchExtension - armExtensionInchesAtHome;
                 }
 
@@ -613,35 +600,9 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
 
 
 
-                if(openClawSpacingStatus.clickedDown){
-                    leftClawOpenPosition = leftClawMaxOpenPosition;
-                    rightClawOpenPosition = rightClawMaxOpenPosition;
-                    leftClawClosedPosition = leftClawMaxClosedPosition;
-                    rightClawClosedPosition = rightClawMaxClosedPosition;
-                    tempLightsTimer = endGameTimer.seconds()+1;
-                    tempLightsPattern = RevBlinkinLedDriver.BlinkinPattern.CONFETTI;
-                } else if(duckClawSpacingStatus.clickedDown){
-                    leftClawOpenPosition = leftClawOpenDuckPosition;
-                    rightClawOpenPosition = rightClawOpenDuckPosition;
-                    leftClawClosedPosition = leftClawDuckPosition;
-                    rightClawClosedPosition = rightClawDuckPosition;
-                    tempLightsTimer = endGameTimer.seconds()+1;
-                    tempLightsPattern = RevBlinkinLedDriver.BlinkinPattern.WHITE;
-                } else if(boxClawSpacingStatus.clickedDown){
-                    leftClawOpenPosition = leftClawOpenBoxPosition;
-                    rightClawOpenPosition = rightClawOpenBoxPosition;
-                    leftClawClosedPosition = leftClawBoxPosition;
-                    rightClawClosedPosition = rightClawBoxPosition;
-                    tempLightsTimer = endGameTimer.seconds()+1;
-                    tempLightsPattern = RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD;
-                } else if(ballClawSpacingStatus.clickedDown){
-                    leftClawOpenPosition = leftClawOpenBallPosition;
-                    rightClawOpenPosition = rightClawOpenBallPosition;
-                    leftClawClosedPosition = leftClawBallPosition;
-                    rightClawClosedPosition = rightClawBallPosition;
-                    tempLightsTimer = endGameTimer.seconds()+1;
-                    tempLightsPattern = RevBlinkinLedDriver.BlinkinPattern.STROBE_BLUE;
-                }
+
+
+
 
                 if(clawClose>0.95){clawRemainClosed = true; }
                 if(clawOpen>0.95){clawRemainClosed = false;}
@@ -649,9 +610,16 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
                     leftClaw.setPosition(leftClawClosedPosition);
                     rightClaw.setPosition(rightClawClosedPosition);
                 } else {
-                    //Close claw to prorated level of (close trigger - open trigger) * (Closed position - Open position) + Open Position
-                    leftClaw.setPosition(leftClawOpenPosition + prorate(clawClose, 0, 1, leftClawClosedPosition, leftClawOpenPosition));
-                    rightClaw.setPosition(rightClawOpenPosition + prorate(clawClose, 0, 1, rightClawClosedPosition, rightClawOpenPosition));
+                    //Close claw to prorated level of between open and closed position based on the current trigger value between open trigger and closed trigger
+                    // Not (close trigger - open trigger) * (Closed position - Open position) + Open Position
+
+
+                    //leftClaw.setPosition(leftClawOpenPosition + prorate(clawClose, 0, 1, leftClawClosedPosition, leftClawOpenPosition));
+                    //rightClaw.setPosition(rightClawOpenPosition + prorate(clawClose, 0, 1, rightClawClosedPosition, rightClawOpenPosition));
+                    leftClaw.setPosition(prorate(clawClose,0,1,leftClawOpenPosition,leftClawClosedPosition));
+                    rightClaw.setPosition(prorate(clawClose,0,1,rightClawOpenPosition,rightClawClosedPosition));
+                    //leftClaw.setPosition(leftClawOpenPosition);
+                    //rightClaw.setPosition(rightClawOpenPosition);
                 }
 
 
@@ -859,13 +827,13 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
             // Check if the stone is getting set down on a level and go slow if so
             if (aboveLevel) {
                 vertDesired = stackHeightAboveLevelArray[stackLevel];
-                armSpeed = mtzConstantsPP.defaultArmLowerPower;
+                armSpeed = mtzConstantsCS.defaultArmLowerPower;
             } else {
                 vertDesired = stackHeightOnLevelArray[stackLevel];
-                armSpeed = mtzConstantsPP.defaultArmLowerPower / 3;
+                armSpeed = mtzConstantsCS.defaultArmLowerPower / 3;
             }
             if (!stackingDown) {
-                armSpeed = mtzConstantsPP.defaultArmPower;
+                armSpeed = mtzConstantsCS.defaultArmPower;
             }
 
             vertRequired = vertDesired - armPivotHeight;
@@ -1031,7 +999,7 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
     }
     public void raiseByDegrees(double degrees) {
         if(hasAuxMotorsAndServos){
-            arm.setTargetPosition((int)((degrees + armRotationDegreesAtHome) * mtzConstantsPP.ticksPerDegreeArm));
+            arm.setTargetPosition((int)((degrees + armRotationDegreesAtHome) * mtzConstantsCS.ticksPerDegreeArm));
         }
     }
 
@@ -1122,7 +1090,7 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
     }
     public void DisplayArmTelemetry() {
         if(hasAuxMotorsAndServos) {
-            double armDegrees = arm.getCurrentPosition() / mtzConstantsPP.ticksPerDegreeArm;
+            double armDegrees = arm.getCurrentPosition() / mtzConstantsCS.ticksPerDegreeArm;
             telemetry.clear();
             telemetry.addLine()
                     .addData("Arm Degrees ", (int) armDegrees + "  Power: " + "%.1f", arm.getPower());
