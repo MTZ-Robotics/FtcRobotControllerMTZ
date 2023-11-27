@@ -1,17 +1,21 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.MAX_AUTO_SPEED;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.MAX_AUTO_STRAFE;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.MAX_AUTO_TURN;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.SPEED_GAIN;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.STRAFE_GAIN;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.TURN_GAIN;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmExtensionPower;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmPower;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawBoxPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawMaxOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawBoxPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawMaxOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.sampleDetectionPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawClosedPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawOpenPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawClosedPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawOpenPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerDegreeArm;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerDegreeTurnChassis;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchExtension;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerRevolution1150;
-
-import android.graphics.Color;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
@@ -20,19 +24,30 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-@Autonomous(name ="Auto Controls v109", group = "Bottom")
+@Autonomous(name ="Auto Controls v114", group = "Bottom")
 //@Disabled
 
-/****
+/*************************
  * This class is intended to be a sub class to run the robot autonomously.
  * The following methods are available to super classes:
  *
@@ -48,10 +63,15 @@ import java.io.IOException;
  * v107 Correcting Gyro at 30Jan2023 Practice
  * v108 From 2023
  * v109 Added paths for Center Stage without sensing
+ * v110 Last update before test code added
+ * v111 Added simpler paths and parking areas
+ * v112 Updates during Meet 1
+ * v113 Updates before Thanksgiving
+ * v114 Added AutoAlign
  *
- */
+ *******************/
 
-public class AutoControlsMTZv109 extends LinearOpMode {
+public class AutoControlsMTZv114 extends LinearOpMode {
 
 
     /**************
@@ -61,7 +81,7 @@ public class AutoControlsMTZv109 extends LinearOpMode {
      **************/
     private static final double defaultDriveSpeed = 0.1;
     private static final double defaultTurnSpeed = 0.1;
-    private static final int defaultPauseTime = 2300;
+    private static int defaultPauseTime = 300;
 
     /**********************
      * These variables are the constants in path commands
@@ -76,6 +96,20 @@ public class AutoControlsMTZv109 extends LinearOpMode {
 
     private static final double driveDistanceAdjustment = .85;
     private int allianceReverser = 1;
+
+
+    public int armOdometer=0;
+    public int extendOdometer=0;
+
+
+    /******************
+     * April Tag Alignment Declarations
+     */
+
+    private static final int DESIRED_TAG_ID = 3;     // Choose the tag you want to approach or set to -1 for ANY tag.
+    private VisionPortal visionPortal;               // Used to manage the video source.
+    private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
+    private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
 
 
     /******************
@@ -110,12 +144,34 @@ public class AutoControlsMTZv109 extends LinearOpMode {
     private ColorSensor rightColorSensor;
 
 
+    /**************
+     * Sampling variables
+     */
+
+    int randomNumberResult = 2;
+
     /***********
      * Lights Control Declarations
      ***********/
 
     RevBlinkinLedDriver blinkinLedDriver;
     RevBlinkinLedDriver.BlinkinPattern pattern;
+
+    /*********************
+     * Start TensorFlow Set-up
+     */
+
+    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
+
+    /**
+     * The variable to store our instance of the TensorFlow Object Detection processor.
+     */
+    private TfodProcessor tfod;
+
+
+    //End TensorFlow Set-up
+
+
 
     @Override
 
@@ -135,7 +191,11 @@ public class AutoControlsMTZv109 extends LinearOpMode {
             e.printStackTrace();
         }
     }
-
+    /**************
+     *
+     * The autoPaths method is called from super classes to specify the alliance and path
+     *
+     **************/
     public void autoPaths(String alliance,String pathToRun,Boolean supportArm) throws InterruptedException, IOException {
 
         Logging.setup();
@@ -179,12 +239,15 @@ public class AutoControlsMTZv109 extends LinearOpMode {
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //arm.setDirection(DcMotor.Direction.REVERSE);
+
+
         armExtension = hardwareMap.dcMotor.get("armExtension");
         armExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armExtension.setDirection(DcMotor.Direction.REVERSE);
         armExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        armOdometer=0;
 
 
         /*************
@@ -209,8 +272,8 @@ public class AutoControlsMTZv109 extends LinearOpMode {
         //Leaving it in to see if the arm behaves better after being reset
         StopAndResetAllEncoders();
 
-        leftClaw.setPosition(leftClawBoxPosition);
-        rightClaw.setPosition(rightClawBoxPosition);
+        leftClaw.setPosition(leftClawClosedPosition);
+        rightClaw.setPosition(rightClawClosedPosition);
         //}
         telemetry.log().clear();
         telemetry.update();
@@ -235,7 +298,7 @@ public class AutoControlsMTZv109 extends LinearOpMode {
          * Default Path
          ******************/
         if (pathToRun=="default"){
-            pathToRun="Backdrop";
+            pathToRun="Backdrop Sample";
         }
 
         /*****************************************************************************
@@ -245,365 +308,254 @@ public class AutoControlsMTZv109 extends LinearOpMode {
          *
          ****************************************************************************/
 
-        if (pathToRun == "RightBlueShortConePark") {
-            /*****************
-             * Path Branch 2 *
-             ****************/
-            Logging.log("Running Path Branch 2");
-            /************************************
-             * Path set up -- Add to each path
-             ***********************************/
-            //Robot Setup Notes
-            telemetry.log().add("Line up notes should be entered in. ");
-            waitForStart();
-            /************
-             * Path Start
-             ************/
-            RaiseArm(4, defaultPauseTime / 2);
-            // RaiseArm(-1, defaultPauseTime);
-            Drive(24, defaultDriveSpeed * 1.1, defaultPauseTime);
 
-            /******************IF THE SIGNAL IS RED *************************************** */
-            if (rightColorSensor.red() > rightColorSensor.green() && rightColorSensor.red() > rightColorSensor.blue()) {
-                //Red is largest
-                telemetry.log().add("Red Sensed");
-                Logging.log("Red Sensed");
-                Drive(-40, defaultDriveSpeed/2, defaultPauseTime);
-                Strafe(-12, defaultDriveSpeed, defaultPauseTime);
-                Drive(4 * allianceReverser, defaultDriveSpeed * 0.9, defaultPauseTime); //Slide over to wall, probably going over the black thing
-                leftClaw.setPosition(leftClawMaxOpenPosition);  //Open Claw to pick up cone
-                rightClaw.setPosition(rightClawMaxOpenPosition); //Open Claw to pick up cone
-                Strafe(12,defaultDriveSpeed, defaultPauseTime);
-            }
-            /******************IF THE SIGNAL IS GREEN *************************************** */
-            if (rightColorSensor.green() > rightColorSensor.red() && rightColorSensor.green() > rightColorSensor.blue()) {
-                //Red is largest
-                telemetry.log().add("Green Sensed");
-                Logging.log("Green Sensed");
-                Drive(-40, defaultDriveSpeed/2, defaultPauseTime);
-                Strafe(-12, defaultDriveSpeed, defaultPauseTime);
-                Drive(4 * allianceReverser, defaultDriveSpeed * 0.9, defaultPauseTime); //Slide over to wall, probably going over the black thing
-                leftClaw.setPosition(leftClawMaxOpenPosition);  //Open Claw to pick up cone
-                rightClaw.setPosition(rightClawMaxOpenPosition); //Open Claw to pick up cone
-                Strafe(-12,defaultDriveSpeed, defaultPauseTime);
-            }
-            /******************IF THE SIGNAL IS BLUE *************************************** */
-            if (rightColorSensor.blue() > rightColorSensor.red() && rightColorSensor.blue() > rightColorSensor.green()) {
-                //Red is largest
-                telemetry.log().add("Blue Sensed");
-                Logging.log("Blue Sensed");
-                Drive(-40, defaultDriveSpeed/2, defaultPauseTime);
-                Strafe(-12, defaultDriveSpeed, defaultPauseTime);
-                Drive(4 * allianceReverser, defaultDriveSpeed * 0.9, defaultPauseTime); //Slide over to wall, probably going over the black thing
-                leftClaw.setPosition(leftClawMaxOpenPosition);  //Open Claw to pick up cone
-                rightClaw.setPosition(rightClawMaxOpenPosition); //Open Claw to pick up cone
-                Strafe(-50,defaultDriveSpeed, defaultPauseTime);
-            }
-        }
-        else if (pathToRun == "SamplePark") {
-            /*****************
-             * Path Branch 3 *
-             ****************/
-            Logging.log("Running Path Branch 3");
-            /************************************
-             * Path set up -- Add to each path
-             ***********************************/
-            //Robot Setup Notes
-            telemetry.log().add("Line up notes should be entered in. ");
-            waitForStart();
+        if (pathToRun == "Backdrop" || pathToRun == "Audience" || pathToRun == "Backdrop Sample" || pathToRun == "Audience Sample" || pathToRun == "Audience Wall" || pathToRun == "Backdrop Wall"){
+            /******************************************************************
+             *                           Path Branch 4
+             *****************************************************************/
 
-            RaiseArm(1, defaultPauseTime);
-            Drive(24, defaultDriveSpeed, defaultPauseTime);
-            if (rightColorSensor.red() > rightColorSensor.green() && rightColorSensor.red() > rightColorSensor.blue()) {
-                //Red is largest
-                telemetry.log().add("Red Sensed");
-                Logging.log("Red Sensed");
-                Drive(-24, defaultDriveSpeed, defaultPauseTime);
-                Strafe(28 * allianceReverser, defaultDriveSpeed * 3, defaultPauseTime);
-
-
-            }
-            if (rightColorSensor.green() > rightColorSensor.red() && rightColorSensor.green() > rightColorSensor.blue()) {
-                //green is largest
-                telemetry.log().add("Green Sensed");
-                Logging.log("Green Sensed");
-
-
-            }
-            if (rightColorSensor.blue() > rightColorSensor.red() && rightColorSensor.blue() > rightColorSensor.blue()) {
-                //green is largest
-                telemetry.log().add("Blue Sensed");
-                Logging.log("Blue Sensed");
-                Drive(-24, defaultDriveSpeed, defaultPauseTime);
-                Strafe(-30 * allianceReverser, defaultDriveSpeed * 3, defaultPauseTime);
-
-            }
-        }
-
-/**Shannon's program: blue left********/
-        /***start of Shannon's code**/
-        else if (pathToRun == "ShannonCode" ) {
-
-            /*****************
-             * Path Branch 3 *
-             ****************/
-            Logging.log("Running Path Branch 3"); //what does this do
-            telemetry.log().add("Running Shannon code.");
-            waitForStart();
-            /**path start**/
-            RaiseArm(20, defaultPauseTime);
-            Drive(24, defaultDriveSpeed, defaultPauseTime);
-            //red//
-            if (rightColorSensor.red() > rightColorSensor.green() && rightColorSensor.red() > rightColorSensor.blue()) {
-                //Red is largest
-                telemetry.log().add("Red Sensed");
-                Logging.log("Red Sensed");
-                Drive(-4.2, defaultDriveSpeed, defaultPauseTime);
-                Drive(8.4, defaultDriveSpeed, defaultPauseTime);
-                Strafe(10.2, defaultDriveSpeed, defaultPauseTime);
-                ExtendArm(30, defaultArmPower, defaultPauseTime);
-                RaiseArm(-8, defaultPauseTime);
-                leftClaw.setPosition(leftClawMaxOpenPosition);
-                rightClaw.setPosition(rightClawMaxOpenPosition);
-                Thread.sleep(1000);
-                Strafe(25 * allianceReverser, defaultDriveSpeed * 1.5, defaultPauseTime);
-
-
-            }
-            //green//
-            else if (rightColorSensor.green() > rightColorSensor.red() && rightColorSensor.green() > rightColorSensor.blue()) {
-                //green is largest
-                telemetry.log().add("Green Sensed");
-                Drive(-4.2, defaultDriveSpeed, defaultPauseTime);
-                Drive(8.4, defaultDriveSpeed, defaultPauseTime);
-                Strafe(10.2, defaultDriveSpeed, defaultPauseTime);
-                ExtendArm(30, defaultArmPower, defaultPauseTime);
-                RaiseArm(-10, defaultPauseTime);
-                leftClaw.setPosition(leftClawMaxOpenPosition);
-                rightClaw.setPosition(rightClawMaxOpenPosition);
-                Thread.sleep(1000);
-                Strafe(5 * allianceReverser, defaultDriveSpeed * 1.5, defaultPauseTime);
-
-
-
-            } else if (rightColorSensor.blue() > rightColorSensor.red() && rightColorSensor.blue() > rightColorSensor.green()) {
-                //blue//
-                telemetry.log().add("Blue sensed.");
-                Drive(-4.2, defaultDriveSpeed, defaultPauseTime);
-                Drive(8.4, defaultDriveSpeed, defaultPauseTime);
-                Strafe(10.2, defaultDriveSpeed, defaultPauseTime);
-                ExtendArm(30, defaultArmPower, defaultPauseTime);
-                RaiseArm(-10, defaultPauseTime);
-                leftClaw.setPosition(leftClawMaxOpenPosition);
-                rightClaw.setPosition(rightClawMaxOpenPosition);
-                Thread.sleep(1000);
-                Strafe(-25 * allianceReverser, defaultDriveSpeed * 1.5, defaultPauseTime);
-            }
-        }
-        else if (pathToRun == "ShannonCodeRight" ) {
-
-            /*****************
-             * Path Branch 3 *
-             ****************/
-            Logging.log("Running Path Branch 3"); //what does this do
-            telemetry.log().add("Running Shannon code.");
-            waitForStart();
-            /**path start**/
-            RaiseArm(20, defaultPauseTime);
-            Drive(24, defaultDriveSpeed, defaultPauseTime);
-            //red//
-            if (rightColorSensor.red() > rightColorSensor.green() && rightColorSensor.red() > rightColorSensor.blue()) {
-                //Red is largest
-                telemetry.log().add("Red Sensed");
-                Logging.log("Red Sensed");
-                Drive(-4.2, defaultDriveSpeed, defaultPauseTime);
-                Drive(8.4, defaultDriveSpeed, defaultPauseTime);
-                Strafe(-10.2, defaultDriveSpeed, defaultPauseTime);
-                ExtendArm(30, defaultArmPower, defaultPauseTime);
-                RaiseArm(-8, defaultPauseTime);
-                leftClaw.setPosition(leftClawMaxOpenPosition);
-                rightClaw.setPosition(rightClawMaxOpenPosition);
-                Thread.sleep(1000);
-                Strafe(-25 * allianceReverser, defaultDriveSpeed * 1.5, defaultPauseTime);
-
-
-            }
-            //green//
-            else if (rightColorSensor.green() > rightColorSensor.red() && rightColorSensor.green() > rightColorSensor.blue()) {
-                //green is largest
-                telemetry.log().add("Green Sensed");
-                Drive(-4.2, defaultDriveSpeed, defaultPauseTime);
-                Drive(8.4, defaultDriveSpeed, defaultPauseTime);
-                Strafe(-10.2, defaultDriveSpeed, defaultPauseTime);
-                ExtendArm(30, defaultArmPower, defaultPauseTime);
-                RaiseArm(-10, defaultPauseTime);
-                leftClaw.setPosition(leftClawMaxOpenPosition);
-                rightClaw.setPosition(rightClawMaxOpenPosition);
-                Thread.sleep(1000);
-                Strafe(-5 * allianceReverser, defaultDriveSpeed * 1.5, defaultPauseTime);
-
-
-
-            } else if (rightColorSensor.blue() > rightColorSensor.red() && rightColorSensor.blue() > rightColorSensor.green()) {
-                //blue//
-                telemetry.log().add("Blue sensed.");
-                Drive(-4.2, defaultDriveSpeed, defaultPauseTime);
-                Drive(8.4, defaultDriveSpeed, defaultPauseTime);
-                Strafe(-10.2, defaultDriveSpeed, defaultPauseTime);
-                ExtendArm(30, defaultArmPower, defaultPauseTime);
-                RaiseArm(-10, defaultPauseTime);
-                leftClaw.setPosition(leftClawMaxOpenPosition);
-                rightClaw.setPosition(rightClawMaxOpenPosition);
-                Thread.sleep(1000);
-                Strafe(25 * allianceReverser, defaultDriveSpeed * 1.5, defaultPauseTime);
-            }
-        }
-
-
-        /**end of shannon's code**/
-
-        /**start of lucy's code**/
-        else if (pathToRun == "Lucy Code" ) {
-            /*****************
-             * Path Branch Lucy Path *
-             ****************/
-            Logging.log("Running Path Branch Lucy Path[");
-            /************************************
-             * Path set up -- Add to each path
-             ***********************************/
-            //Robot Setup Notes
-            telemetry.log().add("Line up notes should be entered in. ");
-            waitForStart();
-            /************
-             * Path Start
-             ************/
-            RaiseArm(14, defaultPauseTime);
-            Drive(22, defaultDriveSpeed, defaultPauseTime);
-            if (rightColorSensor.red() > rightColorSensor.green() && rightColorSensor.red() > rightColorSensor.blue()) {
-                //Red is largest
-                telemetry.log().add("Red Sensed");
-                Drive(4.2, defaultDriveSpeed, defaultPauseTime);
-                Strafe(-10.2, defaultDriveSpeed, defaultPauseTime);
-                RaiseArm(-8, defaultPauseTime);
-                leftClaw.setPosition(leftClawMaxOpenPosition);
-                rightClaw.setPosition(rightClawMaxOpenPosition);
-                Thread.sleep(1000);
-                Drive(-2, defaultDriveSpeed, defaultPauseTime);
-                RaiseArm(10, defaultPauseTime);
-                Strafe(-28, defaultDriveSpeed, defaultPauseTime);
-
-            }
-            else if (rightColorSensor.green() > rightColorSensor.red() && rightColorSensor.green() > rightColorSensor.blue()) {
-                //green is largest
-                telemetry.log().add("Green Sensed");
-                Drive(4.2, defaultDriveSpeed, defaultPauseTime);
-                Strafe(-10.2, defaultDriveSpeed, defaultPauseTime);
-                RaiseArm(-8, defaultPauseTime);
-                leftClaw.setPosition(leftClawMaxOpenPosition);
-                rightClaw.setPosition(rightClawMaxOpenPosition);
-                Thread.sleep(1000);
-                RaiseArm(10, defaultPauseTime);
-                Strafe(8, defaultDriveSpeed * 3, defaultPauseTime);
-            }
-            else/* (rightColorSensor.blue() > rightColorSensor.red() && rightColorSensor.blue() > rightColorSensor.green())*/ {
-                // blue is largest
-                telemetry.log().add("Blue sensed.");
-                Drive(4.2, defaultDriveSpeed, defaultPauseTime);
-                Strafe(-10.2, defaultDriveSpeed, defaultPauseTime);
-                RaiseArm(-8, defaultPauseTime);
-                leftClaw.setPosition(leftClawMaxOpenPosition);
-                rightClaw.setPosition(rightClawMaxOpenPosition);
-                Thread.sleep(1000);
-                RaiseArm(10, defaultPauseTime);
-                Strafe(38, defaultDriveSpeed, defaultPauseTime);
-            }
-        }
-        else if (pathToRun == "Lucy Code Right" ) {
-            /*****************
-             * Path Branch Lucy Path *
-             ****************/
-            Logging.log("Running Path Branch Lucy Path[");
-            /************************************
-             * Path set up -- Add to each path
-             ***********************************/
-            //Robot Setup Notes
-            telemetry.log().add("Line up notes should be entered in. ");
-            waitForStart();
-            /************
-             * Path Start
-             ************/
-            RaiseArm(14, defaultPauseTime);
-            Drive(24, defaultDriveSpeed, defaultPauseTime);
-            if (rightColorSensor.red() > rightColorSensor.green() && rightColorSensor.red() > rightColorSensor.blue()) {
-                //Red is largest
-                telemetry.log().add("Red Sensed");
-                Drive(4.2, defaultDriveSpeed, defaultPauseTime);
-                Strafe(10.2, defaultDriveSpeed, defaultPauseTime);
-                RaiseArm(-8, defaultPauseTime);
-                leftClaw.setPosition(leftClawMaxOpenPosition);
-                rightClaw.setPosition(rightClawMaxOpenPosition);
-                Thread.sleep(1000);
-                Drive(-2, defaultDriveSpeed, defaultPauseTime);
-                Strafe(-36, defaultDriveSpeed, defaultPauseTime);
-
-            }
-            else if (rightColorSensor.green() > rightColorSensor.red() && rightColorSensor.green() > rightColorSensor.blue()) {
-                //green is largest
-                telemetry.log().add("Green Sensed");
-                Drive(4.2, defaultDriveSpeed, defaultPauseTime);
-                Strafe(10.2, defaultDriveSpeed, defaultPauseTime);
-                RaiseArm(-8, defaultPauseTime);
-                leftClaw.setPosition(leftClawMaxOpenPosition);
-                rightClaw.setPosition(rightClawMaxOpenPosition);
-                Thread.sleep(1000);
-                RaiseArm(8, defaultPauseTime);
-                Strafe(-6, defaultDriveSpeed * 3, defaultPauseTime);
-            }
-            else if (rightColorSensor.blue() > rightColorSensor.red() && rightColorSensor.blue() > rightColorSensor.green()) {
-                // blue is largest
-                telemetry.log().add("Blue sensed.");
-                Drive(4.2, defaultDriveSpeed, defaultPauseTime);
-                Strafe(10.2, defaultDriveSpeed, defaultPauseTime);
-                RaiseArm(-8, defaultPauseTime);
-                leftClaw.setPosition(leftClawMaxOpenPosition);
-                rightClaw.setPosition(rightClawMaxOpenPosition);
-                Thread.sleep(1000);
-                RaiseArm(8, defaultPauseTime);
-                Strafe(28, defaultDriveSpeed, defaultPauseTime);
-                Drive(0.5, defaultDriveSpeed, defaultPauseTime);
-            }
-        }
-        else if (pathToRun == "Gyro Code" ) {
-            /*****************
-             * Path Branch Gyro Code *
-             ****************/
-            Logging.log("Running Path Branch Gyro Code[");
-            /************************************
-             * Path set up -- Add to each path
-             ***********************************/
-            //Robot Setup Notes
-            telemetry.log().add("Line up notes should be entered in. Testing Gyro");
-            waitForStart();
-            /************
-             * Path Start
-             ************/
-
-            //RaiseArm(4, defaultPauseTime);
-            DriveGyro(240, defaultDriveSpeed/4, defaultPauseTime);
-            //RaiseArm(-3, defaultPauseTime);
-        }
-
-        else if (pathToRun == "ArmTest") {
-            /*****************
-             * Path Branch 4 *
-             ****************/
             Logging.log("Running Path Branch 4");
+
             /************************************
              * Path set up -- Add to each path
              ***********************************/
             //Robot Setup Notes
             telemetry.log().add("Line up notes should be entered in. ");
             waitForStart();
+
+            //sleep(1000);
+
+            double ExtraDistance = 0;
+            if (pathToRun == "Audience" || pathToRun == "Audience Wall"){
+                ExtraDistance = 54;
+            }
+
+
+            RaiseArm(3,defaultPauseTime);
+
+
+
+            Drive(24, defaultDriveSpeed, defaultPauseTime); //Travel back to backdrop area
+            Drive(-24, defaultDriveSpeed, defaultPauseTime); //Travel back to backdrop area
+
+            Turn(90*allianceReverser,defaultTurnSpeed, defaultPauseTime); //Turn towards the backdrop
+            Strafe(15*allianceReverser, defaultDriveSpeed, defaultPauseTime); //head towards wall
+            Strafe(3*allianceReverser, defaultDriveSpeed/2, defaultPauseTime); //straighten up on the wall
+
+
+
+            Strafe(-4*allianceReverser, defaultDriveSpeed, defaultPauseTime); //move away from the wall
+            Drive(24 + ExtraDistance, defaultDriveSpeed, defaultPauseTime); //Travel back to backdrop area
+            Strafe(-22*allianceReverser, defaultDriveSpeed, defaultPauseTime); //slide in front of backdrop. Strafe isn't working so we just took this one out.
+            Turn(5*allianceReverser,defaultDriveSpeed,defaultPauseTime); //To look towards rest of field
+            //Drive(26, defaultDriveSpeed, defaultPauseTime); //To get in front of backdrop
+            //Turn(90,defaultDriveSpeed,defaultPauseTime); //To look towards backdrop
+
+
+            //slide over in front of the april tag for the drop
+
+            //defaultPauseTime=defaultPauseTime+1000;
+
+
+            RaiseArm(14,defaultPauseTime); //Raise arm
+            ExtendArm(-24, defaultArmExtensionPower, defaultPauseTime);
+            Drive(20, defaultDriveSpeed, defaultPauseTime);
+            Drive(8, defaultDriveSpeed/4, defaultPauseTime);
+            //Deliver Pixel
+
+
+            //ExtendArm(5,defaultArmExtensionPower,defaultPauseTime); //extend arm
+            leftClaw.setPosition(leftClawOpenPosition); //release left pixel
+            rightClaw.setPosition(rightClawOpenPosition); //release left pixel
+            RaiseArm(1,defaultPauseTime); //raise arm a little more
+            ReturnExtension(); //retract arm
+
+            //Park
+
+            Drive(-4, defaultDriveSpeed, defaultPauseTime); //Back up a little
+
+            int parkDistance = -25;
+            if (pathToRun=="Audience Wall" || pathToRun == "Backdrop Wall"){
+                parkDistance = 26;
+            }
+
+            Strafe(parkDistance*allianceReverser,defaultDriveSpeed,defaultPauseTime);
+            ReturnArm(); //Lower arm to floor
+            Drive(14, defaultDriveSpeed, defaultPauseTime);//Forward to park area
+
+
+
+        }
+
+        else if (pathToRun == "Backdrop Align") {
+
+            /******************************************************************
+             *                           Path Branch Align
+             *****************************************************************/
+
+            Logging.log("Running Path Branch Align");
+            /************************************
+             * Path set up -- Add to each path
+             ***********************************/
+            //Robot Setup Notes
+            telemetry.log().add("Setup facing spike marks where robot can see the left spike. ");
+
+            //Copied from our auto Align class
+
+            boolean targetFound     = false;    // Set to true when an AprilTag target is detected
+            double  drive           = 0;        // Desired forward power/speed (-1 to +1)
+            double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
+            double  turn            = 0;        // Desired turning power/speed (-1 to +1)
+
+            // Initialize the Apriltag Detection process
+            initAprilTag();
+
+
+            // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
+            // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
+            // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
+            frontLeft.setDirection(DcMotor.Direction.REVERSE);
+            backLeft.setDirection(DcMotor.Direction.REVERSE);
+            frontRight.setDirection(DcMotor.Direction.FORWARD);
+            backRight.setDirection(DcMotor.Direction.FORWARD);
+
+            if (USE_WEBCAM)
+                setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
+
+            // Wait for driver to press start
+            telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
+            telemetry.addData(">", "Touch Play to start OpMode");
+            telemetry.update();
+
+
+            //End Copy
+
+
+            waitForStart();
+
+
+
+            RaiseArm(3,defaultPauseTime);
+
+
+
+            Drive(24, defaultDriveSpeed, defaultPauseTime); //Travel back to backdrop area
+            Drive(-24, defaultDriveSpeed, defaultPauseTime); //Travel back to backdrop area
+
+            Turn(90*allianceReverser,defaultTurnSpeed, defaultPauseTime); //Turn towards the backdrop
+            Strafe(15*allianceReverser, defaultDriveSpeed, defaultPauseTime); //head towards wall
+            Strafe(3*allianceReverser, defaultDriveSpeed/2, defaultPauseTime); //straighten up on the wall
+
+
+
+            Strafe(-4*allianceReverser, defaultDriveSpeed, defaultPauseTime); //move away from the wall
+            Drive(24, defaultDriveSpeed, defaultPauseTime); //Travel back to backdrop area
+            Strafe(-22*allianceReverser, defaultDriveSpeed, defaultPauseTime); //slide in front of backdrop. Strafe isn't working so we just took this one out.
+            Turn(5*allianceReverser,defaultDriveSpeed,defaultPauseTime); //To look towards rest of field
+            //Drive(26, defaultDriveSpeed, defaultPauseTime); //To get in front of backdrop
+            //Turn(90,defaultDriveSpeed,defaultPauseTime); //To look towards backdrop
+
+
+            //slide over in front of the april tag for the drop
+
+
+            //Copied from AutoAlign
+
+            boolean stillAligning = true;
+            double sweepCounter = 0;
+            double maxSweep = 5;
+            int sweepDirection = 1;
+            while (opModeIsActive())   // Loop to find the tag and drive to it
+            {
+                targetFound = false;
+                desiredTag  = null;
+
+                // Step through the list of detected tags and look for a matching tag
+                List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+                for (AprilTagDetection detection : currentDetections) {
+                    // Look to see if we have size info on this tag.
+                    if (detection.metadata != null) {
+                        //  Check to see if we want to track towards this tag.
+                        if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
+                            // Yes, we want to use this tag.
+                            targetFound = true;
+                            desiredTag = detection;
+                            break;  // don't look any further.
+                        } else {
+                            // This tag is in the library, but we do not want to track it right now.
+                            telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                        }
+                    } else {
+                        // This tag is NOT in the library, so we don't have enough information to track to it.
+                        telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+                    }
+                }
+
+                // Tell the driver what we see, and what to do.
+                if (targetFound) {
+                    telemetry.addData("\n>","HOLD Left-Bumper to Drive to Target\n");
+                    telemetry.addData("Found", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
+                    telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
+                    telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
+                    telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
+                } else {
+                    telemetry.addData("\n>","Sweeping\n");
+                }
+
+                // If we have found the desired target, Drive to target Automatically .
+                if (targetFound) {
+
+                    // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+                    double  rangeError      = (desiredTag.ftcPose.range - mtzConstantsCS.backdropAprilTagDESIRED_DISTANCE);
+                    double  headingError    = desiredTag.ftcPose.bearing + mtzConstantsCS.cameraBearingOffsetLeftTagLeftPixelLeftSide;
+                    double  yawError        = desiredTag.ftcPose.yaw;
+
+                    // Use the speed and turn "gains" to calculate how we want the robot to move.
+                    drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+                    turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+                    strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+                    telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+                } else {
+
+                    // turn to find tag
+                    if (Math.abs(sweepCounter)<maxSweep) {
+                        turn = -.1 * sweepDirection;
+                        sweepCounter = sweepCounter + sweepDirection;
+                    }
+                    else {
+                        sweepDirection = -1 * sweepDirection;
+                        turn = -.1 * sweepDirection;
+                        sweepCounter = sweepCounter + sweepDirection;
+                    }
+                    telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+                }
+                telemetry.update();
+
+                // Apply desired axes motions to the drivetrain.
+                moveRobot(drive, strafe, turn);
+                sleep(10);
+            }
+
+
+
+            //End Copy
+
+        }
+        else if (pathToRun == "ArmTest") {
+
+                /******************************************************************
+                 *                           Path Branch Arm Test
+                 *****************************************************************/
+
+                Logging.log("Running Path Branch Arm Test");
+                /************************************
+                 * Path set up -- Add to each path
+                 ***********************************/
+                //Robot Setup Notes
+                telemetry.log().add("Line up notes should be entered in. ");
+                waitForStart();
+
             //arm.setPower();
 
             RaiseArm(1, defaultPauseTime);
@@ -612,88 +564,14 @@ public class AutoControlsMTZv109 extends LinearOpMode {
 
         }
 
-        else if (pathToRun == "Backdrop" || pathToRun == "Audience"){
-            /*****************
-             * Path Branch 4 *
-             ****************/
-            Logging.log("Running Path Branch 4");
-            /************************************
-             * Path set up -- Add to each path
-             ***********************************/
-            //Robot Setup Notes
-            telemetry.log().add("Line up notes should be entered in. ");
-            waitForStart();
-
-            sleep(1000);
-
-            double ExtraDistance = 0;
-            if (pathToRun == "Audience"){
-                ExtraDistance = 40;
-            }
-            Drive(48, defaultDriveSpeed, defaultPauseTime);
-            Drive(-32, defaultDriveSpeed, defaultPauseTime);
-            Turn(90,defaultTurnSpeed, defaultPauseTime);
-            Strafe(15, defaultDriveSpeed, defaultPauseTime);
-            Strafe(-6, defaultDriveSpeed, defaultPauseTime);
-            Drive(24 + ExtraDistance, defaultDriveSpeed, defaultPauseTime);
-            Strafe(-26, defaultDriveSpeed, defaultPauseTime);
-            //leftClaw.setPosition(leftClawMaxOpenPosition);
-            //Strafe(10.2, defaultDriveSpeed, defaultPauseTime);
-            //Strafe(10.2, defaultDriveSpeed, defaultPauseTime);
-
-            //if camera senses left
-                //Drive(4.2, defaultDriveSpeed, defaultPauseTime); forward
-                //Strafe(28, defaultDriveSpeed, defaultPauseTime); right
-                //Drive(4.2, defaultDriveSpeed, defaultPauseTime); forward
-                //Turn(-180,defaultTurnSpeed,0); face left
-                //Drive(4.2, defaultDriveSpeed, defaultPauseTime); forward
-                //Drive(4.2, defaultDriveSpeed, defaultPauseTime); back
-                //Turn(-180,defaultTurnSpeed,0); face right
-                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); till wall
-                //Strafe(28, defaultDriveSpeed, defaultPauseTime); seperate from wall
-                //Drive(4.2 + ExtraDistance, defaultDriveSpeed, defaultPauseTime); forward
-                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); to sense first april tag
-                //leftClaw.setPosition(leftClawMaxOpenPosition);
-                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); go right
-                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); go left to get out of the way
-
-
-
-
-            //if camera senses straight
-                //Drive(4.2, defaultDriveSpeed, defaultPauseTime); forward
-                //Drive(4.2, defaultDriveSpeed, defaultPauseTime); back
-                //Turn(-180,defaultTurnSpeed,0);
-                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); till wall
-                //Strafe(28, defaultDriveSpeed, defaultPauseTime); seperate from wall
-                //Drive(4.2 + ExtraDistance, defaultDriveSpeed, defaultPauseTime); forward
-                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); to sense second april tag
-                //leftClaw.setPosition(leftClawMaxOpenPosition);
-                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); go right to park
-                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); go left to get out of the way
-
-
-
-
-            //if camera senses right
-                //Drive(4.2, defaultDriveSpeed, defaultPauseTime); forward
-                //Strafe(28, defaultDriveSpeed, defaultPauseTime); left
-                //Drive(4.2, defaultDriveSpeed, defaultPauseTime); forward
-                //Turn(-180,defaultTurnSpeed,0); face right
-                //Drive(4.2, defaultDriveSpeed, defaultPauseTime); forward
-                //Drive(4.2, defaultDriveSpeed, defaultPauseTime); back
-                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); till wall
-                //Strafe(28, defaultDriveSpeed, defaultPauseTime); seperate from wall
-                //Drive(4.2 + ExtraDistance, defaultDriveSpeed, defaultPauseTime); forward
-                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); to sense left april tag
-                //leftClaw.setPosition(leftClawMaxOpenPosition);
-                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); go right
-                //Strafe(10.2, defaultDriveSpeed, defaultPauseTime); go left to get out of the way
-
-
-        }
-
         else if (pathToRun=="Calibrate") {
+
+            /******************************************************************
+             *                           Path Branch Calibrate
+             *****************************************************************/
+
+            Logging.log("Running Path Branch Calibrate");
+
             /************************************
              * Path set up -- Add to each path
              ***********************************/
@@ -707,13 +585,21 @@ public class AutoControlsMTZv109 extends LinearOpMode {
             Drive(24,defaultDriveSpeed,5000);
             Strafe(-24,defaultDriveSpeed,10000);
             Turn(-180,defaultTurnSpeed,0);
+            ExtendArm(10, defaultArmExtensionPower,2000);
+            sleep(20000);
+            ExtendArm(-10, defaultArmExtensionPower,2000);
+            RaiseArm(-10,2000);
             /************
              * Path End *
              ***********/
         }
+        /*********************************************************************
+         *                              Next Path
+         ********************************************************************/
+        //Path Selection Error
         else {
             /************************************
-             * Path Selection Error
+             *          Path Selection Error
              ***********************************/
             //Robot Setup Notes
             telemetry.log().add("Error in Path Selection");
@@ -736,6 +622,7 @@ public class AutoControlsMTZv109 extends LinearOpMode {
         }
 
         // End of Paths
+        sleep(30000); //Allow the timer to run to the end so that nothing else happens before the timer is up
     }
 
 
@@ -811,67 +698,61 @@ public class AutoControlsMTZv109 extends LinearOpMode {
     /**********************
      * Sampling Methods
      **********************/
+/******
 
-    public void sampleRandomizerResult1 (int allianceReverser) throws InterruptedException {
-        //Determine which of the 3 positions to go after
-        //position 1 = left    (Red)
-        //position 2 = middle  (Yellow)
-        //position 3 = right   (Green)
 
-        int skyStoneLocation = determineSkyStoneColorSensor();
+    public int determinePixelLocation () throws InterruptedException {
+        int pixelLocation = 0;
+        int pixelTimer = 10000;
+        if (opModeIsActive()) {
+            while (opModeIsActive() && pixelTimer>0) {
 
-        sampleDetectionPosition = 3;
-        pattern = RevBlinkinLedDriver.BlinkinPattern.SHOT_RED;
-        if (skyStoneLocation == 1) {
-            sampleDetectionPosition = 2;
-            pattern = RevBlinkinLedDriver.BlinkinPattern.YELLOW;
-        } else if (skyStoneLocation == 0) {
-            pattern = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_OCEAN_PALETTE;
-            sampleDetectionPosition = 3;
-        }
-        blinkinLedDriver.setPattern(pattern);
+                telemetryTfod();
 
-    }
-    public void sampleRandomizerResult2 (int allianceReverser) throws InterruptedException {
-        //Determine which of the 3 positions to go after
-        //position 1 = left    (Red)
-        //position 2 = middle  (Yellow)
-        //position 3 = right   (Green)
+                // Push telemetry to the Driver Station.
+                telemetry.update();
 
-        int skyStoneLocation = determineSkyStoneColorSensor();
+                // Save CPU resources; can resume streaming when needed.
+                if (gamepad1.dpad_down) {
+                    visionPortal.stopStreaming();
+                } else if (gamepad1.dpad_up) {
+                    visionPortal.resumeStreaming();
+                }
+                List<Recognition> currentRecognitions = tfod.getRecognitions();
+                telemetry.addData("# Objects Detected", currentRecognitions.size());
 
-        pattern = RevBlinkinLedDriver.BlinkinPattern.SHOT_RED;
-        if (sampleDetectionPosition == 3){
-            if (skyStoneLocation == 2) {
-                sampleDetectionPosition = 3;
-                pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
-            } else if (skyStoneLocation == 0) {
-                pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
-                sampleDetectionPosition = 1;
+                // Step through the list of recognitions and display info for each one.
+                for (Recognition recognition : currentRecognitions) {
+                    double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
+                    double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
+
+                    telemetry.addData(""," ");
+                    telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+                    telemetry.addData("- Position", "%.0f / %.0f", x, y);
+                    telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+                    if (x<100) {
+                        pixelLocation = 1;
+                    }
+                    else if (x>=100 && x<200){
+                        pixelLocation = 2;
+                    }
+                    else if (x>200){
+                        pixelLocation = 3;
+                    }
+                }   // end for() loop
+
+                // Share the CPU.
+                sleep(20);
+                pixelTimer=pixelTimer-20;
             }
         }
-        blinkinLedDriver.setPattern(pattern);
 
+        // Save more CPU resources when camera is no longer needed.
+        visionPortal.close();
+
+        return pixelLocation;
     }
-    public int determineSkyStoneColorSensor() {
-        float lefthsvValues[] = {0F, 0F, 0F};
-        Color.RGBToHSV(leftColorSensor.red() * 8, leftColorSensor.green() * 8, leftColorSensor.blue() * 8, lefthsvValues);
-        float righthsvValues[] = {0F, 0F, 0F};
-        Color.RGBToHSV(rightColorSensor.red() * 8, rightColorSensor.green() * 8, rightColorSensor.blue() * 8, righthsvValues);
-
-        // Left = 1
-        // Right = 2
-        // Not Seen = 0
-        int skyStonePos = 0;
-
-        if(lefthsvValues[0]>60){
-            skyStonePos = 1;
-        } else if(righthsvValues[0]>60){ //This value was 90
-            skyStonePos = 2;
-        }
-
-        return skyStonePos;
-    }
+*******/
 
     /**********************
      * Motion Methods
@@ -927,14 +808,7 @@ public class AutoControlsMTZv109 extends LinearOpMode {
         Thread.sleep(pause);
 
     }
-    public void LowerArm(int distance, int pause) throws InterruptedException {
-        /*arm.setPower(0.1);
-        sleep(distance * 100);
-        arm.setPower(0);
-        Thread.sleep(pause);
 
-         */
-    }
     public void RaiseArm(int distance, int pause) throws InterruptedException {
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //Set the target rotations for the motor
@@ -945,9 +819,20 @@ public class AutoControlsMTZv109 extends LinearOpMode {
             DisplayArmTelemetry();
         }
     }
+    public void ReturnArm() throws InterruptedException {
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //Set the target rotations for the motor
+        arm.setTargetPosition(-armOdometer);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ArmPower(defaultArmPower/2);
+        while (arm.isBusy()) {
+            DisplayArmTelemetry();
+        }
+        armOdometer=0;
+    }
     public void ExtendArm(double additionalExtension, double power,int pause) throws InterruptedException {
         if (opModeIsActive()) {
-           armExtension.setTargetPosition((int) ((armExtension.getCurrentPosition() + additionalExtension) * ticksPerInchExtension));
+            armExtension.setTargetPosition((int) (armExtension.getCurrentPosition() + (additionalExtension * ticksPerInchExtension)));
             armExtension.setPower(power);
             while (arm.isBusy() || armExtension.isBusy()) {
                 DisplayArmTelemetry();
@@ -955,6 +840,17 @@ public class AutoControlsMTZv109 extends LinearOpMode {
             armExtension.setPower(0);
         }
         Thread.sleep(pause);
+    }
+    public void ReturnExtension() throws InterruptedException {
+        if (opModeIsActive()) {
+            armExtension.setTargetPosition(0);
+            armExtension.setPower(defaultArmExtensionPower/2);
+            while (arm.isBusy() || armExtension.isBusy()) {
+                DisplayArmTelemetry();
+            }
+            armExtension.setPower(0);
+        }
+        extendOdometer=0;
     }
     public void lightForward() throws InterruptedException{
 
@@ -1141,10 +1037,12 @@ public class AutoControlsMTZv109 extends LinearOpMode {
     public void RaiseByInches(double distance) {
         int correctedDistance = (int) (distance * (armDistanceAdjustment));
         arm.setTargetPosition(correctedDistance);
+        armOdometer=armOdometer+correctedDistance;
     }
     public void raiseByDegrees(double degrees) {
         int correctedDistance = (int)(degrees * ticksPerDegreeArm);
         arm.setTargetPosition(correctedDistance);
+        armOdometer=armOdometer+correctedDistance;
     }
 
 
@@ -1162,6 +1060,65 @@ public class AutoControlsMTZv109 extends LinearOpMode {
     public void ArmPower(double power) {
         arm.setPower(power);
     }
+
+    /******
+     * TensorFlow Methods
+     **********/
+
+    /**
+     * Initialize the TensorFlow Object Detection processor.
+     */
+
+    /********
+
+    private void initTfod() {
+
+        // Create the TensorFlow processor the easy way.
+        tfod = TfodProcessor.easyCreateWithDefaults();
+
+        // Create the vision portal the easy way.
+        if (USE_WEBCAM) {
+            visionPortal = VisionPortal.easyCreateWithDefaults(
+                    hardwareMap.get(WebcamName.class, "Webcam 1"), tfod);
+        } else {
+            visionPortal = VisionPortal.easyCreateWithDefaults(
+                    BuiltinCameraDirection.BACK, tfod);
+        }
+
+    }   // end method initTfod()
+
+
+     ****/
+
+    /**
+     * Add telemetry about TensorFlow Object Detection (TFOD) recognitions.
+     */
+
+    /************
+
+
+    private void telemetryTfod() {
+
+        List<Recognition> currentRecognitions = tfod.getRecognitions();
+        telemetry.addData("# Objects Detected", currentRecognitions.size());
+
+        // Step through the list of recognitions and display info for each one.
+        for (Recognition recognition : currentRecognitions) {
+            double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
+            double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
+
+            telemetry.addData(""," ");
+            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+            telemetry.addData("- Position", "%.0f / %.0f", x, y);
+            telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+        }   // end for() loop
+
+    }   // end method telemetryTfod()
+
+
+    //End TensorFlow Methods
+*********************************/
+
 
     /**********************
      * Telemetry Methods
@@ -1190,13 +1147,126 @@ public class AutoControlsMTZv109 extends LinearOpMode {
     }
     public void DisplayArmTelemetry() {
         double armDegrees = arm.getCurrentPosition() / ticksPerDegreeArm;
+        double extensionInches = armExtension.getCurrentPosition() / ticksPerInchExtension;
         double frontRightInches = frontRight.getCurrentPosition() / conversionTicksToInches;
         double backLeftInches = backLeft.getCurrentPosition() / conversionTicksToInches;
         double backRightInches = backRight.getCurrentPosition() / conversionTicksToInches;
         telemetry.clear();
         telemetry.addLine()
                 .addData("Arm Degrees ", (int) armDegrees + "   Power: " + "%.1f", arm.getPower());
+        telemetry.addLine()
+                .addData("Arm Extension ", (int) extensionInches + "   Power: " + "%.1f", armExtension.getPower());
         telemetry.update();
     }
+
+    /************************
+     * Align w/AprilTag Methods
+     */
+
+
+    /**
+     * Move robot according to desired axes motions
+     * <p>
+     * Positive X is forward
+     * <p>
+     * Positive Y is strafe left
+     * <p>
+     * Positive Yaw is counter-clockwise
+     */
+    public void moveRobot(double x, double y, double yaw) {
+        // Calculate wheel powers.
+        double leftFrontPower    =  x -y -yaw;
+        double rightFrontPower   =  x +y +yaw;
+        double leftBackPower     =  x +y -yaw;
+        double rightBackPower    =  x -y +yaw;
+
+        // Normalize wheel powers to be less than 1.0
+        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
+
+        if (max > 1.0) {
+            leftFrontPower /= max;
+            rightFrontPower /= max;
+            leftBackPower /= max;
+            rightBackPower /= max;
+        }
+
+        // Send powers to the wheels.
+        frontLeft.setPower(leftFrontPower);
+        frontRight.setPower(rightFrontPower);
+        backLeft.setPower(leftBackPower);
+        backRight.setPower(rightBackPower);
+    }
+
+    /**
+     * Initialize the AprilTag processor.
+     */
+    private void initAprilTag() {
+        // Create the AprilTag processor by using a builder.
+        aprilTag = new AprilTagProcessor.Builder().build();
+
+        // Adjust Image Decimation to trade-off detection-range for detection-rate.
+        // eg: Some typical detection data using a Logitech C920 WebCam
+        // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
+        // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
+        // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second
+        // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second
+        // Note: Decimation can be changed on-the-fly to adapt during a match.
+        aprilTag.setDecimation(2);
+
+        // Create the vision portal by using a builder.
+        if (USE_WEBCAM) {
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                    .addProcessor(aprilTag)
+                    .build();
+        } else {
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(BuiltinCameraDirection.BACK)
+                    .addProcessor(aprilTag)
+                    .build();
+        }
+    }
+
+    /*
+     Manually set the camera gain and exposure.
+     This can only be called AFTER calling initAprilTag(), and only works for Webcams;
+    */
+    private void    setManualExposure(int exposureMS, int gain) {
+        // Wait for the camera to be open, then use the controls
+
+        if (visionPortal == null) {
+            return;
+        }
+
+        // Make sure camera is streaming before we try to set the exposure controls
+        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera", "Waiting");
+            telemetry.update();
+            while (!isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                sleep(20);
+            }
+            telemetry.addData("Camera", "Ready");
+            telemetry.update();
+        }
+
+        // Set camera controls unless we are stopping.
+        if (!isStopRequested())
+        {
+            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                exposureControl.setMode(ExposureControl.Mode.Manual);
+                sleep(50);
+            }
+            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+            sleep(20);
+            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+            gainControl.setGain(gain);
+            sleep(20);
+        }
+    }
+
+
     //End of Class
 }

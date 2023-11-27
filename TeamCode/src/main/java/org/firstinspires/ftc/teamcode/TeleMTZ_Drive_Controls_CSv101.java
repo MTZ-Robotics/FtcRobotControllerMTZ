@@ -56,7 +56,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="TeleMTZ_Drive_PP v101", group ="Bottom")
+@TeleOp(name="TeleMTZ_Drive_CS v101", group ="Bottom")
 
 //@Disabled
 
@@ -70,7 +70,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *
  */
 
-public class TeleMTZ_Drive_Controls_PPv101 extends LinearOpMode {
+public class TeleMTZ_Drive_Controls_CSv101 extends LinearOpMode {
 
     /********************************
      * Robot Configuration Flags

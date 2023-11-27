@@ -9,11 +9,10 @@ package org.firstinspires.ftc.teamcode;
  * v002 Changes after 22Jan2022 Competition
  * v201 Changes for arm with new shoulder and extension and double claw
  * v202 Corrections on 01Feb2022
- * v310
- * v302 Added wrist adjustment
+ * v301 Updates before 23Nov2023
  *
  ***********************************************/
-public class mtzConstantsCS {
+public class mtzConstantsCSv301 {
 // Adjustments for efficiency
     public static final double driveEfficiency =1.0;
     public static final double strafeEfficiency = 1.0;
@@ -32,7 +31,6 @@ public class mtzConstantsCS {
     public static double greenWarningTime = 60;
     public static double yellowWarningTime = 70;
     public static double redWarningTime = 80;
-
 // Powers & Speeds
 
     //public static double defaultArmPower = 0.2;
@@ -48,10 +46,7 @@ public class mtzConstantsCS {
     public static double driveBump = 1; // inches
     public static double strafeBump = 1; // inches
     public static double turnBump = 3; // degrees
-    public static double wristBump = 0.01; // servo
-    public static double wristAdjustment = 0.00; // servo Correction
-
-    public static int scoopStage;
+    public static double wristBump = 0.03; // servo rotations
 
     public static double defaultDriveSpeed = 0.35;
     public static double driveSlowRatio = 0.35;
@@ -60,24 +55,6 @@ public class mtzConstantsCS {
     public static double defaultIntakeSpeed = 0.25;
     public static double defaultFlywheelSpeed = 0.08;
 
-    //Align to AprilTag Variables
-    // Adjust these numbers to suit your robot.
-    public static double backdropAprilTagDESIRED_DISTANCE = 9; //  this is how close the camera should get to the target (inches)
-    public static double cameraBearingOffsetLeftTagLeftPixelLeftSide = -12; //this is how far to the left the tag should be from the camera for the robot to drop the left pixel on the left side of the mountain
-    public static double cameraBearingOffsetLeftTagRightPixelRightSide = -11; //this is how far to the left the tag should be from the camera for the robot to drop the right pixel on the right side of the mountain
-    public static double cameraBearingOffsetRightTagLeftPixelLeftSide = 9; //this is how far to the right the next tag should be from the camera for the robot to drop the left pixel on the left side of the mountain
-    public static double cameraBearingOffsetRightTagRightPixelRightSide = 10; //this is how far to the right the next tag should be from the camera for the robot to drop the right pixel on the right side of the mountain
-
-    //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
-    //  applied to the drive motors to correct the error.
-    //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
-    public static double SPEED_GAIN  =  0.01  ;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
-    public static double STRAFE_GAIN =  0.005 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
-    public static double TURN_GAIN   =  0.01  ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
-
-    public static double MAX_AUTO_SPEED = 0.1;   //  Clip the approach speed to this max value (adjust for your robot)
-    public static double MAX_AUTO_STRAFE= 0.1;   //  Clip the approach speed to this max value (adjust for your robot)
-    public static double MAX_AUTO_TURN  = 0.1;   //  Clip the turn speed to this max value (adjust for your robot)
 
 // Positions
 
@@ -85,20 +62,33 @@ public class mtzConstantsCS {
 
     // Positions
     //Single Claw
-    public static final double clawOpenPosition = .5;
-    public static final double clawClosedPosition = .35;
+    public static final double clawOpenPosition = 0;
+    public static final double clawClosedPosition = 1;
     //Double Claw
 
-    public static final double leftClawMaxOpenPosition = .8;
-    public static final double leftClawMaxClosedPosition = .25;
-    public static final double rightClawMaxOpenPosition = .8;
-    public static final double rightClawMaxClosedPosition = .25;
+
+    public static final double leftClawOpenDuckPosition = .2;
+    public static final double leftClawOpenBoxPosition = .15;
+    public static final double leftClawOpenBallPosition = .1;
+    public static final double leftClawMaxOpenPosition = 0;
+    public static final double leftClawDuckPosition = .5;
+    public static final double leftClawBoxPosition = .35;
+    public static final double leftClawBallPosition = .2;
+    public static final double leftClawMaxClosedPosition = 0;
+    public static final double rightClawOpenDuckPosition = .2;
+    public static final double rightClawOpenBoxPosition = .15;
+    public static final double rightClawOpenBallPosition = .1;
+    public static final double rightClawMaxOpenPosition = 0;
+    public static final double rightClawDuckPosition = .5;
+    public static final double rightClawBoxPosition = .35;
+    public static final double rightClawBallPosition = .1;
+    public static final double rightClawMaxClosedPosition = 0;
 
 
-    public static double rightClawOpenPosition = 0.5;
     public static double rightClawClosedPosition = .35;
-    public static double leftClawOpenPosition = .5;
     public static double leftClawClosedPosition = .35;
+    public static double rightClawOpenPosition = .5;
+    public static double leftClawOpenPosition = .5;
 
 
 
@@ -117,13 +107,10 @@ public class mtzConstantsCS {
     public static int sampleDetectionPosition = 2;
     public static int skyStonePosition = 2;
 
-// Robot Configuration
-
-    public static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
 
     // Adjustments for where home is for the hand
-    public static double armRotationDegreesAtHome = -10.6;
-    public static double armExtensionInchesAtHome = 0;
+    public static double armRotationDegreesAtHome = -36.011;
+    public static double armExtensionInchesAtHome = 3.22;
     public static int stackDistanceAtHome = 0;
     public static int stackLevelAtHome = 0;
     public static final double armExtensionCollapsedLength = 16.125;
@@ -139,8 +126,8 @@ public class mtzConstantsCS {
     public static final double maxArmExtensionInches = 200/25.4; //200mm stroke
     public static final double minArmDegrees = -60;
     public static final double maxArmDegrees = 70;
-    public static final double minWristPosition = 0;
-    public static final double maxWristPosition = 0.85;
+    public static final double minWristPosition = 1.0;
+    public static final double maxWristPosition = .5;
 
     // Stack Arrays
     public static final double[] stackHeightOnLevelArray = {0,1,5,9,13};
@@ -173,8 +160,8 @@ public class mtzConstantsCS {
     }
     public static double wristConversionToServo(double angle){
         double servoPosition = 0.5;
-        double wristAngles[] = {0, 90.0, 170};
-        double wristNumbers[] = {.15, 0.5, .85};
+        double wristAngles[] = {40.00, 90.0, 140};
+        double wristNumbers[] = {minWristPosition, 0.69, maxWristPosition};
         for(int i=0;i <= wristAngles.length - 1;i++ ){
             if(wristAngles[i]>=angle && i==0){
                 servoPosition = wristNumbers[i];

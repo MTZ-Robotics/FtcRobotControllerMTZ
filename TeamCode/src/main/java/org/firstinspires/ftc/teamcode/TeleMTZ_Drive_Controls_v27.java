@@ -5,29 +5,14 @@ import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armExtensionInchesAt
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armLengthDesired;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armPivotHeight;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armRotationDegreesAtHome;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.blockThrowerDownPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.blockThrowerUpPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.clawClosedPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.clawOpenPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmExtensionPower;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultFlywheelSpeed;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultPauseTime;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.findStackDistance;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.findStackLevel;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightAboveLevel;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightDistance;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightLevel;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.maxArmDegrees;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.maxArmExtensionInches;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.minArmDegrees;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.minArmExtensionInches;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackDistanceArray;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackDistanceAtHome;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackHeightAboveLevelArray;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackHeightOnLevelArray;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackLevelAtHome;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchExtension;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.wristConversionToServo;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmAssistLevel;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmLowerPower;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmPower;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultDriveSpeed;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultPauseTime;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.driveBump;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.driveFastRatio;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.driveSlowRatio;
@@ -35,19 +20,39 @@ import static org.firstinspires.ftc.teamcode.mtzConstantsCS.endGameOver;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.endGameStart;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.endGameWarning;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.endGameWarning2;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.findStackDistance;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.findStackLevel;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.greenWarningTime;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.prorate;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightAboveLevel;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightDistance;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightLevel;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftHookDownPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftHookInPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftHookUpPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.maxArmDegrees;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.maxArmExtensionInches;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.maxWristPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.minArmDegrees;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.minArmExtensionInches;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.minWristPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.redWarningTime;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawOpenPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightHookDownPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightHookInPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightHookUpPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackDistanceArray;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackDistanceAtHome;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackHeightAboveLevelArray;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackHeightOnLevelArray;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackLevelAtHome;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.strafeBump;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerDegreeArm;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerDegreeTurnChassis;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchExtension;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchWheelDrive;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchWheelStrafe;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.turnBump;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.wristBump;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.wristConversionToServo;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.yellowWarningTime;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
@@ -57,34 +62,27 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="TeleMTZ_Drive_PP", group ="Bottom")
+
+@TeleOp(name="TeleMTZ_Drive_Controls v27 Tarragon", group ="A_Top")
+
+//Tarragon
+
+//Adds run to position to controls map
+//Adds control map error handling
 
 //@Disabled
 
-/****
- * This class is intended to be a sub class to run the robot with the controllers.
- * The super classes may call out different controller maps to use
- *
- *
- * v100 Copied from Last Year
- * v101 Updates during meet 1
- * v102
- *
- */
-
-public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
+public class TeleMTZ_Drive_Controls_v27 extends LinearOpMode {
 
     /********************************
      * Robot Configuration Flags
      ********************************/
     boolean accountForArmDrift;
     boolean hasChassisMotors;
-    boolean hasAuxMotorsAndServos;
+    boolean hasArmMotorsAndServos;
+    boolean hasExpansionHubConnected;
     boolean hasLightsHub;
     boolean wantAutoChassisControls;
-    boolean clawRemainClosed = true;
-    private int allianceReverser = 1;
-    double armAssistLevel = defaultArmAssistLevel;
 
     /********************************
      * Timer Variables
@@ -95,7 +93,6 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
     boolean yellowTimerElapsed;
     boolean redTimerElapsed;
     boolean endGameStartElapsed;
-    double tempLightsTimer;
 
     /***********
      * Lights Control Declarations
@@ -103,7 +100,6 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
 
     RevBlinkinLedDriver blinkinLedDriver;
     RevBlinkinLedDriver.BlinkinPattern pattern;
-    RevBlinkinLedDriver.BlinkinPattern tempLightsPattern;
 
 
     /*************************
@@ -115,15 +111,15 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
     private DcMotor backLeft;
     private DcMotor arm;
     private DcMotor armExtension;
-    private DcMotor flywheel;
-    private Servo leftClaw;
-    private Servo rightClaw;
-    double drivePower;
-    double blPower;
-    double brPower;
-    double flPower;
-    double frPower;
+    private Servo claw;
+    private Servo leftHook;
+    private Servo rightHook;
+    private Servo blockThrower;
+    private Servo wrist;
 
+    double drivePower;
+
+    boolean clawRemainClosed;
     boolean aboveLevel = false;
     boolean stackingDown;
 
@@ -134,14 +130,14 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
     double verticalDesired;
     double horizontalDesired;
     double stackDegreesDesired;
+    double wristPositionDesired = wristConversionToServo(90+armRotationDegreesAtHome);
 
 
     /*******
-     * Add Controller Variables & Objects
+     * Add Button Variables & Objects
      ********/
 
-
-    /*************           Freight Frenzy R1     Control Pad Map            **************/
+    /*************           MTZ Controls Variables            **************/
 // Assign Variables & Objects for Control Pads
     double chassisSpeedSlow;                             //Slow Speed
     mtzButtonBehavior chassisBumpLeftTurnStatus = new mtzButtonBehavior();         //Bump Left Turn
@@ -154,8 +150,8 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
     mtzButtonBehavior chassisBumpRightStrafeStatus = new mtzButtonBehavior();         //Bump Right Strafe
     mtzButtonBehavior chassisBumpBackStatus = new mtzButtonBehavior();         //Bump Backwards
 
-
-    double driveStick2;                             //Drive 2
+    mtzButtonBehavior robotExtenderInButtonStatus = new mtzButtonBehavior();         //Park Extender In
+    double driveStick1;                             //Drive 1
     double turnStick;                             //Turn
     double chassisSpeedFast;                             //High Speed
     mtzButtonBehavior chassisBumpRightTurnStatus = new mtzButtonBehavior();         //Bump Right Turn
@@ -163,81 +159,84 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
     mtzButtonBehavior startButton1Status = new mtzButtonBehavior();         //Pad Select (A & B)
 
 
+    mtzButtonBehavior hooksDownButtonStatus = new mtzButtonBehavior();         //Hooks Down
+    mtzButtonBehavior hooksInButtonStatus = new mtzButtonBehavior();         //Hooks In
 
+    mtzButtonBehavior blockThrowerButtonStatus = new mtzButtonBehavior();         //Block Thrower
+    mtzButtonBehavior hooksUpButtonStatus = new mtzButtonBehavior();         //Hooks Up
 
-
-
-
-
-    double driveStick1;                             //Drive 1
+    mtzButtonBehavior robotExtenderOutButtonStatus = new mtzButtonBehavior();         //Park Extender Out
+    double driveStick2;                             //Drive 2
     double strafeStick;                             //Strafe
     double clawOpen;                             //Claw Open (Sticky)
-    mtzButtonBehavior flywheel1Status = new mtzButtonBehavior();         //Flywheel 1
+    mtzButtonBehavior wristAdjustLessStatus = new mtzButtonBehavior();         //Wrist Adjust -
 
     mtzButtonBehavior resetAdjustmentsStatus = new mtzButtonBehavior();         //Reset Adjustments
-    mtzButtonBehavior handHomeStatus = new mtzButtonBehavior();         //Hand to Home
+    mtzButtonBehavior stoneReleaseButtonStatus = new mtzButtonBehavior();         //Release Stone
 
-    mtzButtonBehavior levelUpStatus = new mtzButtonBehavior();         //Move Hand to Next Level Higher
-    mtzButtonBehavior armExtendMaxStatus = new mtzButtonBehavior();         //Extend Arm All the Way
-    mtzButtonBehavior armExtendMinStatus = new mtzButtonBehavior();         //Retract Arm All the Way
-    mtzButtonBehavior levelDownStatus = new mtzButtonBehavior();         //Move Hand to Next Level Lower
+    mtzButtonBehavior stackLevelUpStatus = new mtzButtonBehavior();         //Stack Level Up
+    mtzButtonBehavior stackDistanceLessStatus = new mtzButtonBehavior();         //Stack Distance -
+    mtzButtonBehavior stackDistanceMoreStatus = new mtzButtonBehavior();         //Stack Distance +
+    mtzButtonBehavior stackHalfLevelDownStatus = new mtzButtonBehavior();         //Stack Half Level Down
 
 
     double handVerticalStick;                             //Hand Vertical Move
     double handHorizontalStick;                             //Hand Horizontal Move
     double clawClose;                             //Claw Close (Sticky)
-    mtzButtonBehavior flywheel2Status = new mtzButtonBehavior();         //Flywheel 2
+    mtzButtonBehavior wristAdjustMoreStatus = new mtzButtonBehavior();         //Wrist Adjust +
 
     mtzButtonBehavior startButton2Status = new mtzButtonBehavior();         //Pad Select (A & B)
 
 
-    mtzButtonBehavior boxClawSpacingStatus = new mtzButtonBehavior();         //Box Claw Spacing
-    mtzButtonBehavior ballClawSpacingStatus = new mtzButtonBehavior();         //Ball Claw Spacing
-    mtzButtonBehavior duckClawSpacingStatus = new mtzButtonBehavior();         //Duck Claw Spacing
-    mtzButtonBehavior openClawSpacingStatus = new mtzButtonBehavior();         //Open Claw
+    mtzButtonBehavior handAdjustHigherStatus = new mtzButtonBehavior();         //Hand Adjust Higher
+    mtzButtonBehavior handAdjustInStatus = new mtzButtonBehavior();         //Hand Adjust In
+    mtzButtonBehavior handAdjustOutStatus = new mtzButtonBehavior();         //Hand Adjust Out
+    mtzButtonBehavior handAdjustLowerStatus = new mtzButtonBehavior();         //Hand Adjust Lower
 
 
     double handAssist;                             //Ride Height/Drop to 0
-    double sideShiftClaw;                             //Claw SIde Shift
+    double stoneReleaseStick;                             //Release Stone (RL Flick)
 // End of Assignment Mapping
-    /*************           End     Freight Frenzy R1     Control Pad Map            **************/
+    /*************           End     MTZ Control Pad Variables            **************/
+
 
     @Override
 
-    //This is the default opMode call for generically running the opMode in this class directly from the phone without calling it from a super class
+    //This is the opMode call for generically running the opMode in this super class
     public void runOpMode() throws InterruptedException{
-        /******************************************************
-         * These default settings will be used if THIS opMode is selected from the driver station.
-         * Typically this opMode is not called since this class is used by super classes to call the controlRobot method with specific variables.
-         * It is helpful to use this opMode for testing the controlRobot method
-         *****************************************************/
 
-        controlRobot("Red", "Freight Frenzy R1", defaultDriveSpeed, true, true, true, true);
+
+        String controlPadMap = "SkyStone Braves Left Strafe";
+        boolean spurGearArm = false;
+        double driveSpeed = 0.5;
+        telemetry.log().add("Controls Map:"+controlPadMap+", Arm Support:"+spurGearArm+", Drive Power:"+driveSpeed);
+        controlRobot(controlPadMap,spurGearArm,driveSpeed);
     }
 
     //This is the method that handles the controls
-    public void controlRobot(String alliance, String controlPadMap, Double defaultDrivePower, Boolean runChassis, Boolean runAux, Boolean runLights, Boolean runAutos) throws InterruptedException {
+    public void controlRobot(String controlPadMap, Boolean supportArm, Double defaultDrivePower) throws InterruptedException {
 
         // Robot Configuration Flags
-        hasChassisMotors = runChassis;
-        hasAuxMotorsAndServos = runAux;
-        hasLightsHub = runLights;
-        wantAutoChassisControls = runAutos;
-        // non-counterbalanced Spur Gear arm needs to account for arm drift
-        accountForArmDrift = false;
-
-        //Code written for Blue alliance and reverse turns if on Red alliance
-        allianceReverser=1;
-        if (alliance=="Red") {
-            allianceReverser=-1;
-        }
+        accountForArmDrift = supportArm;
+        hasChassisMotors = true;
+        hasArmMotorsAndServos = true;
+        hasExpansionHubConnected = true;
+        hasLightsHub = true;
+        wantAutoChassisControls = true;
 
         /***********************
          * Modifiable variables
          **********************/
+        //mtzConstantsCS.endGameStart = 90;
+        //endGameWarning = endGameStart + 15;
+        //endGameOver = endGameStart + 30;
+        //greenWarningTime = 60;
+        //yellowWarningTime = 70;
+        //redWarningTime = 80;
+        //defaultArmPower = 0.75;
 
         /***************
-         * reset Timer Variables to false
+         * Set Timer Variables
          ***************/
         greenTimerElapsed = false;
         yellowTimerElapsed = false;
@@ -245,21 +244,17 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
         endGameStartElapsed = false;
 
         /*************
-         * Assign Lights Variables
+         * Set Lights Variables
          *************/
        if(hasLightsHub) {
            blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
 
-           if (alliance=="Red") {
-               pattern = RevBlinkinLedDriver.BlinkinPattern.STROBE_RED;
-           } else {
-               pattern = RevBlinkinLedDriver.BlinkinPattern.STROBE_BLUE;
-           }
+           pattern = RevBlinkinLedDriver.BlinkinPattern.LARSON_SCANNER_RED;
            blinkinLedDriver.setPattern(pattern);
        }
 
         /*******************************
-         * Assign Motor & Servo Variables
+         * Set Motor & Servo Variables
          ******************************/
         if(hasChassisMotors){
             frontLeft = hardwareMap.dcMotor.get("frontLeft");
@@ -267,56 +262,48 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
             backLeft = hardwareMap.dcMotor.get("backLeft");
             backRight = hardwareMap.dcMotor.get("backRight");
             frontLeft.setDirection(DcMotor.Direction.REVERSE);
-            backLeft.setDirection(DcMotor.Direction.REVERSE);
+            backRight.setDirection(DcMotor.Direction.REVERSE);
         }
-        if(hasAuxMotorsAndServos){
-            leftClaw = hardwareMap.servo.get("leftClaw");
-            leftClaw.setDirection(Servo.Direction.REVERSE);
-            rightClaw = hardwareMap.servo.get("rightClaw");
+        if(hasArmMotorsAndServos){
             arm = hardwareMap.dcMotor.get("arm");
+            armExtension = hardwareMap.dcMotor.get("armExtension");
+            claw = hardwareMap.servo.get("leftClaw");
+            wrist = hardwareMap.servo.get("rightClaw");
+            //rightHook = hardwareMap.servo.get("rightHook");
+            //leftHook = hardwareMap.servo.get("leftHook");
+            //blockThrower = hardwareMap.servo.get("blockThrower");
+
+            armExtension.setDirection(DcMotor.Direction.REVERSE);
+            leftHook.setDirection(Servo.Direction.REVERSE);
+
             arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            //arm.setDirection(DcMotor.Direction.REVERSE);
-            armExtension = hardwareMap.dcMotor.get("armExtension");
             armExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             armExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armExtension.setDirection(DcMotor.Direction.REVERSE);
-            armExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            flywheel = hardwareMap.dcMotor.get("flywheel");
-            flywheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            //arm.setDirection(DcMotor.Direction.REVERSE);
         }
 
 
         /**********************************
-         * Do Not set positions on initialize since that counts as controlling the robot
-         * and initialize would not be able to happen until the timer starts for driver controlled period
+         * Do Not set positions on initialize
          **********************************/
 
 
         /***********************************************
-         * Tell driver station that initialization is complete
+         * Tell driver station that initialization complete
          **********************************************/
-        telemetry.log().clear();
-        telemetry.update();
-        telemetry.log().add("Initialized. Control Pad Map = "+controlPadMap+". Go "+alliance+" alliance");
+        telemetry.log().add("Initialized. Go MTZ! Be Sure to Home Arm. Timer Set for ");
 
-        telemetry.log().add(greenWarningTime+", " +
-                yellowWarningTime+", " +
-                redWarningTime+", " +
-                endGameStart
+        telemetry.log().add(greenWarningTime+" s, " +
+                yellowWarningTime+" s, " +
+                redWarningTime+" s, " +
+                endGameStart+" s, "
         );
 
         /************* Press Play Button ***********************/
 
         waitForStart();
-
-        /************ START ***************/
-
         if(hasLightsHub) {
-            //Use a gentle pattern during the normal part of the match
-            //pattern = RevBlinkinLedDriver.BlinkinPattern.SINELON_LAVA_PALETTE;
             pattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
             blinkinLedDriver.setPattern(pattern);
         }
@@ -324,96 +311,258 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
         endGameTimer = new ElapsedTime();
         endGameTimer.reset();
 
-        while (opModeIsActive()) {
-            /**************************************************************
-             *
-             * TeleOp Loops From Here to the End of controlRobot
-             *
-             * Loops often to see if controls are still the same
-             *
-             ****************************************************************/
+        while (opModeIsActive()) {  //Loop often to see if controls are still the same
 
-            /***********************
-             * Gather Button Input *
-             **********************/
 
-            if (controlPadMap=="Freight Frenzy R1") {
 
-/*************           Freight Frenzy R1     Controls Update Status           **************/
+            /***********
+             * Gather Button Input
+             */
+
+            if (controlPadMap=="SkyStone Braves Left Strafe") {
+
+/*************           SkyStone Braves Left Strafe     Controls Update Status           **************/
                 chassisSpeedSlow = gamepad1.left_trigger;             //Slow Speed
                 chassisBumpLeftTurnStatus.update(gamepad1.left_bumper);             //Bump Left Turn
+
+
+
+
                 chassisBumpForwardStatus.update(gamepad1.dpad_up);             //Bump Forward
                 chassisBumpLeftStrafeStatus.update(gamepad1.dpad_left);             //Bump Left Strafe
                 chassisBumpRightStrafeStatus.update(gamepad1.dpad_right);             //Bump Right Strafe
                 chassisBumpBackStatus.update(gamepad1.dpad_down);             //Bump Backwards
+
+                robotExtenderInButtonStatus.update(gamepad1.left_stick_button);             //Park Extender In
                 driveStick2 = gamepad1.left_stick_y;             //Drive 2
-                turnStick = gamepad1.left_stick_x;             //Turn
+                strafeStick = gamepad1.left_stick_x;             //Turn
                 chassisSpeedFast = gamepad1.right_trigger;             //High Speed
                 chassisBumpRightTurnStatus.update(gamepad1.right_bumper);             //Bump Right Turn
+
                 startButton1Status.update(gamepad1.start);             //Pad Select (A & B)
+
+
+                hooksUpButtonStatus.update(gamepad1.y);             //Hooks Up
+                hooksInButtonStatus.update(gamepad1.x);             //Hooks In
+                blockThrowerButtonStatus.update(gamepad1.b);             //Block Thrower
+                hooksDownButtonStatus.update(gamepad1.a);             //Hooks Down
+
+                robotExtenderOutButtonStatus.update(gamepad1.left_stick_button);             //Park Extender Out
                 driveStick1 = gamepad1.right_stick_y;             //Drive 1
                 strafeStick = gamepad1.right_stick_x;             //Strafe
                 clawOpen = gamepad2.left_trigger;             //Claw Open (Sticky)
-                flywheel1Status.update(gamepad2.left_bumper);             //Flywheel 1
+                wristAdjustLessStatus.update(gamepad2.left_bumper);             //Wrist Adjust -
+
                 resetAdjustmentsStatus.update(gamepad2.guide);             //Reset Adjustments
-                handHomeStatus.update(gamepad2.back);             //Hand to Home
-                levelUpStatus.update(gamepad2.dpad_up);             //Move Hand to Next Level Higher
-                armExtendMaxStatus.update(gamepad2.dpad_left);             //Extend Arm All the Way
-                armExtendMinStatus.update(gamepad2.dpad_right);             //Retract Arm All the Way
-                levelDownStatus.update(gamepad2.dpad_down);             //Move Hand to Next Level Lower
+                stoneReleaseButtonStatus.update(gamepad2.back);             //Release Stone
+
+                stackLevelUpStatus.update(gamepad2.dpad_up);             //Stack Level Up
+                stackDistanceLessStatus.update(gamepad2.dpad_left);             //Stack Distance -
+                stackDistanceMoreStatus.update(gamepad2.dpad_right);             //Stack Distance +
+                stackHalfLevelDownStatus.update(gamepad2.dpad_down);             //Stack Half Level Down
+
+
                 handVerticalStick = gamepad2.left_stick_y;             //Hand Vertical Move
                 handHorizontalStick = gamepad2.left_stick_x;             //Hand Horizontal Move
                 clawClose = gamepad2.right_trigger;             //Claw Close (Sticky)
-                flywheel2Status.update(gamepad2.right_bumper);             //Flywheel 2
+                wristAdjustMoreStatus.update(gamepad2.right_bumper);             //Wrist Adjust +
+
                 startButton2Status.update(gamepad2.start);             //Pad Select (A & B)
-                boxClawSpacingStatus.update(gamepad2.y);             //Box Claw Spacing
-                ballClawSpacingStatus.update(gamepad2.x);             //Ball Claw Spacing
-                duckClawSpacingStatus.update(gamepad2.b);             //Duck Claw Spacing
-                openClawSpacingStatus.update(gamepad2.a);             //Open Claw
-                //handAssist = gamepad2.right_stick_y;             //Ride Height/Drop to 0
-                //sideShiftClaw = gamepad2.right_stick_x;             //Claw SIde Shift
-/*************           End     Freight Frenzy R1     Updates            **************/
-            }
-            else if (controlPadMap=="Freight Frenzy L1") {
-/*************           Freight Frenzy L1     Controls Update Status           **************/
+
+
+                handAdjustHigherStatus.update(gamepad2.y);             //Hand Adjust Higher
+                handAdjustInStatus.update(gamepad2.x);             //Hand Adjust In
+                handAdjustOutStatus.update(gamepad2.b);             //Hand Adjust Out
+                handAdjustLowerStatus.update(gamepad2.a);             //Hand Adjust Lower
+
+
+                handAssist = gamepad2.right_stick_y;             //Ride Height/Drop to 0
+                stoneReleaseStick = gamepad2.right_stick_x;             //Release Stone (RL Flick)
+/*************           End     SkyStone Braves Left Strafe     Updates            **************/
+            } else if (controlPadMap=="SkyStone Braves Right Strafe") {
+
+/*************           SkyStone Braves Right Strafe     Controls Update Status           **************/
                 chassisSpeedSlow = gamepad1.left_trigger;             //Slow Speed
                 chassisBumpLeftTurnStatus.update(gamepad1.left_bumper);             //Bump Left Turn
+
+
+
+
                 chassisBumpForwardStatus.update(gamepad1.dpad_up);             //Bump Forward
                 chassisBumpLeftStrafeStatus.update(gamepad1.dpad_left);             //Bump Left Strafe
                 chassisBumpRightStrafeStatus.update(gamepad1.dpad_right);             //Bump Right Strafe
                 chassisBumpBackStatus.update(gamepad1.dpad_down);             //Bump Backwards
-                driveStick2 = gamepad1.left_stick_y;             //Drive 2
-                strafeStick = gamepad1.left_stick_x;             //Strafe
+
+                robotExtenderInButtonStatus.update(gamepad1.left_stick_button);             //Park Extender In
+                driveStick1 = gamepad1.left_stick_y;             //Drive 1
+                turnStick = gamepad1.left_stick_x;             //Turn
                 chassisSpeedFast = gamepad1.right_trigger;             //High Speed
                 chassisBumpRightTurnStatus.update(gamepad1.right_bumper);             //Bump Right Turn
+
                 startButton1Status.update(gamepad1.start);             //Pad Select (A & B)
-                driveStick1 = gamepad1.right_stick_y;             //Drive 1
-                turnStick = gamepad1.right_stick_x;             //Turn
+
+
+                hooksUpButtonStatus.update(gamepad1.y);             //Hooks Up
+                hooksInButtonStatus.update(gamepad1.x);             //Hooks In
+                blockThrowerButtonStatus.update(gamepad1.b);             //Block Thrower
+                hooksDownButtonStatus.update(gamepad1.a);             //Hooks Down
+
+                robotExtenderOutButtonStatus.update(gamepad1.left_stick_button);             //Park Extender Out
+                driveStick2 = gamepad1.right_stick_y;             //Drive 2
+                strafeStick = gamepad1.right_stick_x;             //Strafe
                 clawOpen = gamepad2.left_trigger;             //Claw Open (Sticky)
-                flywheel1Status.update(gamepad2.left_bumper);             //Flywheel 1
+                wristAdjustLessStatus.update(gamepad2.left_bumper);             //Wrist Adjust -
+
                 resetAdjustmentsStatus.update(gamepad2.guide);             //Reset Adjustments
-                handHomeStatus.update(gamepad2.back);             //Hand to Home
-                levelUpStatus.update(gamepad2.dpad_up);             //Move Hand to Next Level Higher
-                armExtendMaxStatus.update(gamepad2.dpad_left);             //Extend Arm All the Way
-                armExtendMinStatus.update(gamepad2.dpad_right);             //Retract Arm All the Way
-                levelDownStatus.update(gamepad2.dpad_down);             //Move Hand to Next Level Lower
+                stoneReleaseButtonStatus.update(gamepad2.back);             //Release Stone
+
+                stackLevelUpStatus.update(gamepad2.dpad_up);             //Stack Level Up
+                stackDistanceLessStatus.update(gamepad2.dpad_left);             //Stack Distance -
+                stackDistanceMoreStatus.update(gamepad2.dpad_right);             //Stack Distance +
+                stackHalfLevelDownStatus.update(gamepad2.dpad_down);             //Stack Half Level Down
+
+
                 handVerticalStick = gamepad2.left_stick_y;             //Hand Vertical Move
                 handHorizontalStick = gamepad2.left_stick_x;             //Hand Horizontal Move
                 clawClose = gamepad2.right_trigger;             //Claw Close (Sticky)
-                flywheel2Status.update(gamepad2.right_bumper);             //Flywheel 2
-                startButton2Status.update(gamepad2.start);             //Pad Select (A & B)
-                boxClawSpacingStatus.update(gamepad2.y);             //Box Claw Spacing
-                ballClawSpacingStatus.update(gamepad2.x);             //Ball Claw Spacing
-                duckClawSpacingStatus.update(gamepad2.b);             //Duck Claw Spacing
-                openClawSpacingStatus.update(gamepad2.a);             //Open Claw
-                ////handAssist = gamepad2.right_stick_y;             //Ride Height/Drop to 0
-                sideShiftClaw = gamepad2.right_stick_x;             //Claw SIde Shift
-/*************           End     Freight Frenzy L1     Updates            **************/
-            } else {
+                wristAdjustMoreStatus.update(gamepad2.right_bumper);             //Wrist Adjust +
 
-                /***********************************
-                 * Control Pad Map Selection Error *
-                 **********************************/
+                startButton2Status.update(gamepad2.start);             //Pad Select (A & B)
+
+
+                handAdjustHigherStatus.update(gamepad2.y);             //Hand Adjust Higher
+                handAdjustInStatus.update(gamepad2.x);             //Hand Adjust In
+                handAdjustOutStatus.update(gamepad2.b);             //Hand Adjust Out
+                handAdjustLowerStatus.update(gamepad2.a);             //Hand Adjust Lower
+
+
+                handAssist = gamepad2.right_stick_y;             //Ride Height/Drop to 0
+                stoneReleaseStick = gamepad2.right_stick_x;             //Release Stone (RL Flick)
+/*************           End     SkyStone Braves Right Strafe     Updates            **************/
+            } else if (controlPadMap=="SkyStone Right Strafe") {
+
+                /*************           SkyStone Right Strafe     Controls Update Status           **************/
+                chassisSpeedSlow = gamepad1.left_trigger;             //Slow Speed
+
+
+
+
+
+
+
+
+
+
+
+
+                strafeStick = gamepad1.left_stick_x;             //Strafe
+                chassisSpeedFast = gamepad1.right_trigger;             //High Speed
+
+
+
+
+
+
+
+
+
+
+
+                driveStick1 = gamepad1.right_stick_y;             //Drive
+                turnStick = gamepad1.right_stick_x;             //Turn
+
+                wristAdjustLessStatus.update(gamepad2.left_bumper);             //Wrist Adjust +
+
+
+
+
+                hooksDownButtonStatus.update(gamepad2.dpad_up);             //Hooks Up
+
+
+                hooksUpButtonStatus.update(gamepad2.dpad_down);             //Hooks Down
+
+
+                handVerticalStick = gamepad2.left_stick_y;             //Arm Angle
+                handHorizontalStick = gamepad2.left_stick_x;             //Arm Extension
+
+                mtzButtonBehavior wristAdjustMoreStatus = new mtzButtonBehavior();         //Wrist Adjust -
+
+
+
+
+
+
+
+                blockThrowerButtonStatus.update(gamepad2.a);             //Block Thrower
+
+
+                clawClose = gamepad2.right_stick_y;             //Claw
+
+                /*************           End     SkyStone Right Strafe     Updates            **************/
+            } else if (controlPadMap=="SkyStone Left Strafe") {
+
+                /*************           SkyStone Left Strafe     Controls Update Status           **************/
+                chassisSpeedSlow = gamepad1.left_trigger;             //Slow Speed
+
+
+
+
+
+
+
+
+
+
+
+                driveStick1 = gamepad1.left_stick_y;             //Drive
+                turnStick = gamepad1.left_stick_x;             //Turn
+                chassisSpeedFast = gamepad1.right_trigger;             //High Speed
+
+
+
+
+
+
+
+
+
+
+
+
+                strafeStick = gamepad1.right_stick_x;             //Strafe
+
+                wristAdjustLessStatus.update(gamepad2.left_bumper);             //Wrist Adjust +
+
+
+
+
+                hooksDownButtonStatus.update(gamepad2.dpad_up);             //Hooks Up
+
+
+                hooksUpButtonStatus.update(gamepad2.dpad_down);             //Hooks Down
+
+
+                handVerticalStick = gamepad2.left_stick_y;             //Arm Angle
+                handHorizontalStick = gamepad2.left_stick_x;             //Arm Extension
+
+                wristAdjustMoreStatus.update(gamepad2.right_bumper);             //Wrist Adjust -
+
+
+
+
+
+
+
+                blockThrowerButtonStatus.update(gamepad2.a);             //Block Thrower
+
+
+                clawClose = gamepad2.right_stick_y;             //Claw
+
+                /*************           End     SkyStone Left Strafe     Updates            **************/
+            } else {
+                /************************************
+                 * Control Pad Map Selection Error
+                 ***********************************/
                 telemetry.log().add("Error in Control Map Selection"); telemetry.update();
                 if(hasLightsHub){pattern = RevBlinkinLedDriver.BlinkinPattern.SHOT_RED; blinkinLedDriver.setPattern(pattern);}
                 waitForStart(); sleep(30000);
@@ -421,20 +570,9 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
 
             displayTelemetry();
 
-            if(resetAdjustmentsStatus.clickedUp){
-                stackLevelAtHome = stackLevel;
-                stackDistanceAtHome = stackDistance;
-                armRotationDegreesAtHome = armRotationDegrees;
-                armExtensionInchesAtHome =  armExtensionInches;
-            }
-
-
-            /**********************************************************************************************
-             * Speed adjust with triggers                                                                 *
-             * If the chassisSpeedFast trigger is pulled, the motor speed will increase a constant amount *
-             * If the chassisSpeedSlow trigger is pulled, the motor speed will decrease a constant amount *
-             * chassisSpeedFast overrides chassisSpeedSlow                                                *
-             *********************************************************************************************/
+            /*********************
+             * Speed adjust with triggers
+             ********************/
             if (chassisSpeedFast > 0) {
                 drivePower = defaultDrivePower * driveFastRatio;
             } else if (chassisSpeedSlow > 0) {
@@ -443,21 +581,22 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
                     drivePower = defaultDrivePower;
             }
 
-            /**************************
-             * Chassis drive controls *
-             *************************/
-            turnStick = turnStick * .85;
-            blPower = drivePower * ((-driveStick2 + -driveStick1 + strafeStick) - turnStick);
-            brPower = drivePower * ((-driveStick2 + -driveStick1 - strafeStick) + turnStick);
-            flPower = drivePower * ((-driveStick2 + -driveStick1 + strafeStick) + turnStick);
-            frPower = drivePower * ((-driveStick2 + -driveStick1 - strafeStick) - turnStick);
+            /*****************
+             * Hook Controls
+             ****************/
 
+            if (hooksDownButtonStatus.clickedDown) { HooksDown(); }
+            if (hooksUpButtonStatus.clickedDown) { HooksUp(); }
+
+            /*************************
+             * Chassis drive controls
+             *************************/
             if(hasChassisMotors) {
-                //Set motors to run manually from controller
-                backLeft.setPower(blPower);
-                backRight.setPower(brPower);
-                frontLeft.setPower(flPower);
-                frontRight.setPower(frPower);
+                //Set motors to run manually
+                backLeft.setPower(drivePower * ((driveStick1 + strafeStick) - turnStick));
+                backRight.setPower(drivePower * ((driveStick1 - strafeStick) + turnStick));
+                frontLeft.setPower(drivePower * ((-driveStick1 + strafeStick) + turnStick));
+                frontRight.setPower(drivePower * ((-driveStick1 - strafeStick) - turnStick));
             }
             /*************************
              * Chassis bump controls
@@ -467,7 +606,7 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
                     Drive(driveBump, .5, 0);
                 }
                 if (chassisBumpBackStatus.clickedDown) {
-                    Drive(-driveBump, .5, 0);
+                    Drive(driveBump, .5, 0);
                 }
                 if (chassisBumpLeftStrafeStatus.clickedDown) {
                     Strafe(strafeBump, .5, 0);
@@ -483,35 +622,12 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
                 }
             }
 
-
-            /*************************
-             * Aux drive controls
-             *************************/
-            if(hasAuxMotorsAndServos) {
-                /*************
-                 * Arm Controls
-                 *************/
-
+            /*************
+             * Arm Controls
+             *************/
+            if(hasArmMotorsAndServos) {
                 if (accountForArmDrift) {
-                    /*
-                    Removed arm assist buttons for room on the controller - v013//Adjust arm assist level while the program is running a little each click.
-
-                    //The level of adjustment for each click of 0.0025 is arbitrary.
-
-
-                    if (armAssistAdjDownStatus.clickedDown){
-                        armAssistLevel = armAssistLevel - 0.0025;
-                    } else if (armAssistAdjUpStatus.clickedDown){
-                        armAssistLevel = armAssistLevel + 0.0025;
-                    }
-                     */
-
-                    /**********
-                     * Arm Power
-                     **********/
-
-
-                    arm.setPower(-1 * (defaultArmPower * (handVerticalStick) - armAssistLevel));
+                    arm.setPower(-1 * (defaultArmPower * (handVerticalStick) - 0.2));
                 } else {
 
                     if (handVerticalStick < 0) {
@@ -520,166 +636,127 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
                         arm.setPower(defaultArmLowerPower * (-handVerticalStick));
                     }
                 }
-                armExtension.setPower(handHorizontalStick*defaultArmExtensionPower);
-                if (handVerticalStick!=0){
-                    stackLevel = -1;
-                }
-                if (handHorizontalStick!=0){
-                    stackDistance = -1;
-                }
 
-                //handAssist
-                if(handAssist<=-0.9){
-                    //Ride Height Desired
-                    stackLevel = handAssistRideHeightLevel;
-                    stackDistance = handAssistRideHeightDistance;
-                    aboveLevel = handAssistRideHeightAboveLevel;
-                    goToStackPosition(false,stackLevel,stackDistance,aboveLevel);
-                }
-                if(handAssist>=0.9){
-                    // Zero Height Desired
-                    stackLevel = 0;
-                    stackDistance = 0;
-                    aboveLevel = false;
-                    goToStackPosition(false,stackLevel,stackDistance,aboveLevel);
-                }
+                armExtension.setPower((handHorizontalStick));
+            }
+            if (handVerticalStick!=0){
+                stackLevel = -1;
+            }
+            if (handHorizontalStick!=0){
+                stackDistance = -1;
+            }
 
-                /************************
-                 * Stacker Controls
-                 ***********************/
-                if(hasAuxMotorsAndServos) {
-                    armRotationDegrees = (arm.getCurrentPosition() / mtzConstantsCS.ticksPerDegreeArm) + armRotationDegreesAtHome;
-                    armExtensionInches = armExtension.getCurrentPosition() / ticksPerInchExtension - armExtensionInchesAtHome;
-                }
+            //handAssist
+            if(handAssist<=-0.9){
+                //Ride Height Desired
+                stackLevel = handAssistRideHeightLevel;
+                stackDistance = handAssistRideHeightDistance;
+                aboveLevel = handAssistRideHeightAboveLevel;
+                goToStackPosition(false,stackLevel,stackDistance,aboveLevel);
+            }
+            if(handAssist>=0.9){
+                // Zero Height Desired
+                stackLevel = 0;
+                stackDistance = 0;
+                aboveLevel = false;
+                goToStackPosition(false,stackLevel,stackDistance,aboveLevel);
+            }
 
-                if(levelUpStatus.clickedDown){
-                    stackingDown=false;
-                    if(stackLevel!=-1 && stackLevel < stackHeightOnLevelArray.length-1){
-                        stackLevel++;
-                        stackDistance=stackLevel;
+            /************************
+             * Stacker Controls
+             ***********************/
+            if(hasArmMotorsAndServos) {
+                armRotationDegrees = (arm.getCurrentPosition() / ticksPerDegreeArm) + armRotationDegreesAtHome;
+                armExtensionInches = armExtension.getCurrentPosition() / ticksPerInchExtension - armExtensionInchesAtHome;
+            }
+
+            if(stackLevelUpStatus.clickedDown){
+                stackingDown=false;
+                if(stackLevel!=-1 && stackLevel < stackHeightOnLevelArray.length-1){
+                    stackLevel++;
+                }
+                goToStackPosition(stackingDown,stackLevel,stackDistance,aboveLevel);
+            }
+            if(stackHalfLevelDownStatus.clickedDown){
+                stackingDown=true;
+                if(stackLevel!=-1){
+                    if(aboveLevel){
+                        aboveLevel = false;
+                    } else if(stackLevel!=0){
+                        stackLevel--;
+                        aboveLevel = true;
                     }
-                    goToStackPosition(stackingDown,stackLevel,stackDistance,aboveLevel);
                 }
-                if(levelDownStatus.clickedDown){
-                    stackingDown=true;
-                    if(stackLevel!=-1){
-                        if(aboveLevel){
-                            //aboveLevel = false;
-                        } else if(stackLevel!=0){
-                            stackLevel--;
-                            stackDistance=stackLevel;
-                            //aboveLevel = true;
-                        }
-                    }
-                    goToStackPosition(stackingDown,stackLevel,stackDistance,aboveLevel);
+                goToStackPosition(stackingDown,stackLevel,stackDistance,aboveLevel);
+            }
+            if(stackDistanceMoreStatus.clickedDown){
+                stackingDown = false;
+                if(stackDistance!=-1 && stackDistance < stackHeightOnLevelArray.length-1){
+                    stackDistance++;
                 }
-                if(armExtendMaxStatus.clickedDown){
-                    stackingDown = false;
-                    if(stackDistance!=-1 && stackDistance < stackHeightOnLevelArray.length-1){
-                        stackDistance=stackDistanceArray.length-1;
-                    }
-                    goToStackPosition(stackingDown,stackLevel,stackDistance,aboveLevel);
+                goToStackPosition(stackingDown,stackLevel,stackDistance,aboveLevel);
+            }
+            if(stackDistanceLessStatus.clickedDown){
+                stackingDown = false;
+                if(stackDistance>0 && stackDistance < stackHeightOnLevelArray.length-1){
+                    stackDistance--;
                 }
-                if(armExtendMinStatus.clickedDown){
-                    stackingDown = false;
-                    if(stackDistance>0 && stackDistance < stackHeightOnLevelArray.length-1){
-                        stackDistance=0;
-                    }
-                    goToStackPosition(stackingDown,stackLevel,stackDistance,aboveLevel);
-                }
-
-                /*************
-                 * Claw Controls
-                 *************/
-                /***
-                 * If Green button clicked - closed position = Max, remain closed false
-                 * If Red button clicked - closed position = duck, and remain closed true
-                 * If Yellow button clicked - closed position = box, and remain closed true
-                 * If Blue button clicked - closed position = ball, and remain closed true
-                 */
+                goToStackPosition(stackingDown,stackLevel,stackDistance,aboveLevel);
+            }
 
 
+            /*************
+             * Claw Controls
+             *************/
 
-
-
-
-
-                if(clawClose>0.95){clawRemainClosed = true; }
-                if(clawOpen>0.95){clawRemainClosed = false;}
+            if(clawClose>0.95){clawRemainClosed = true; }
+            if(clawOpen>0.95){clawRemainClosed = false;}
+            if(hasArmMotorsAndServos) {
                 if (clawRemainClosed) {
-                    leftClaw.setPosition(leftClawClosedPosition);
-                    rightClaw.setPosition(rightClawClosedPosition);
+                    claw.setPosition(clawClosedPosition);
                 } else {
-                    //Close claw to prorated level of between open and closed position based on the current trigger value between open trigger and closed trigger
-                    // Not (close trigger - open trigger) * (Closed position - Open position) + Open Position
-
-
-                    //leftClaw.setPosition(leftClawOpenPosition + prorate(clawClose, 0, 1, leftClawClosedPosition, leftClawOpenPosition));
-                    //rightClaw.setPosition(rightClawOpenPosition + prorate(clawClose, 0, 1, rightClawClosedPosition, rightClawOpenPosition));
-                    leftClaw.setPosition(prorate(clawClose,0,1,leftClawOpenPosition,leftClawClosedPosition));
-                    rightClaw.setPosition(prorate(clawClose,0,1,rightClawOpenPosition,rightClawClosedPosition));
-                    //leftClaw.setPosition(leftClawOpenPosition);
-                    //rightClaw.setPosition(rightClawOpenPosition);
+                    claw.setPosition(clawOpenPosition - clawClose - clawOpen);
                 }
+            }
 
-
-
-
-
-
-
-                /****************
-                 * Diagnose Claw
-                 ******************/
-                //leftClaw.setPosition(clawClose);
-                //rightClaw.setPosition(clawClose);
-
-                /**********************
-                 * Flywheel Controls
-                 *********************/
-                if (alliance=="Red") {
-                    //allianceReverser=-1;
-                    flywheel.setDirection(DcMotor.Direction.REVERSE);
-                }
-                if(flywheel2Status.isDown) {
-                    //Accelerate by setting the initial speed when the button is first pressed and continue adding speed until the max speed is reached
-                    //Initial Speed
-                    if(flywheel2Status.clickedDown){
-                        flywheel.setPower(defaultFlywheelSpeed);
-                    }
-                    //Max Speed Check
-                    if(flywheel.getPower()<defaultFlywheelSpeed*1.5){
-                        //Add A little speed each time through the loop (If on the backwards alliance, it will add more in the negative direction)
-                        flywheel.setPower(flywheel.getPower() + 0.001);
-                    }
-
-                } else if(flywheel1Status.isDown) {
-                    //Accelerate by setting the initial speed when the button is first pressed and continue adding speed until the max speed is reached
-                    //Initial Speed
-                    if(flywheel1Status.clickedDown){
-                        flywheel.setPower(defaultFlywheelSpeed);
-                    }
-                    //Max Speed Check
-                    if(flywheel.getPower()<defaultFlywheelSpeed){
-                        //Add A little speed each time through the loop (If on the backwards alliance, it will add more in the negative direction)
-                        flywheel.setPower(flywheel.getPower() + 0.001);
-                    }
+            /************************
+             * Cap Stone thrower controls
+             ***********************/
+            if(hasArmMotorsAndServos) {
+                if (blockThrowerButtonStatus.isDown) {
+                    blockThrower.setPosition(blockThrowerDownPosition);
                 } else {
-                    flywheel.setPower(0);
+                    blockThrower.setPosition(blockThrowerUpPosition);
                 }
+            }
 
+            /*************
+             * Wrist Controls
+             *************/
+            if (wristAdjustLessStatus.clickedDown) {
+                wristPositionDesired = wristPositionDesired - wristBump;
+            } else if (wristAdjustMoreStatus.clickedDown) {
+                wristPositionDesired = wristPositionDesired + wristBump;
+            }
+
+            if(wristPositionDesired < minWristPosition){
+                wristPositionDesired = minWristPosition;
+            }
+
+            if(wristPositionDesired > maxWristPosition){
+                wristPositionDesired = maxWristPosition;
+            }
+            //Set wrist position
+            if(hasArmMotorsAndServos) {
+                wrist.setPosition(wristPositionDesired);
             }
 
             /*********************************
              * Check if timer has elapsed
              *********************************/
-
-
             if(hasLightsHub) {
                 //Check for End Timer First
-                if (endGameTimer.seconds() < tempLightsTimer){
-                    blinkinLedDriver.setPattern(tempLightsPattern);
-                } else if (endGameTimer.seconds() > endGameOver) {
+                if (endGameTimer.seconds() > endGameOver) {
                     endGameStartElapsed = true;
                     pattern = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
                     blinkinLedDriver.setPattern(pattern);
@@ -708,11 +785,6 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
                     pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
                     blinkinLedDriver.setPattern(pattern);
                 }
-
-                //Stop supporting arm 5 seconds after end game
-                if (endGameTimer.seconds() > endGameOver + 5) {
-                    armAssistLevel = 0;
-                }
             }
         }
     }
@@ -721,21 +793,8 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
      * End of Control Robot Method
      ******************************/
 
-    /****************************************************************************
-     * Motion Methods                                                           *
-     * These methods cause motion in the robot when called by the program above *
-     ***************************************************************************/
+    //Motion Methods
 
-    /*****************
-     * Drive
-     *
-     * Propels the robot forward or backward a certain number of inches with all 4 wheels turning the same direction
-     *
-     * @param distance inches
-     * @param motorPower
-     * @param pause
-     * @throws InterruptedException
-     */
     public void Drive(double distance, double motorPower, int pause) throws InterruptedException {
         if(hasChassisMotors) {
             if (opModeIsActive()) {
@@ -750,17 +809,6 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
             }
         }
     }
-
-    /***********
-     * Strafe
-     *
-     * Propels the robot sideways a certain number of inches
-     *
-     * @param leftDistance inches
-     * @param power
-     * @param pause
-     * @throws InterruptedException
-     */
     public void Strafe(double leftDistance, double power, int pause) throws InterruptedException {
         if(hasChassisMotors) {
             //Left is positive
@@ -776,18 +824,6 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
             }
         }
     }
-
-    /*******
-     * Turn
-     *
-     * Rotates the robot about the center of the 4 wheels
-     * Left is negative degrees
-     *
-     * @param rightDegrees
-     * @param power
-     * @param pause
-     * @throws InterruptedException
-     */
     public void Turn(double rightDegrees, double power, int pause) throws InterruptedException {
         if(hasChassisMotors) {
             //Left is negative
@@ -803,9 +839,6 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
             }
         }
     }
-
-    //Arm Methods
-
     public void goToStackPosition(boolean stackingDown,int stackLevel,int stackDistance,boolean aboveLevel) throws InterruptedException {
         double vertDesired, horDesired, degreesDesired, vertRequired,armSpeed;
         if (stackLevel<0){
@@ -827,13 +860,13 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
             // Check if the stone is getting set down on a level and go slow if so
             if (aboveLevel) {
                 vertDesired = stackHeightAboveLevelArray[stackLevel];
-                armSpeed = mtzConstantsCS.defaultArmLowerPower;
+                armSpeed = defaultArmLowerPower;
             } else {
                 vertDesired = stackHeightOnLevelArray[stackLevel];
-                armSpeed = mtzConstantsCS.defaultArmLowerPower / 3;
+                armSpeed = defaultArmLowerPower / 3;
             }
             if (!stackingDown) {
-                armSpeed = mtzConstantsCS.defaultArmPower;
+                armSpeed = defaultArmPower;
             }
 
             vertRequired = vertDesired - armPivotHeight;
@@ -856,10 +889,10 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
             stackDegreesDesired = degreesDesired;
             // Set the target positions to run to
             raiseByDegrees(degreesDesired);
-            //wristPositionDesired = wristAutoLevel(degreesDesired);
+            wristPositionDesired = wristAutoLevel(degreesDesired);
             horizontalDesired = horDesired;
             verticalDesired = vertDesired;
-            if(hasAuxMotorsAndServos) {
+            if(hasArmMotorsAndServos) {
                 armExtension.setTargetPosition((int) ((armExtensionInches - armExtensionInchesAtHome) * ticksPerInchExtension));
 
                 if (opModeIsActive()) {
@@ -879,7 +912,7 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
     }
 
     public void RaiseArm(double degrees, double power,int pause) throws InterruptedException {
-        if(hasAuxMotorsAndServos) {
+        if(hasArmMotorsAndServos) {
             if (opModeIsActive()) {
                 raiseByDegrees(degrees);
                 ArmPower(power);
@@ -891,7 +924,7 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
         }
     }
     public void LowerArm(double degrees, double power, int pause) throws InterruptedException {
-        if(hasAuxMotorsAndServos) {
+        if(hasArmMotorsAndServos) {
             if (opModeIsActive()) {
                 raiseByDegrees(-degrees);
                 ArmPower(power);
@@ -903,7 +936,7 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
         }
     }
     public double wristAutoLevel(double armAngle){
-        return wristConversionToServo(armAngle + 90);
+                return wristConversionToServo(armAngle + 90);
     }
 
     public void ExtendArm(double desiredArmLength, double power,int pause) throws InterruptedException {
@@ -914,7 +947,7 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
             } else if(armExtensionInches>maxArmExtensionInches){
                 armExtensionInches=maxArmExtensionInches;
             }
-            if(hasAuxMotorsAndServos) {
+            if(hasArmMotorsAndServos) {
                 armExtension.setTargetPosition((int) (armExtensionInches * ticksPerInchExtension));
                 armExtension.setPower(power);
 
@@ -925,6 +958,38 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
         }
         Thread.sleep(pause);
     }
+    public void HooksDown()throws InterruptedException {
+        if(hasArmMotorsAndServos) {
+            //Light Reverse Power On
+            leftHook.setPosition(leftHookDownPosition);
+            rightHook.setPosition(rightHookDownPosition);
+            //lightReverse();
+            //sleep(1500);
+
+            //Reverse Power Off
+            //StopAndResetDriveEncoders();
+        }
+    }
+    public void HooksUp() {
+        if(hasArmMotorsAndServos) {
+            leftHook.setPosition(leftHookUpPosition);
+            rightHook.setPosition(rightHookUpPosition);
+            //sleep(1500);
+        }
+    }
+    public void HooksIn() {
+        if(hasArmMotorsAndServos) {
+            leftHook.setPosition(leftHookInPosition);
+            rightHook.setPosition(rightHookInPosition);
+            //sleep(500);
+        }
+    }
+    public void lightForward() throws InterruptedException{
+        if (hasChassisMotors) {
+            Drive(1,0.1,50);
+        }
+    }
+
 
 //Encoder Methods
 
@@ -935,8 +1000,9 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
             backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
-        if(hasAuxMotorsAndServos){
+        if(hasArmMotorsAndServos){
             arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
     }
     public void StopAndResetDriveEncoders() {
@@ -945,6 +1011,12 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
             frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+    }
+    public void StopAndResetArmEncoder() {
+        if(hasArmMotorsAndServos){
+            arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
     }
     public void RunDriveToPosition() {
@@ -956,16 +1028,15 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
         }
     }
     public void RunArmToPosition() {
-        if(hasAuxMotorsAndServos) {
+        if(hasArmMotorsAndServos) {
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
     public void RunArm() {
-        if(hasAuxMotorsAndServos) {
+        if(hasArmMotorsAndServos) {
             arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
-
 
     //End of Encoder Methods
 
@@ -997,9 +1068,10 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
             backRight.setTargetPosition((int) (degrees * ticksPerDegreeTurnChassis));
         }
     }
+
     public void raiseByDegrees(double degrees) {
-        if(hasAuxMotorsAndServos){
-            arm.setTargetPosition((int)((degrees + armRotationDegreesAtHome) * mtzConstantsCS.ticksPerDegreeArm));
+        if(hasArmMotorsAndServos){
+            arm.setTargetPosition((int)((degrees - armRotationDegreesAtHome) * ticksPerDegreeArm));
         }
     }
 
@@ -1016,7 +1088,7 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
         }
     }
     public void ArmPower(double power) {
-        if(hasAuxMotorsAndServos) {
+        if(hasArmMotorsAndServos) {
             arm.setPower(power);
         }
     }
@@ -1029,30 +1101,24 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
         telemetry.addLine()
                 .addData("Timer: ", endGameTimer.toString());
         telemetry.addLine()
-                .addData("Blinkin: ", pattern);
+                .addData("Stack Level: ", stackLevel);
         telemetry.addLine()
-                .addData("Account For Arm Drift: ", accountForArmDrift);
+                .addData("Stack Distance: ", stackDistance);
         telemetry.addLine()
-                .addData("Default Arm: ", defaultArmPower);
+                .addData("Vert Desired: ", verticalDesired);
         telemetry.addLine()
-                .addData("Arm Assist: ", armAssistLevel);
+                .addData("Hor Desired: ", horizontalDesired);
         telemetry.addLine()
-                .addData("Arm Power: ", arm.getPower());
+                .addData("Arm Theoretical Degrees: ", armRotationDegrees);
         telemetry.addLine()
-                .addData("Arm Extension Power: ", armExtension.getPower());
+                .addData("Stack Degrees Desired: ", stackDegreesDesired);
         telemetry.addLine()
-                .addData("Flywheel Power: ", flywheel.getPower());
+                .addData("Arm Length: ", armExtensionInches + armExtensionCollapsedLength);
         telemetry.addLine()
-                .addData("Flywheel 1: ", flywheel1Status.isDown);
+                .addData("ticksPerDegreesArm: ", ticksPerDegreeArm);
         telemetry.addLine()
-                .addData("Flywheel 2: ", flywheel2Status.isDown);
-        telemetry.addLine()
-                .addData("leftClaw: ", leftClaw.getPosition());
-        telemetry.addLine()
-                .addData("rightClaw: ", rightClaw.getPosition());
-
-
-        if(hasChassisMotors) {
+                .addData("ticksPerInchExtension: ", ticksPerInchExtension);
+        if(hasChassisMotors && hasArmMotorsAndServos) {
             telemetry.addLine()
                     .addData("Front Left Power: ", frontLeft.getPower());
             telemetry.addLine()
@@ -1061,6 +1127,22 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
                     .addData("Back Left Power: ", backLeft.getPower());
             telemetry.addLine()
                     .addData("Back Right Power: ", backRight.getPower());
+            telemetry.addLine()
+                    .addData("Claw Position: ", claw.getPosition());
+            telemetry.addLine()
+                    .addData("Wrist Position: ", wrist.getPosition());
+            telemetry.addLine()
+                    .addData("Left Hook Position: ", leftHook.getPosition());
+            telemetry.addLine()
+                    .addData("Right Hook Position: ", rightHook.getPosition());
+            telemetry.addLine()
+                    .addData("Block Thrower Position: ", blockThrower.getPosition());
+            telemetry.addLine()
+                    .addData("Arm Extension: ", armExtension.getCurrentPosition());
+            telemetry.addLine()
+                    .addData("Arm Ticks: ", arm.getCurrentPosition());
+            telemetry.addLine()
+                    .addData("Arm Current Degrees: ", arm.getCurrentPosition() / ticksPerDegreeArm);
         }
         telemetry.update();
     }
@@ -1072,25 +1154,19 @@ public class TeleMTZ_Drive_Controls_PP extends LinearOpMode {
             double backRightInches = backRight.getCurrentPosition() / ticksPerInchWheelDrive;
             telemetry.clear();
             telemetry.addLine()
-                    .addData("F Left : ", (int) frontLeftInches + "in, Power: " + "%.1f", frontLeft.getPower());
+                    .addData("Front Left Inches ", (int) frontLeftInches + "   Power: " + "%.1f", frontLeft.getPower());
             telemetry.addLine()
-                    .addData("F Right: ", (int) frontRightInches + "in, Power: " + "%.1f", frontRight.getPower());
+                    .addData("Front Right Inches: ", (int) frontRightInches + "   Power: " + "%.1f", frontRight.getPower());
             telemetry.addLine()
-                    .addData("B Left : ", (int) backLeftInches + "in, Power: " + "%.1f", backLeft.getPower());
+                    .addData("Back Left Inches: ", (int) backLeftInches + "   Power: " + "%.1f", backLeft.getPower());
             telemetry.addLine()
-                    .addData("B Right: ", (int) backRightInches + "in, Power: " + "%.1f", backRight.getPower());
-            telemetry.addLine()
-                    .addData("Arm: ", (int) arm.getCurrentPosition()/ticksPerDegreeArm + "deg, Power: " + "%.1f", arm.getPower());
+                    .addData("Back Right Inches: ", (int) backRightInches + "   Power: " + "%.1f", backRight.getPower());
             telemetry.update();
         }
-        if(hasAuxMotorsAndServos){
-
-        }
-
     }
     public void DisplayArmTelemetry() {
-        if(hasAuxMotorsAndServos) {
-            double armDegrees = arm.getCurrentPosition() / mtzConstantsCS.ticksPerDegreeArm;
+        if(hasArmMotorsAndServos) {
+            double armDegrees = arm.getCurrentPosition() / ticksPerDegreeArm;
             telemetry.clear();
             telemetry.addLine()
                     .addData("Arm Degrees ", (int) armDegrees + "  Power: " + "%.1f", arm.getPower());

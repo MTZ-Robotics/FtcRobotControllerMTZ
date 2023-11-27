@@ -5,12 +5,34 @@ import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armExtensionInchesAt
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armLengthDesired;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armPivotHeight;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armRotationDegreesAtHome;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmAssistLevel;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmExtensionPower;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultFlywheelSpeed;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultPauseTime;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.findStackDistance;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.findStackLevel;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightAboveLevel;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightDistance;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightLevel;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.maxArmDegrees;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.maxArmExtensionInches;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.maxWristPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.minArmDegrees;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.minArmExtensionInches;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.minWristPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.scoopStage;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackDistanceArray;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackDistanceAtHome;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackHeightAboveLevelArray;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackHeightOnLevelArray;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackLevelAtHome;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchExtension;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.wristAdjustment;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.wristBump;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.wristConversionToServo;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmAssistLevel;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmLowerPower;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmPower;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultDriveSpeed;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultPauseTime;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.driveBump;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.driveFastRatio;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.driveSlowRatio;
@@ -18,59 +40,20 @@ import static org.firstinspires.ftc.teamcode.mtzConstantsCS.endGameOver;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.endGameStart;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.endGameWarning;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.endGameWarning2;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.findStackDistance;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.findStackLevel;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.greenWarningTime;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightAboveLevel;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightDistance;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightLevel;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawBallPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawBoxPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawDuckPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawMaxClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawMaxOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawOpenBallPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawOpenBoxPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawOpenDuckPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.maxArmDegrees;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.maxArmExtensionInches;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.minArmDegrees;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.minArmExtensionInches;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.prorate;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.redWarningTime;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawBallPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawBoxPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawDuckPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawMaxClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawMaxOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawOpenBallPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawOpenBoxPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawOpenDuckPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackDistanceArray;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackDistanceAtHome;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackHeightAboveLevelArray;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackHeightOnLevelArray;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackLevelAtHome;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.strafeBump;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerDegreeArm;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerDegreeTurnChassis;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchExtension;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchWheelDrive;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchWheelStrafe;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.turnBump;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.wristConversionToServo;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.yellowWarningTime;
-
-//Coach Scherer added below
-
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.AnalogInput;
-
-//end of additions
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -79,7 +62,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="TeleMTZ_Drive_PP_CoachTest", group ="Bottom")
+@TeleOp(name="TeleMTZ_Drive_CS", group ="AA_Top")
 
 //@Disabled
 
@@ -89,10 +72,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *
  *
  * v100 Copied from Last Year
+ * v101 Updates during meet 1
+ * v102
  *
  */
 
-public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
+public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
 
     /********************************
      * Robot Configuration Flags
@@ -102,7 +87,8 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
     boolean hasAuxMotorsAndServos;
     boolean hasLightsHub;
     boolean wantAutoChassisControls;
-    boolean clawRemainClosed = true;
+    boolean leftClawRemainClosed = true;
+    boolean rightClawRemainClosed = true;
     private int allianceReverser = 1;
     double armAssistLevel = defaultArmAssistLevel;
 
@@ -135,26 +121,10 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
     private DcMotor backLeft;
     private DcMotor arm;
     private DcMotor armExtension;
-    private DcMotor flywheel;
     private Servo leftClaw;
     private Servo rightClaw;
-
-    //coach added below
-    private AnalogInput switchC0;
-    private AnalogInput switchC1;
-    private DigitalChannel lightE1green;
-    private DigitalChannel lightE1red;
-    private DigitalChannel lightE2green;
-    private DigitalChannel lightE2red;
-    private DigitalChannel lightE3green;
-    private DigitalChannel lightE3red;
-    private DigitalChannel lightE4green;
-    private DigitalChannel lightE4red;
-
-
-
-    //end of additions
-
+    private Servo wrist;
+    private Servo planeLaunchTrigger;
     double drivePower;
     double blPower;
     double brPower;
@@ -171,6 +141,9 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
     double verticalDesired;
     double horizontalDesired;
     double stackDegreesDesired;
+    String debugString ="none";
+
+    double wristPositionDesired = wristConversionToServo(90+armRotationDegreesAtHome) + wristAdjustment;
 
 
     /*******
@@ -178,7 +151,7 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
      ********/
 
 
-    /*************           Freight Frenzy R1     Control Pad Map            **************/
+    /*************           Power Play R1     Control Pad Map            **************/
 // Assign Variables & Objects for Control Pads
     double chassisSpeedSlow;                             //Slow Speed
     mtzButtonBehavior chassisBumpLeftTurnStatus = new mtzButtonBehavior();         //Bump Left Turn
@@ -200,7 +173,7 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
     mtzButtonBehavior startButton1Status = new mtzButtonBehavior();         //Pad Select (A & B)
 
 
-
+    mtzButtonBehavior planeLaunchStatus = new mtzButtonBehavior();         //Launch Plane
 
 
 
@@ -208,36 +181,37 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
 
     double driveStick1;                             //Drive 1
     double strafeStick;                             //Strafe
-    double clawOpen;                             //Claw Open (Sticky)
-    mtzButtonBehavior flywheel1Status = new mtzButtonBehavior();         //Flywheel 1
+    double leftClawClose;                             //Left Claw Close (Sticky)
+    mtzButtonBehavior leftClawOpenStatus = new mtzButtonBehavior();         //Left Claw Open (Sticky)
 
     mtzButtonBehavior resetAdjustmentsStatus = new mtzButtonBehavior();         //Reset Adjustments
     mtzButtonBehavior handHomeStatus = new mtzButtonBehavior();         //Hand to Home
 
     mtzButtonBehavior levelUpStatus = new mtzButtonBehavior();         //Move Hand to Next Level Higher
-    mtzButtonBehavior armExtendMaxStatus = new mtzButtonBehavior();         //Extend Arm All the Way
-    mtzButtonBehavior armExtendMinStatus = new mtzButtonBehavior();         //Retract Arm All the Way
+    mtzButtonBehavior wristAdjustLessStatus = new mtzButtonBehavior();         //Slightly Decrease Wrist
+    mtzButtonBehavior wristAdjustMoreStatus = new mtzButtonBehavior();         //Slightly Increase Wrist
     mtzButtonBehavior levelDownStatus = new mtzButtonBehavior();         //Move Hand to Next Level Lower
 
 
     double handVerticalStick;                             //Hand Vertical Move
     double handHorizontalStick;                             //Hand Horizontal Move
-    double clawClose;                             //Claw Close (Sticky)
-    mtzButtonBehavior flywheel2Status = new mtzButtonBehavior();         //Flywheel 2
+    double rightClawClose;                             //Right Claw Close (Sticky)
+    mtzButtonBehavior rightClawOpenStatus = new mtzButtonBehavior();         //Right Claw Open (Sticky)
 
     mtzButtonBehavior startButton2Status = new mtzButtonBehavior();         //Pad Select (A & B)
 
 
-    mtzButtonBehavior boxClawSpacingStatus = new mtzButtonBehavior();         //Box Claw Spacing
-    mtzButtonBehavior ballClawSpacingStatus = new mtzButtonBehavior();         //Ball Claw Spacing
-    mtzButtonBehavior duckClawSpacingStatus = new mtzButtonBehavior();         //Duck Claw Spacing
-    mtzButtonBehavior openClawSpacingStatus = new mtzButtonBehavior();         //Open Claw
+    mtzButtonBehavior aprilTagCenterStatus = new mtzButtonBehavior();         //Aim to Center AprilTag
+    mtzButtonBehavior aprilTagLeftStatus = new mtzButtonBehavior();         //Aim to Left AprilTag
+    mtzButtonBehavior aprilTagRightStatus = new mtzButtonBehavior();         //Aim to Right AprilTag
+
 
 
     double handAssist;                             //Ride Height/Drop to 0
-    double sideShiftClaw;                             //Claw SIde Shift
+
 // End of Assignment Mapping
-    /*************           End     Freight Frenzy R1     Control Pad Map            **************/
+    /*************           End     Power Play R1     Control Pad Map            **************/
+
 
     @Override
 
@@ -249,7 +223,7 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
          * It is helpful to use this opMode for testing the controlRobot method
          *****************************************************/
 
-        controlRobot("Red", "Freight Frenzy R1", defaultDriveSpeed, true, true, true, true);
+        controlRobot("Red", "Center Stage R1", defaultDriveSpeed, true, true, true, true);
     }
 
     //This is the method that handles the controls
@@ -310,6 +284,8 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
             leftClaw = hardwareMap.servo.get("leftClaw");
             leftClaw.setDirection(Servo.Direction.REVERSE);
             rightClaw = hardwareMap.servo.get("rightClaw");
+            wrist = hardwareMap.servo.get("wrist");
+            planeLaunchTrigger = hardwareMap.servo.get("planeLaunchTrigger");
             arm = hardwareMap.dcMotor.get("arm");
             arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -319,10 +295,6 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
             armExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armExtension.setDirection(DcMotor.Direction.REVERSE);
             armExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            flywheel = hardwareMap.dcMotor.get("flywheel");
-            flywheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
 
@@ -330,33 +302,6 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
          * Do Not set positions on initialize since that counts as controlling the robot
          * and initialize would not be able to happen until the timer starts for driver controlled period
          **********************************/
-
-        //Coach Additions below
-        // Get the LED colors and touch sensor from the hardwaremap
-        lightE1red = hardwareMap.get(DigitalChannel.class, "lightE1red");
-        lightE1green = hardwareMap.get(DigitalChannel.class, "lightE1green");
-        lightE2red = hardwareMap.get(DigitalChannel.class, "lightE2red");
-        lightE2green = hardwareMap.get(DigitalChannel.class, "lightE2green");
-        lightE3red = hardwareMap.get(DigitalChannel.class, "lightE3red");
-        lightE3green = hardwareMap.get(DigitalChannel.class, "lightE3green");
-        lightE4red = hardwareMap.get(DigitalChannel.class, "lightE4red");
-        lightE4green = hardwareMap.get(DigitalChannel.class, "lightE4green");
-        switchC0 = hardwareMap.get(AnalogInput.class, "switchC0");
-        switchC1 = hardwareMap.get(AnalogInput.class, "switchC1");
-
-        // change LED mode from input to output
-        lightE1red.setMode(DigitalChannel.Mode.OUTPUT);
-        lightE1green.setMode(DigitalChannel.Mode.OUTPUT);
-        lightE2red.setMode(DigitalChannel.Mode.OUTPUT);
-        lightE2green.setMode(DigitalChannel.Mode.OUTPUT);
-        lightE3red.setMode(DigitalChannel.Mode.OUTPUT);
-        lightE3green.setMode(DigitalChannel.Mode.OUTPUT);
-        lightE4red.setMode(DigitalChannel.Mode.OUTPUT);
-        lightE4green.setMode(DigitalChannel.Mode.OUTPUT);
-
-
-        //End of additions
-
 
 
         /***********************************************
@@ -371,23 +316,12 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
                 redWarningTime+", " +
                 endGameStart
         );
-        telemetry.log().add("Switch 0 Voltage = "+switchC0.getVoltage()+" V");
-        telemetry.log().add("Switch 1 Voltage = "+switchC1.getVoltage()+" V");
-
-
-
-
-
-
 
         /************* Press Play Button ***********************/
 
         waitForStart();
 
         /************ START ***************/
-
-
-
 
         if(hasLightsHub) {
             //Use a gentle pattern during the normal part of the match
@@ -404,130 +338,74 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
              *
              * TeleOp Loops From Here to the End of controlRobot
              *
-             * Loops very often to see if controls are still the same
+             * Loops often to see if controls are still the same
              *
              ****************************************************************/
-
-            //Coach Additions Below
-
-
-            if (switchC0.getVoltage()>0.5){
-                //Switch is off
-                //off
-                lightE1red.setState(true);
-                lightE1green.setState(true);
-                //red
-                lightE2red.setState(true);
-                lightE2green.setState(false);
-                //green
-                lightE3red.setState(false);
-                lightE3green.setState(true);
-                //orange
-                lightE4red.setState(false);
-                lightE4green.setState(false);
-            } else {
-                //green
-                lightE1red.setState(false);
-                lightE1green.setState(true);
-                //orange
-                lightE2red.setState(false);
-                lightE2green.setState(false);
-                //off
-                lightE3red.setState(true);
-                lightE3green.setState(true);
-                //red
-                lightE4red.setState(true);
-                lightE4green.setState(false);
-            }
-            if(switchC1.getVoltage()>0.5){
-                //wire is connected to positive
-            } else {
-                //wire is not connected to positive
-            }
-
-
-
-            //End of Additions
-
-
-
 
             /***********************
              * Gather Button Input *
              **********************/
 
-            if (controlPadMap=="Freight Frenzy R1") {
+            if (controlPadMap=="Center Stage R1") {
 
-/*************           Freight Frenzy R1     Controls Update Status           **************/
+/*************           Power Play R1     Controls Update Status           **************/
                 chassisSpeedSlow = gamepad1.left_trigger;             //Slow Speed
                 chassisBumpLeftTurnStatus.update(gamepad1.left_bumper);             //Bump Left Turn
+
+
+
+
                 chassisBumpForwardStatus.update(gamepad1.dpad_up);             //Bump Forward
                 chassisBumpLeftStrafeStatus.update(gamepad1.dpad_left);             //Bump Left Strafe
                 chassisBumpRightStrafeStatus.update(gamepad1.dpad_right);             //Bump Right Strafe
                 chassisBumpBackStatus.update(gamepad1.dpad_down);             //Bump Backwards
+
+
                 driveStick2 = gamepad1.left_stick_y;             //Drive 2
                 turnStick = gamepad1.left_stick_x;             //Turn
                 chassisSpeedFast = gamepad1.right_trigger;             //High Speed
                 chassisBumpRightTurnStatus.update(gamepad1.right_bumper);             //Bump Right Turn
+
                 startButton1Status.update(gamepad1.start);             //Pad Select (A & B)
+
+
+                planeLaunchStatus.update(gamepad1.y);             //Launch Plane
+
+
+
+
+
                 driveStick1 = gamepad1.right_stick_y;             //Drive 1
                 strafeStick = gamepad1.right_stick_x;             //Strafe
-                clawOpen = gamepad2.left_trigger;             //Claw Open (Sticky)
-                flywheel1Status.update(gamepad2.left_bumper);             //Flywheel 1
+                leftClawClose = gamepad2.left_trigger;             //Left Claw Close (Sticky)
+                leftClawOpenStatus.update(gamepad2.left_bumper);             //Left Claw Open (Sticky)
+
                 resetAdjustmentsStatus.update(gamepad2.guide);             //Reset Adjustments
                 handHomeStatus.update(gamepad2.back);             //Hand to Home
+
                 levelUpStatus.update(gamepad2.dpad_up);             //Move Hand to Next Level Higher
-                armExtendMaxStatus.update(gamepad2.dpad_left);             //Extend Arm All the Way
-                armExtendMinStatus.update(gamepad2.dpad_right);             //Retract Arm All the Way
+                wristAdjustLessStatus.update(gamepad2.dpad_left);             //Slightly Decrease Wrist
+                wristAdjustMoreStatus.update(gamepad2.dpad_right);             //Slightly Increase Wrist
                 levelDownStatus.update(gamepad2.dpad_down);             //Move Hand to Next Level Lower
+
+
                 handVerticalStick = gamepad2.left_stick_y;             //Hand Vertical Move
                 handHorizontalStick = gamepad2.left_stick_x;             //Hand Horizontal Move
-                clawClose = gamepad2.right_trigger;             //Claw Close (Sticky)
-                flywheel2Status.update(gamepad2.right_bumper);             //Flywheel 2
+                rightClawClose = gamepad2.right_trigger;             //Right Claw Close (Sticky)
+                rightClawOpenStatus.update(gamepad2.right_bumper);             //Right Claw Open (Sticky)
+
                 startButton2Status.update(gamepad2.start);             //Pad Select (A & B)
-                boxClawSpacingStatus.update(gamepad2.y);             //Box Claw Spacing
-                ballClawSpacingStatus.update(gamepad2.x);             //Ball Claw Spacing
-                duckClawSpacingStatus.update(gamepad2.b);             //Duck Claw Spacing
-                openClawSpacingStatus.update(gamepad2.a);             //Open Claw
+
+
+                aprilTagCenterStatus.update(gamepad2.y);             //Aim to Center AprilTag
+                aprilTagLeftStatus.update(gamepad2.x);             //Aim to Left AprilTag
+                aprilTagRightStatus.update(gamepad2.b);             //Aim to Right AprilTag
+
+
+
                 handAssist = gamepad2.right_stick_y;             //Ride Height/Drop to 0
-                sideShiftClaw = gamepad2.right_stick_x;             //Claw SIde Shift
-/*************           End     Freight Frenzy R1     Updates            **************/
-            }
-            else if (controlPadMap=="Freight Frenzy L1") {
-/*************           Freight Frenzy L1     Controls Update Status           **************/
-                chassisSpeedSlow = gamepad1.left_trigger;             //Slow Speed
-                chassisBumpLeftTurnStatus.update(gamepad1.left_bumper);             //Bump Left Turn
-                chassisBumpForwardStatus.update(gamepad1.dpad_up);             //Bump Forward
-                chassisBumpLeftStrafeStatus.update(gamepad1.dpad_left);             //Bump Left Strafe
-                chassisBumpRightStrafeStatus.update(gamepad1.dpad_right);             //Bump Right Strafe
-                chassisBumpBackStatus.update(gamepad1.dpad_down);             //Bump Backwards
-                driveStick2 = gamepad1.left_stick_y;             //Drive 2
-                strafeStick = gamepad1.left_stick_x;             //Strafe
-                chassisSpeedFast = gamepad1.right_trigger;             //High Speed
-                chassisBumpRightTurnStatus.update(gamepad1.right_bumper);             //Bump Right Turn
-                startButton1Status.update(gamepad1.start);             //Pad Select (A & B)
-                driveStick1 = gamepad1.right_stick_y;             //Drive 1
-                turnStick = gamepad1.right_stick_x;             //Turn
-                clawOpen = gamepad2.left_trigger;             //Claw Open (Sticky)
-                flywheel1Status.update(gamepad2.left_bumper);             //Flywheel 1
-                resetAdjustmentsStatus.update(gamepad2.guide);             //Reset Adjustments
-                handHomeStatus.update(gamepad2.back);             //Hand to Home
-                levelUpStatus.update(gamepad2.dpad_up);             //Move Hand to Next Level Higher
-                armExtendMaxStatus.update(gamepad2.dpad_left);             //Extend Arm All the Way
-                armExtendMinStatus.update(gamepad2.dpad_right);             //Retract Arm All the Way
-                levelDownStatus.update(gamepad2.dpad_down);             //Move Hand to Next Level Lower
-                handVerticalStick = gamepad2.left_stick_y;             //Hand Vertical Move
-                handHorizontalStick = gamepad2.left_stick_x;             //Hand Horizontal Move
-                clawClose = gamepad2.right_trigger;             //Claw Close (Sticky)
-                flywheel2Status.update(gamepad2.right_bumper);             //Flywheel 2
-                startButton2Status.update(gamepad2.start);             //Pad Select (A & B)
-                boxClawSpacingStatus.update(gamepad2.y);             //Box Claw Spacing
-                ballClawSpacingStatus.update(gamepad2.x);             //Ball Claw Spacing
-                duckClawSpacingStatus.update(gamepad2.b);             //Duck Claw Spacing
-                openClawSpacingStatus.update(gamepad2.a);             //Open Claw
-                handAssist = gamepad2.right_stick_y;             //Ride Height/Drop to 0
-                sideShiftClaw = gamepad2.right_stick_x;             //Claw SIde Shift
-/*************           End     Freight Frenzy L1     Updates            **************/
+
+/*************           End     Power Play R1     Updates            **************/
             }
             else {
 
@@ -566,6 +444,7 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
             /**************************
              * Chassis drive controls *
              *************************/
+            turnStick = turnStick * .85;
             blPower = drivePower * ((-driveStick2 + -driveStick1 + strafeStick) - turnStick);
             brPower = drivePower * ((-driveStick2 + -driveStick1 - strafeStick) + turnStick);
             flPower = drivePower * ((-driveStick2 + -driveStick1 + strafeStick) + turnStick);
@@ -628,6 +507,8 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
                     /**********
                      * Arm Power
                      **********/
+
+
                     arm.setPower(-1 * (defaultArmPower * (handVerticalStick) - armAssistLevel));
                 } else {
 
@@ -661,6 +542,7 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
                     goToStackPosition(false,stackLevel,stackDistance,aboveLevel);
                 }
 
+
                 /************************
                  * Stacker Controls
                  ***********************/
@@ -690,85 +572,74 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
                     }
                     goToStackPosition(stackingDown,stackLevel,stackDistance,aboveLevel);
                 }
-                if(armExtendMaxStatus.clickedDown){
-                    stackingDown = false;
-                    if(stackDistance!=-1 && stackDistance < stackHeightOnLevelArray.length-1){
-                        stackDistance=stackDistanceArray.length-1;
-                    }
-                    goToStackPosition(stackingDown,stackLevel,stackDistance,aboveLevel);
+
+                /*************
+                 * Wrist Adjuster
+                 *************/
+                if (wristAdjustLessStatus.clickedDown) {
+                    wristAdjustment = wristAdjustment - wristBump;
+                } else if (wristAdjustMoreStatus.clickedDown) {
+                    wristAdjustment = wristAdjustment + wristBump;
                 }
-                if(armExtendMinStatus.clickedDown){
-                    stackingDown = false;
-                    if(stackDistance>0 && stackDistance < stackHeightOnLevelArray.length-1){
-                        stackDistance=0;
-                    }
-                    goToStackPosition(stackingDown,stackLevel,stackDistance,aboveLevel);
+
+                /********************************************
+                 *
+                 * Wrist Angle Auto Set
+                 *
+                 * without stacker controls
+                 *
+                 ********************************************/
+                if(armRotationDegrees>0 && armRotationDegrees<70) {
+                    wristPositionDesired = wristAutoLevelDeliverFront(armRotationDegrees) + wristAdjustment;
+                    scoopStage = 2;
+                    debugString = "Front "+wristPositionDesired+"";
                 }
+                else if(armRotationDegrees>70) {
+                    wristPositionDesired = wristAutoLevelDeliverRear(armRotationDegrees) + wristAdjustment;
+                    scoopStage = 3;
+                    debugString = "Rear "+ wristPositionDesired+"";
+                }
+                else {
+                    wristPositionDesired = wristAutoLevelScoop(armRotationDegrees) + wristAdjustment;
+                    scoopStage = 1;
+                    debugString = "Scoop "+wristPositionDesired+"";
+                }
+
+/*
+                if(wristPositionDesired < minWristPosition){
+                    wristPositionDesired = minWristPosition;
+                }
+
+                if(wristPositionDesired > maxWristPosition){
+                    wristPositionDesired = maxWristPosition;
+                }
+*/
+                //Set wrist position
+                wrist.setPosition(wristPositionDesired);
 
                 /*************
                  * Claw Controls
                  *************/
-                /***
-                 * If Green button clicked - closed position = Max, remain closed false
-                 * If Red button clicked - closed position = duck, and remain closed true
-                 * If Yellow button clicked - closed position = box, and remain closed true
-                 * If Blue button clicked - closed position = ball, and remain closed true
-                 */
 
-
-
-                if(openClawSpacingStatus.clickedDown){
-                    leftClawOpenPosition = leftClawMaxOpenPosition;
-                    rightClawOpenPosition = rightClawMaxOpenPosition;
-                    leftClawClosedPosition = leftClawMaxClosedPosition;
-                    rightClawClosedPosition = rightClawMaxClosedPosition;
-                    tempLightsTimer = endGameTimer.seconds()+1;
-                    tempLightsPattern = RevBlinkinLedDriver.BlinkinPattern.CONFETTI;
-                } else if(duckClawSpacingStatus.clickedDown){
-                    leftClawOpenPosition = leftClawOpenDuckPosition;
-                    rightClawOpenPosition = rightClawOpenDuckPosition;
-                    leftClawClosedPosition = leftClawDuckPosition;
-                    rightClawClosedPosition = rightClawDuckPosition;
-                    tempLightsTimer = endGameTimer.seconds()+1;
-                    tempLightsPattern = RevBlinkinLedDriver.BlinkinPattern.WHITE;
-                } else if(boxClawSpacingStatus.clickedDown){
-                    leftClawOpenPosition = leftClawOpenBoxPosition;
-                    rightClawOpenPosition = rightClawOpenBoxPosition;
-                    leftClawClosedPosition = leftClawBoxPosition;
-                    rightClawClosedPosition = rightClawBoxPosition;
-                    tempLightsTimer = endGameTimer.seconds()+1;
-                    tempLightsPattern = RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD;
-                } else if(ballClawSpacingStatus.clickedDown){
-                    leftClawOpenPosition = leftClawOpenBallPosition;
-                    rightClawOpenPosition = rightClawOpenBallPosition;
-                    leftClawClosedPosition = leftClawBallPosition;
-                    rightClawClosedPosition = rightClawBallPosition;
-                    tempLightsTimer = endGameTimer.seconds()+1;
-                    tempLightsPattern = RevBlinkinLedDriver.BlinkinPattern.STROBE_BLUE;
-                }
-
-                if(clawClose>0.95){clawRemainClosed = true; }
-                if(clawOpen>0.95){clawRemainClosed = false;}
-                if (clawRemainClosed) {
+                if(leftClawClose>0.95){leftClawRemainClosed = true; }
+                if(leftClawOpenStatus.clickedDown){leftClawRemainClosed = false;}
+                if(rightClawClose>0.95){rightClawRemainClosed = true; }
+                if(rightClawOpenStatus.clickedDown){rightClawRemainClosed = false;}
+                if (leftClawRemainClosed) {
                     leftClaw.setPosition(leftClawClosedPosition);
+                } else {
+                    //Close claw to prorated level of between open and closed position based on the current trigger value between open trigger and closed trigger
+                    leftClaw.setPosition(prorate(leftClawClose,0,1,leftClawOpenPosition,leftClawClosedPosition));
+                }
+                if (rightClawRemainClosed) {
                     rightClaw.setPosition(rightClawClosedPosition);
                 } else {
-                    //Close claw to prorated level of (close trigger - open trigger) * (Closed position - Open position) + Open Position
-                    leftClaw.setPosition(leftClawOpenPosition + prorate(clawClose, 0, 1, leftClawClosedPosition, leftClawOpenPosition));
-                    rightClaw.setPosition(rightClawOpenPosition + prorate(clawClose, 0, 1, rightClawClosedPosition, rightClawOpenPosition));
+                    //Close claw to prorated level of between open and closed position based on the current trigger value between open trigger and closed trigger
+                    rightClaw.setPosition(prorate(rightClawClose,0,1,rightClawOpenPosition,rightClawClosedPosition));
                 }
 
 
 
-
-
-
-
-                /****************
-                 * Diagnose Claw
-                 ******************/
-                //leftClaw.setPosition(clawClose);
-                //rightClaw.setPosition(clawClose);
 
             }
 
@@ -1004,8 +875,14 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
             Thread.sleep(pause);
         }
     }
-    public double wristAutoLevel(double armAngle){
-        return wristConversionToServo(armAngle + 90);
+    public double wristAutoLevelScoop(double armAngle){
+        return wristConversionToServo(armAngle + 0);
+    }
+    public double wristAutoLevelDeliverFront(double armAngle){
+        return wristConversionToServo(armAngle + 65);
+    }
+    public double wristAutoLevelDeliverRear(double armAngle){
+        return wristConversionToServo(armAngle - 30);
     }
 
     public void ExtendArm(double desiredArmLength, double power,int pause) throws InterruptedException {
@@ -1131,31 +1008,27 @@ public class TeleMTZ_Drive_Controls_PPvCoachTest extends LinearOpMode {
         telemetry.addLine()
                 .addData("Timer: ", endGameTimer.toString());
         telemetry.addLine()
-                .addData("Switch C0 Voltage: ",switchC0.getVoltage());
-        telemetry.addLine()
-                .addData("Switch C1 Voltage: ",switchC1.getVoltage());
-        telemetry.addLine()
                 .addData("Blinkin: ", pattern);
         telemetry.addLine()
-                .addData("Account For Arm Drift: ", accountForArmDrift);
-        telemetry.addLine()
                 .addData("Default Arm: ", defaultArmPower);
-        telemetry.addLine()
-                .addData("Arm Assist: ", armAssistLevel);
         telemetry.addLine()
                 .addData("Arm Power: ", arm.getPower());
         telemetry.addLine()
                 .addData("Arm Extension Power: ", armExtension.getPower());
         telemetry.addLine()
-                .addData("Flywheel Power: ", flywheel.getPower());
-        telemetry.addLine()
-                .addData("Flywheel 1: ", flywheel1Status.isDown);
-        telemetry.addLine()
-                .addData("Flywheel 2: ", flywheel2Status.isDown);
+                .addData("Arm Rotation: ", armRotationDegrees);
         telemetry.addLine()
                 .addData("leftClaw: ", leftClaw.getPosition());
         telemetry.addLine()
                 .addData("rightClaw: ", rightClaw.getPosition());
+        telemetry.addLine()
+                .addData("Scoop Stage: ", scoopStage);
+        telemetry.addLine()
+                .addData("wrist: ", wrist.getPosition());
+        telemetry.addLine()
+                .addData("Plane Launch: ", planeLaunchTrigger.getPosition());
+        telemetry.addLine()
+                .addData("Debug String: ", debugString);
 
 
         if(hasChassisMotors) {
