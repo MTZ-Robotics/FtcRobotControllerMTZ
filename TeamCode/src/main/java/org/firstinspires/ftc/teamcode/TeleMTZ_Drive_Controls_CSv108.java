@@ -80,7 +80,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-@TeleOp(name="TeleMTZ_Drive_CS", group ="ATop")
+@TeleOp(name="TeleMTZ_Drive_CS v108", group ="bottom")
 
 //@Disabled
 
@@ -98,12 +98,11 @@ import java.util.List;
  * v106 removed sticky from drive speed adjust with triggers
  * v107 Added Auto Raise to Hang
  * v108 Added AprilTag Alignment back in
- * v109
  *
  *
  */
 
-public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
+public class TeleMTZ_Drive_Controls_CSv108 extends LinearOpMode {
 
     /********************************
      * Robot Configuration Flags
@@ -182,7 +181,6 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
     double horizontalDesired;
     double stackDegreesDesired;
     String debugString ="none";
-
 
     double wristPositionDesired = wristConversionToServo(armRotationDegreesAtHome) + wristAdjustment;
 
@@ -321,10 +319,6 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
             backRight = hardwareMap.dcMotor.get("backRight");
             frontLeft.setDirection(DcMotor.Direction.REVERSE);
             backLeft.setDirection(DcMotor.Direction.REVERSE);
-            frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
         if(hasAuxMotorsAndServos){
             leftClaw = hardwareMap.servo.get("leftClaw");
@@ -341,7 +335,6 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
             armExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armExtension.setDirection(DcMotor.Direction.REVERSE);
             armExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            planeLaunchTrigger.setDirection(Servo.Direction.REVERSE);
         }
 
 
@@ -364,7 +357,6 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
                 endGameStart
         );
 
-        wristAdjustment = 0.0;
         /************* Press Play Button ***********************/
 
         waitForStart();
@@ -419,10 +411,10 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
                 startButton1Status.update(gamepad1.start);             //Pad Select (A & B)
 
 
-                //aprilTagCenterStatus.update(gamepad1.y);             //Aim to Center AprilTag
-                //aprilTagLeftStatus.update(gamepad1.x);             //Aim to Left AprilTag
-                //aprilTagRightStatus.update(gamepad1.b);             //Aim to Right AprilTag
-                planeLaunchStatus.update(gamepad1.y);             //Launch Plane
+                aprilTagCenterStatus.update(gamepad1.y);             //Aim to Center AprilTag
+                aprilTagLeftStatus.update(gamepad1.x);             //Aim to Left AprilTag
+                aprilTagRightStatus.update(gamepad1.b);             //Aim to Right AprilTag
+                planeLaunchStatus.update(gamepad1.a);             //Launch Plane
 
 
                 driveStick1 = gamepad1.right_stick_y;             //Drive 1
@@ -561,18 +553,18 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
             /*************
              * Arm Controls
              *************/
-            //Arm Raise & Lower
+
             if (handVerticalStick < 0) {
                 arm.setPower(defaultArmPower * powerRatio * (-handVerticalStick));
             } else {
                 arm.setPower(defaultArmLowerPower * powerRatio * (-handVerticalStick));
             }
-            //Arm Extend
-            armExtension.setPower((handHorizontalStick-armExtensionStick)*defaultArmExtensionPower * powerRatio);
+
+            armExtension.setPower(handHorizontalStick*defaultArmExtensionPower * powerRatio);
             if (handVerticalStick!=0){
                 stackLevel = -1;
             }
-            if (handHorizontalStick!=0 || armExtensionStick!=0){
+            if (handHorizontalStick!=0){
                 stackDistance = -1;
             }
 
@@ -643,13 +635,13 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
              * without stacker controls
              *
              ********************************************/
-            if(armRotationDegrees>15 && armRotationDegrees<50) {//Deliver on the backdrop at the front of the robot
+            if(armRotationDegrees>15 && armRotationDegrees<70) {//Deliver on the backdrop at the front of the robot
                 wristPositionDesired = wristAutoLevelDeliverFront(armRotationDegrees) + wristAdjustment;
                 scoopStage = 2;
                 debugString = "Front "+wristPositionDesired+"";
 
             }
-            else if(armRotationDegrees>50) {//Deliver over the top to the rear
+            else if(armRotationDegrees>70) {//Deliver over the top to the rear
                 wristPositionDesired = wristAutoLevelDeliverRear(armRotationDegrees) + wristAdjustment;
                 scoopStage = 3;
                 debugString = "Rear "+ wristPositionDesired+"";
@@ -787,7 +779,6 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
                     DisplayDriveTelemetry();
                 }
                 Thread.sleep(pause);
-                RunDriveWithEncoders();
             }
         }
     }
@@ -814,8 +805,6 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
                     DisplayDriveTelemetry();
                 }
                 Thread.sleep(pause);
-
-                RunDriveWithEncoders();
             }
         }
     }
@@ -843,8 +832,6 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
                     DisplayDriveTelemetry();
                 }
                 Thread.sleep(pause);
-
-                RunDriveWithEncoders();
             }
         }
     }
@@ -926,8 +913,8 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
     public void RaiseArm(double degrees, double power,int pause) throws InterruptedException {
         if(hasAuxMotorsAndServos) {
             if (opModeIsActive()) {
-                raiseByDegrees(degrees);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                raiseByDegrees(degrees);
                 ArmPower(power);
                 while (arm.isBusy() || armExtension.isBusy()) {
                     DisplayArmTelemetry();
@@ -1008,14 +995,6 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
             frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-    }
-    public void RunDriveWithEncoders() {
-        if(hasChassisMotors) {
-            frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
     public void RunArmToPosition() {

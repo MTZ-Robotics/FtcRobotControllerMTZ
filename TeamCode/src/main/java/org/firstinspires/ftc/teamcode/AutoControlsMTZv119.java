@@ -6,16 +6,26 @@ import static org.firstinspires.ftc.teamcode.mtzConstantsCS.MAX_AUTO_TURN;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.SPEED_GAIN;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.STRAFE_GAIN;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.TURN_GAIN;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armRotationDegreesAtHome;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.cameraBearingOffsetLeftTagLeftPixelLeftSide;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.cameraBearingOffsetRightTagRightPixelRightSide;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmExtensionPower;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmPower;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.distanceBetweenScoopPositions;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.distanceBetweenValleys;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawClosedPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawOpenPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.randomizerPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawClosedPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawMaxOpenPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawOpenPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerDegreeArm;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerDegreeTurnChassis;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchExtension;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchWheelDrive;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchWheelStrafe;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerRevolution1150;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.wristConversionToServo;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
@@ -44,7 +54,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name ="Auto Controls v114", group = "Bottom")
+@Autonomous(name ="Auto Controls v119", group = "Bottom")
 //@Disabled
 
 /*************************
@@ -68,10 +78,16 @@ import java.util.concurrent.TimeUnit;
  * v112 Updates during Meet 1
  * v113 Updates before Thanksgiving
  * v114 Added AutoAlign
+ * v115 Prior to Adding Paths
+ * v116
+ * v117 Added Dropping at backdrop and looking for tag on other alliance and camera looks at left or right tag
+ * v118 Removed Old Paths & added turn towards backdrop from backdrop side
+ * v119 Added Early Delay Option
+ *
  *
  *******************/
 
-public class AutoControlsMTZv114 extends LinearOpMode {
+public class AutoControlsMTZv119 extends LinearOpMode {
 
 
     /**************
@@ -89,12 +105,13 @@ public class AutoControlsMTZv114 extends LinearOpMode {
     private static final double ticksPerRevolution = ticksPerRevolution1150;
     private static final double gearReduction = 1.0;
     private static final double wheelDiameterInches = 4.0;
+
     private static final double pi = 3.1415;
     private static final double conversionTicksToInches = (ticksPerRevolution * gearReduction) / (pi * wheelDiameterInches);
     private static final double armDistanceAdjustment = 39.4;
-    private static final double strafeDistanceAdjustment = 1.15;
+    //private static final double strafeDistanceAdjustment = 1.15;
 
-    private static final double driveDistanceAdjustment = .85;
+    //private static final double driveDistanceAdjustment = .85;
     private int allianceReverser = 1;
 
 
@@ -106,7 +123,7 @@ public class AutoControlsMTZv114 extends LinearOpMode {
      * April Tag Alignment Declarations
      */
 
-    private static final int DESIRED_TAG_ID = 3;     // Choose the tag you want to approach or set to -1 for ANY tag.
+    private static int DESIRED_TAG_ID = 0;     // Choose the tag you want to approach or set to -1 for ANY tag.
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
@@ -136,8 +153,7 @@ public class AutoControlsMTZv114 extends LinearOpMode {
     private DcMotor backLeft;
     private DcMotor arm;
     private DcMotor armExtension;
-    private DcMotor flywheel;
-    //private Servo claw;
+    private Servo wrist;
     private Servo leftClaw;
     private Servo rightClaw;
     private ColorSensor leftColorSensor;
@@ -170,8 +186,7 @@ public class AutoControlsMTZv114 extends LinearOpMode {
 
 
     //End TensorFlow Set-up
-
-
+    //Start AprilTag
 
     @Override
 
@@ -235,6 +250,7 @@ public class AutoControlsMTZv114 extends LinearOpMode {
         rightClaw = hardwareMap.servo.get("rightClaw");
         leftClaw.setDirection(Servo.Direction.REVERSE);
         //rightClaw.setDirection(Servo.Direction.REVERSE);
+        wrist = hardwareMap.servo.get("wrist");
         arm = hardwareMap.dcMotor.get("arm");
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -248,6 +264,11 @@ public class AutoControlsMTZv114 extends LinearOpMode {
         armExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         armOdometer=0;
+
+
+
+        //Sampling Variables
+        randomizerPosition = 2;
 
 
         /*************
@@ -284,6 +305,8 @@ public class AutoControlsMTZv114 extends LinearOpMode {
         if (alliance=="Blue") {
             allianceReverser=-1;
         }
+
+
         /************************************************************
          * ******************************************************** *
          * ******************************************************** *
@@ -294,13 +317,24 @@ public class AutoControlsMTZv114 extends LinearOpMode {
          * ******************************************************** *
          ************************************************************/
 
+
+
+
         /*******************
          * Default Path
          ******************/
+
         if (pathToRun=="default"){
-            pathToRun="Backdrop Sample";
+            pathToRun="Backdrop Align";
         }
 
+        double distanceBetweenStartingPositions = 0;
+
+        //if (pathToRun == "Audience" || pathToRun == "Audience Wall" || pathToRun == "Audience Sample" || pathToRun == "Audience Align"){distanceBetweenStartingPositions = 54;}
+        //Replaced the code above to try to simplify code
+        if(pathToRun.contains("Audience")){
+            distanceBetweenStartingPositions = 54;
+        }
         /*****************************************************************************
          * Coding Instructions
          *
@@ -309,85 +343,7 @@ public class AutoControlsMTZv114 extends LinearOpMode {
          ****************************************************************************/
 
 
-        if (pathToRun == "Backdrop" || pathToRun == "Audience" || pathToRun == "Backdrop Sample" || pathToRun == "Audience Sample" || pathToRun == "Audience Wall" || pathToRun == "Backdrop Wall"){
-            /******************************************************************
-             *                           Path Branch 4
-             *****************************************************************/
-
-            Logging.log("Running Path Branch 4");
-
-            /************************************
-             * Path set up -- Add to each path
-             ***********************************/
-            //Robot Setup Notes
-            telemetry.log().add("Line up notes should be entered in. ");
-            waitForStart();
-
-            //sleep(1000);
-
-            double ExtraDistance = 0;
-            if (pathToRun == "Audience" || pathToRun == "Audience Wall"){
-                ExtraDistance = 54;
-            }
-
-
-            RaiseArm(3,defaultPauseTime);
-
-
-
-            Drive(24, defaultDriveSpeed, defaultPauseTime); //Travel back to backdrop area
-            Drive(-24, defaultDriveSpeed, defaultPauseTime); //Travel back to backdrop area
-
-            Turn(90*allianceReverser,defaultTurnSpeed, defaultPauseTime); //Turn towards the backdrop
-            Strafe(15*allianceReverser, defaultDriveSpeed, defaultPauseTime); //head towards wall
-            Strafe(3*allianceReverser, defaultDriveSpeed/2, defaultPauseTime); //straighten up on the wall
-
-
-
-            Strafe(-4*allianceReverser, defaultDriveSpeed, defaultPauseTime); //move away from the wall
-            Drive(24 + ExtraDistance, defaultDriveSpeed, defaultPauseTime); //Travel back to backdrop area
-            Strafe(-22*allianceReverser, defaultDriveSpeed, defaultPauseTime); //slide in front of backdrop. Strafe isn't working so we just took this one out.
-            Turn(5*allianceReverser,defaultDriveSpeed,defaultPauseTime); //To look towards rest of field
-            //Drive(26, defaultDriveSpeed, defaultPauseTime); //To get in front of backdrop
-            //Turn(90,defaultDriveSpeed,defaultPauseTime); //To look towards backdrop
-
-
-            //slide over in front of the april tag for the drop
-
-            //defaultPauseTime=defaultPauseTime+1000;
-
-
-            RaiseArm(14,defaultPauseTime); //Raise arm
-            ExtendArm(-24, defaultArmExtensionPower, defaultPauseTime);
-            Drive(20, defaultDriveSpeed, defaultPauseTime);
-            Drive(8, defaultDriveSpeed/4, defaultPauseTime);
-            //Deliver Pixel
-
-
-            //ExtendArm(5,defaultArmExtensionPower,defaultPauseTime); //extend arm
-            leftClaw.setPosition(leftClawOpenPosition); //release left pixel
-            rightClaw.setPosition(rightClawOpenPosition); //release left pixel
-            RaiseArm(1,defaultPauseTime); //raise arm a little more
-            ReturnExtension(); //retract arm
-
-            //Park
-
-            Drive(-4, defaultDriveSpeed, defaultPauseTime); //Back up a little
-
-            int parkDistance = -25;
-            if (pathToRun=="Audience Wall" || pathToRun == "Backdrop Wall"){
-                parkDistance = 26;
-            }
-
-            Strafe(parkDistance*allianceReverser,defaultDriveSpeed,defaultPauseTime);
-            ReturnArm(); //Lower arm to floor
-            Drive(14, defaultDriveSpeed, defaultPauseTime);//Forward to park area
-
-
-
-        }
-
-        else if (pathToRun == "Backdrop Align") {
+        if(!pathToRun.contains("Test")){
 
             /******************************************************************
              *                           Path Branch Align
@@ -401,7 +357,6 @@ public class AutoControlsMTZv114 extends LinearOpMode {
             telemetry.log().add("Setup facing spike marks where robot can see the left spike. ");
 
             //Copied from our auto Align class
-
             boolean targetFound     = false;    // Set to true when an AprilTag target is detected
             double  drive           = 0;        // Desired forward power/speed (-1 to +1)
             double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
@@ -411,21 +366,10 @@ public class AutoControlsMTZv114 extends LinearOpMode {
             initAprilTag();
 
 
-            // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-            // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
-            // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-            frontLeft.setDirection(DcMotor.Direction.REVERSE);
-            backLeft.setDirection(DcMotor.Direction.REVERSE);
-            frontRight.setDirection(DcMotor.Direction.FORWARD);
-            backRight.setDirection(DcMotor.Direction.FORWARD);
-
             if (USE_WEBCAM)
                 setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
 
             // Wait for driver to press start
-            telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
-            telemetry.addData(">", "Touch Play to start OpMode");
-            telemetry.update();
 
 
             //End Copy
@@ -435,114 +379,98 @@ public class AutoControlsMTZv114 extends LinearOpMode {
 
 
 
-            RaiseArm(3,defaultPauseTime);
-
-
-
-            Drive(24, defaultDriveSpeed, defaultPauseTime); //Travel back to backdrop area
-            Drive(-24, defaultDriveSpeed, defaultPauseTime); //Travel back to backdrop area
-
-            Turn(90*allianceReverser,defaultTurnSpeed, defaultPauseTime); //Turn towards the backdrop
-            Strafe(15*allianceReverser, defaultDriveSpeed, defaultPauseTime); //head towards wall
-            Strafe(3*allianceReverser, defaultDriveSpeed/2, defaultPauseTime); //straighten up on the wall
-
-
-
-            Strafe(-4*allianceReverser, defaultDriveSpeed, defaultPauseTime); //move away from the wall
-            Drive(24, defaultDriveSpeed, defaultPauseTime); //Travel back to backdrop area
-            Strafe(-22*allianceReverser, defaultDriveSpeed, defaultPauseTime); //slide in front of backdrop. Strafe isn't working so we just took this one out.
-            Turn(5*allianceReverser,defaultDriveSpeed,defaultPauseTime); //To look towards rest of field
-            //Drive(26, defaultDriveSpeed, defaultPauseTime); //To get in front of backdrop
-            //Turn(90,defaultDriveSpeed,defaultPauseTime); //To look towards backdrop
-
-
-            //slide over in front of the april tag for the drop
-
-
-            //Copied from AutoAlign
-
-            boolean stillAligning = true;
-            double sweepCounter = 0;
-            double maxSweep = 5;
-            int sweepDirection = 1;
-            while (opModeIsActive())   // Loop to find the tag and drive to it
-            {
-                targetFound = false;
-                desiredTag  = null;
-
-                // Step through the list of detected tags and look for a matching tag
-                List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-                for (AprilTagDetection detection : currentDetections) {
-                    // Look to see if we have size info on this tag.
-                    if (detection.metadata != null) {
-                        //  Check to see if we want to track towards this tag.
-                        if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
-                            // Yes, we want to use this tag.
-                            targetFound = true;
-                            desiredTag = detection;
-                            break;  // don't look any further.
-                        } else {
-                            // This tag is in the library, but we do not want to track it right now.
-                            telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
-                        }
-                    } else {
-                        // This tag is NOT in the library, so we don't have enough information to track to it.
-                        telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
-                    }
-                }
-
-                // Tell the driver what we see, and what to do.
-                if (targetFound) {
-                    telemetry.addData("\n>","HOLD Left-Bumper to Drive to Target\n");
-                    telemetry.addData("Found", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
-                    telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
-                    telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
-                    telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
-                } else {
-                    telemetry.addData("\n>","Sweeping\n");
-                }
-
-                // If we have found the desired target, Drive to target Automatically .
-                if (targetFound) {
-
-                    // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-                    double  rangeError      = (desiredTag.ftcPose.range - mtzConstantsCS.backdropAprilTagDESIRED_DISTANCE);
-                    double  headingError    = desiredTag.ftcPose.bearing + mtzConstantsCS.cameraBearingOffsetLeftTagLeftPixelLeftSide;
-                    double  yawError        = desiredTag.ftcPose.yaw;
-
-                    // Use the speed and turn "gains" to calculate how we want the robot to move.
-                    drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                    turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-                    strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-
-                    telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
-                } else {
-
-                    // turn to find tag
-                    if (Math.abs(sweepCounter)<maxSweep) {
-                        turn = -.1 * sweepDirection;
-                        sweepCounter = sweepCounter + sweepDirection;
-                    }
-                    else {
-                        sweepDirection = -1 * sweepDirection;
-                        turn = -.1 * sweepDirection;
-                        sweepCounter = sweepCounter + sweepDirection;
-                    }
-                    telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
-                }
-                telemetry.update();
-
-                // Apply desired axes motions to the drivetrain.
-                moveRobot(drive, strafe, turn);
-                sleep(10);
+            RaiseArmByDegrees(10,defaultPauseTime);
+            wrist.setPosition(wristConversionToServo(180));
+            if(pathToRun.contains("Early Delay")){
+                sleep(mtzConstantsCS.earlyDelayPauseTime);
             }
+
+            colorSensePixelLocation(allianceReverser);
+
+            //dump pixel
+            if(randomizerPosition == 1) {
+                Turn(-45, defaultDriveSpeed, defaultPauseTime);
+            } else if (randomizerPosition == 3) {
+                Turn(45, defaultDriveSpeed, defaultPauseTime);
+            }
+            Drive(-4,defaultDriveSpeed,defaultPauseTime);
+            wrist.setPosition(wristConversionToServo(120));
+            rightClaw.setPosition(rightClawOpenPosition);
+            Drive(4,defaultDriveSpeed,defaultPauseTime);
+            wrist.setPosition(wristConversionToServo(180));
+            //Drive(-8,defaultDriveSpeed,defaultPauseTime);
+
+            if(pathToRun.contains("Audience")) { //drive through the wall side of the rigging
+                if (randomizerPosition == 1) {
+                    Turn(45, defaultDriveSpeed, defaultPauseTime);
+                } else if (randomizerPosition == 3) {
+                    Turn(-45, defaultDriveSpeed, defaultPauseTime);
+                }
+
+
+                Turn(90 * allianceReverser, defaultTurnSpeed, defaultPauseTime); //Turn towards the backdrop
+                Strafe(20 * allianceReverser, defaultDriveSpeed, defaultPauseTime); //head towards wall
+                Strafe(3 * allianceReverser, defaultDriveSpeed / 2, defaultPauseTime); //straighten up on the wall
+
+
+                Strafe(-4 * allianceReverser, defaultDriveSpeed, defaultPauseTime); //move away from the wall
+                Drive(24 + distanceBetweenStartingPositions, defaultDriveSpeed, defaultPauseTime); //Travel back to backdrop area
+                Strafe(-22 * allianceReverser, defaultDriveSpeed, defaultPauseTime); //slide in front of backdrop. Strafe isn't working so we just took this one out.
+                Turn(5 * allianceReverser, defaultDriveSpeed, defaultPauseTime);
+            } else {
+                if(allianceReverser>1) {
+                    if (randomizerPosition == 1) {
+                        Turn(135, defaultDriveSpeed, defaultPauseTime);
+                    } else if (randomizerPosition == 3) {
+                        Turn(45, defaultDriveSpeed, defaultPauseTime);
+                    } else {
+
+                        Turn(90, defaultDriveSpeed, defaultPauseTime);
+                    }
+                } else {
+                    if (randomizerPosition == 1) {
+                        Turn(-45, defaultDriveSpeed, defaultPauseTime);
+                    } else if (randomizerPosition == 3) {
+                        Turn(-135, defaultDriveSpeed, defaultPauseTime);
+                    } else {
+                        Turn(-90, defaultDriveSpeed, defaultPauseTime);
+                    }
+                }
+            }
+
+
+            //align to the april tag for the drop
+
+            RaiseArmByDegrees(60,defaultPauseTime);
+
+            int backdropTag = randomizerPosition;
+            if(allianceReverser>0){
+                backdropTag=randomizerPosition +3;
+            }
+            alignToAprilTag(backdropTag,randomizerPosition==3,true,true);
+
+
+            //Drop Tag Off
+
+            RaiseArmByDegrees(-70,defaultPauseTime);
+            wrist.setPosition(wristConversionToServo(140-(armOdometer/ticksPerDegreeArm)+armRotationDegreesAtHome));
+            ExtendArm(4,defaultArmExtensionPower,defaultPauseTime);
+            leftClaw.setPosition(leftClawOpenPosition);
+            rightClaw.setPosition(rightClawMaxOpenPosition);
+            wrist.setPosition(wristConversionToServo(190-(armOdometer/ticksPerDegreeArm)+armRotationDegreesAtHome));
+            RaiseArmByDegrees(10,defaultPauseTime);
+            Drive(-4,defaultDriveSpeed,defaultPauseTime);
+
+            //Park
+
+            park(pathToRun.contains("Park Wall"),pathToRun.contains("Spin"));
 
 
 
             //End Copy
 
         }
-        else if (pathToRun == "ArmTest") {
+        else if (pathToRun.contains("Arm")) {
 
                 /******************************************************************
                  *                           Path Branch Arm Test
@@ -558,13 +486,14 @@ public class AutoControlsMTZv114 extends LinearOpMode {
 
             //arm.setPower();
 
-            RaiseArm(1, defaultPauseTime);
+            RaiseArmByDegrees(10, defaultPauseTime);
             sleep(20000);
+            RaiseArmByDegrees(-10, defaultPauseTime);
 
 
         }
 
-        else if (pathToRun=="Calibrate") {
+        else if (pathToRun.contains("Calibrate")) {
 
             /******************************************************************
              *                           Path Branch Calibrate
@@ -581,14 +510,14 @@ public class AutoControlsMTZv114 extends LinearOpMode {
             /************
              * Path Start
              ************/
-            RaiseArm(10,2000);
+            RaiseArmByDegrees(10,2000);
             Drive(24,defaultDriveSpeed,5000);
             Strafe(-24,defaultDriveSpeed,10000);
             Turn(-180,defaultTurnSpeed,0);
             ExtendArm(10, defaultArmExtensionPower,2000);
-            sleep(20000);
+            sleep(2000);
             ExtendArm(-10, defaultArmExtensionPower,2000);
-            RaiseArm(-10,2000);
+            RaiseArmByDegrees(-10,2000);
             /************
              * Path End *
              ***********/
@@ -695,6 +624,146 @@ public class AutoControlsMTZv114 extends LinearOpMode {
         RaiseArm(4,defaultPauseTime);
     }
 
+    public void park(boolean wall, boolean spin) throws InterruptedException{
+
+        /*******
+         *   Park after dropping at backdrop
+         *   near the wall or away from it
+         *   spin around and back in or not
+         *******/
+
+        //Strafe away from backdrop
+        int parkDistance = -25;
+        if (wall){
+            parkDistance = 26;
+        }
+        Strafe(parkDistance*allianceReverser,defaultDriveSpeed,defaultPauseTime);
+
+        //Spin around and pull in
+        if(spin){
+            Turn(180,defaultTurnSpeed,defaultPauseTime);
+            Drive(-14, defaultDriveSpeed, defaultPauseTime);//Back to park area
+        } else {
+            Drive(14, defaultDriveSpeed, defaultPauseTime);//Forward to park area
+        }
+
+        wrist.setPosition(wristConversionToServo(55-armRotationDegreesAtHome));
+        ReturnExtension();
+        ReturnArm(); //Lower arm to floor
+
+    }
+
+    public void alignToAprilTag(int tagID, boolean leftOfCamera,boolean leftOfMountain, boolean leftPixelInScoop) throws InterruptedException {
+
+        boolean targetFound     = false;    // Set to true when an AprilTag target is detected
+        double  drive           = 0;        // Desired forward power/speed (-1 to +1)
+        double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
+        double  turn            = 0;        // Desired turning power/speed (-1 to +1)
+        boolean stillAligning = true;
+        double sweepCounter = 0;
+        double maxSweep = 5;
+        int sweepDirection = 1;
+        double headingOffset = 0;
+        DESIRED_TAG_ID = tagID;
+        targetFound = false;
+        desiredTag  = null;
+        if (leftOfCamera){
+            headingOffset = cameraBearingOffsetLeftTagLeftPixelLeftSide;
+            if(!leftOfMountain) {
+                headingOffset = headingOffset + distanceBetweenValleys;
+            }
+
+            if(!leftPixelInScoop){
+                headingOffset = headingOffset - distanceBetweenScoopPositions;
+                }
+        } else {
+            DESIRED_TAG_ID = tagID+1;
+            headingOffset = cameraBearingOffsetRightTagRightPixelRightSide;
+            if(leftOfMountain) {
+                headingOffset = headingOffset - distanceBetweenValleys;
+            }
+
+            if(leftPixelInScoop){
+                headingOffset = headingOffset + distanceBetweenScoopPositions;
+            }
+        }
+
+        while (opModeIsActive())   // Loop to find the tag and drive to it
+        {
+            // Step through the list of detected tags and look for a matching tag
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+            for (AprilTagDetection detection : currentDetections) {
+                // Look to see if we have size info on this tag.
+                if (detection.metadata != null) {
+                    //  Check to see if we want to track towards this tag.
+                    if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
+                        // Yes, we want to use this tag.
+                        targetFound = true;
+                        desiredTag = detection;
+                        break;  // don't look any further.
+                    } else {
+                        // This tag is in the library, but we do not want to track it right now.
+                        telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                    }
+                } else {
+                    // This tag is NOT in the library, so we don't have enough information to track to it.
+                    telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+                }
+            }
+
+            // Tell the driver what we see, and what to do.
+            if (targetFound) {
+                telemetry.addData("\n>","HOLD Left-Bumper to Drive to Target\n");
+                telemetry.addData("Found", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
+                telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
+                telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
+                telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
+            } else {
+                telemetry.addData("\n>","Sweeping\n");
+            }
+
+            // If we have found the desired target, Drive to target Automatically .
+            if (targetFound) {
+
+                // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+                double  rangeError      = (desiredTag.ftcPose.range - mtzConstantsCS.backdropAprilTagDESIRED_DISTANCE);
+                double  headingError    = desiredTag.ftcPose.bearing + mtzConstantsCS.cameraBearingOffsetLeftTagLeftPixelLeftSide;
+                double  yawError        = desiredTag.ftcPose.yaw;
+
+                if (rangeError <mtzConstantsCS.alignConfidence && headingError<mtzConstantsCS.alignConfidence && yawError <mtzConstantsCS.alignConfidence){
+                    return;
+                }
+                // Use the speed and turn "gains" to calculate how we want the robot to move.
+                drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+                turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+                strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+                telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+            } else {
+
+                // turn to find tag
+                if (Math.abs(sweepCounter)<maxSweep) {
+                    turn = -.1 * sweepDirection;
+                    sweepCounter = sweepCounter + sweepDirection;
+                }
+                else {
+                    sweepDirection = -1 * sweepDirection;
+                    turn = -.1 * sweepDirection;
+                    sweepCounter = sweepCounter + sweepDirection;
+                }
+                telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+            }
+            telemetry.update();
+
+            // Apply desired axes motions to the drivetrain.
+            moveRobot(drive, strafe, turn);
+            sleep(10);
+        }
+        telemetry.addLine("Something went wrong with the alignment");
+        sleep(30000);
+        return;
+    }
+
     /**********************
      * Sampling Methods
      **********************/
@@ -754,6 +823,53 @@ public class AutoControlsMTZv114 extends LinearOpMode {
     }
 *******/
 
+    public void colorSensePixelLocation (int alliance) throws InterruptedException {
+        double colorThreshold = 300;
+        //Drive to left spike
+        String targetColor = "Blue";
+        if (alliance<0){
+            targetColor = "Red";
+        }
+        Drive(25,defaultDriveSpeed,defaultPauseTime);
+        Strafe(-7.5,defaultDriveSpeed,defaultPauseTime);
+        Drive(4,defaultDriveSpeed/4,defaultPauseTime);
+        //Sample Left Spike
+        if (alliance<0){ //Alliance is Red
+            if (leftColorSensor.red()>colorThreshold) {
+                randomizerPosition = 1;
+            }
+        } else { //Alliance is Blue
+            if (leftColorSensor.blue()>colorThreshold) {
+                randomizerPosition = 1;
+            }
+        }
+        if(randomizerPosition == 2){
+            //backup, strafe right, forward
+            //Drive(-4,defaultDriveSpeed,defaultPauseTime);
+            Strafe(9,defaultDriveSpeed,defaultPauseTime);
+            Drive(-4,defaultDriveSpeed,defaultPauseTime);
+            Strafe(4,defaultDriveSpeed,defaultPauseTime);
+            Drive(6,defaultDriveSpeed/4,defaultPauseTime);
+
+            //Sample RightLef Spike
+            if (alliance<0){ //Alliance is Red
+                if (rightColorSensor.red()>colorThreshold) {
+                    randomizerPosition = 3;
+                }
+            } else { //Alliance is Blue
+                if (rightColorSensor.blue()>colorThreshold) {
+                    randomizerPosition = 3;
+                }
+            }
+            //return to center of sampling
+            Strafe(-4,defaultDriveSpeed,defaultPauseTime);
+        } else {
+            //return to center of sampling
+            Strafe(4,defaultDriveSpeed,defaultPauseTime);
+        }
+
+    }
+
     /**********************
      * Motion Methods
      **********************/
@@ -801,12 +917,14 @@ public class AutoControlsMTZv114 extends LinearOpMode {
     }
     public void RaiseArmByDegrees(double degrees, int pause) throws InterruptedException {
         if (opModeIsActive()) {
-            RaiseByInches (degrees);
+            RaiseByDegrees(degrees);
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             ArmPower(defaultArmPower);
         }
+        while (arm.isBusy()) {
+            DisplayArmTelemetry();
+        }
         ArmPower(0);
-        Thread.sleep(pause);
-
     }
 
     public void RaiseArm(int distance, int pause) throws InterruptedException {
@@ -865,121 +983,6 @@ public class AutoControlsMTZv114 extends LinearOpMode {
         Drive(1,0.1,defaultPauseTime);
     }
 
-    public void DriveGyro(double inches, double motorPower, int pause) throws InterruptedException {
-        /****
-         * inches: how far the robot is supposed to travel
-         * power: how strong the motors should be targeting
-         *
-         */
-
-        double targetDistance = inches * conversionTicksToInches*driveDistanceAdjustment;
-        int i = 0;
-        double splitDistance;
-        angles = imuForDisplay.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        double originalHeading = angles.firstAngle;
-
-        //double orientationGain = 1*(10^-15);
-        double orientationGain = 0.00000001;
-        int stepJump = 100;
-        while(opModeIsActive()) {
-            while (targetDistance > 0) {
-                if (targetDistance > stepJump) {
-                    //split the target distance up so error can be adjusted
-                    if (i < 3) {
-                        splitDistance = stepJump - 20;
-                    } else {
-                        splitDistance = stepJump;
-                    }
-                } else {
-                    //use up all of the target distance and go slow
-                    splitDistance = (targetDistance);
-                    // Reduce the motor speeds on each motor
-                    motorPower = 0.2 * motorPower;
-                }
-
-
-                //Tell the motors the intended distance
-                frontLeft.setTargetPosition((int) (splitDistance));
-                frontRight.setTargetPosition((int) (splitDistance));
-                backLeft.setTargetPosition((int) (splitDistance));
-                backRight.setTargetPosition((int) (splitDistance));
-
-                // Only drive to the distance for one motor,
-                // otherwise the other motors will still want to finish their count
-                // and throw the orientation wacky at the end
-
-                frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                /*
-                frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                 */
-
-                //Get the current orientation
-                angles = imuForDisplay.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-                //CCW is Positive for the orientation
-                double orientationError = originalHeading - angles.firstAngle;
-
-                //Set the motor power based on the error noted on the imu with gain
-
-                //Subtract Error on Left
-                frontLeft.setPower(motorPower - (orientationError * orientationGain));
-                backLeft.setPower(motorPower - (orientationError * orientationGain));
-
-                //Add error on right
-                frontRight.setPower(motorPower + (orientationError * orientationGain));
-                backRight.setPower(motorPower + (orientationError * orientationGain));
-
-
-                //increase the counters for the next iteration of the loop
-                targetDistance = targetDistance - splitDistance;
-                double frontLeftInches = frontLeft.getCurrentPosition();
-                double frontRightInches = frontRight.getCurrentPosition();
-                double backLeftInches = backLeft.getCurrentPosition();
-                double backRightInches = backRight.getCurrentPosition();
-
-                while (frontLeft.isBusy()) {
-                    /*
-                    telemetry.clear();
-
-                    telemetry.addLine()
-                            .addData("Front Left Ticks ", (int) frontLeftInches + "   Power: " + "%.1f", frontLeft.getPower());
-                    telemetry.addLine()
-                            .addData("Front Right Ticks: ", (int) frontRightInches + "   Power: " + "%.1f", frontRight.getPower());
-                    telemetry.addLine()
-                            .addData("Back Left Ticks: ", (int) backLeftInches + "   Power: " + "%.1f", backLeft.getPower());
-                    telemetry.addLine()
-                            .addData("Back Right Ticks: ", (int) backRightInches + "   Power: " + "%.1f", backRight.getPower());
-
-
-                     */
-                    telemetry.addData("Target Distance: ", targetDistance);
-                    telemetry.addData("Original Heading: ", originalHeading);
-                    telemetry.addData("Orientation Error: ", orientationError);
-                    telemetry.addData("Loop Iteration: ", i);
-                    telemetry.update();
-                }
-                //DisplayDriveTelemetry();
-                //StopAndResetDriveEncoders();
-                frontLeft.setPower(0);
-                frontRight.setPower(0);
-                backLeft.setPower(0);
-                backRight.setPower(0);
-
-                //wait for humans to read
-                sleep(1000);
-
-                i = i + 1;
-            }
-            Thread.sleep(pause);
-        }
-    }
-
     /**********************
      * Encoder Methods
      **********************/
@@ -1015,18 +1018,16 @@ public class AutoControlsMTZv114 extends LinearOpMode {
      ********************************/
 
     public void DriveByInches(double distance) {
-        double correctedDistance = (distance*(driveDistanceAdjustment));
-        frontLeft.setTargetPosition((int)(correctedDistance * conversionTicksToInches));
-        frontRight.setTargetPosition((int)(correctedDistance * conversionTicksToInches));
-        backLeft.setTargetPosition((int)(-1 * correctedDistance * conversionTicksToInches));
-        backRight.setTargetPosition((int)(-1 * correctedDistance * conversionTicksToInches));
+        frontLeft.setTargetPosition((int)(distance * ticksPerInchWheelDrive));
+        frontRight.setTargetPosition((int)(distance * ticksPerInchWheelDrive));
+        backLeft.setTargetPosition((int)(-1 * distance * ticksPerInchWheelDrive));
+        backRight.setTargetPosition((int)(-1 * distance * ticksPerInchWheelDrive));
     }
     public void StrafeByInches(double distance) {
-        double correctedDistance = distance*(strafeDistanceAdjustment);
-        frontLeft.setTargetPosition((int)(correctedDistance * conversionTicksToInches));
-        frontRight.setTargetPosition((int)(-correctedDistance * conversionTicksToInches));
-        backLeft.setTargetPosition((int)(correctedDistance * conversionTicksToInches));
-        backRight.setTargetPosition((int)(-correctedDistance * conversionTicksToInches));
+        frontLeft.setTargetPosition((int)(distance * ticksPerInchWheelStrafe));
+        frontRight.setTargetPosition((int)(-distance * ticksPerInchWheelStrafe));
+        backLeft.setTargetPosition((int)(distance * ticksPerInchWheelStrafe));
+        backRight.setTargetPosition((int)(-distance * ticksPerInchWheelStrafe));
     }
     public void TurnByAngle(double degrees) {
         frontLeft.setTargetPosition((int)(degrees * ticksPerDegreeTurnChassis));
@@ -1039,7 +1040,7 @@ public class AutoControlsMTZv114 extends LinearOpMode {
         arm.setTargetPosition(correctedDistance);
         armOdometer=armOdometer+correctedDistance;
     }
-    public void raiseByDegrees(double degrees) {
+    public void RaiseByDegrees(double degrees) {
         int correctedDistance = (int)(degrees * ticksPerDegreeArm);
         arm.setTargetPosition(correctedDistance);
         armOdometer=armOdometer+correctedDistance;
@@ -1138,6 +1139,8 @@ public class AutoControlsMTZv114 extends LinearOpMode {
                 .addData("Back Left Inches: ", (int) backLeftInches + "   Power: " + "%.1f", backLeft.getPower());
         telemetry.addLine()
                 .addData("Back Right Inches: ", (int) backRightInches + "   Power: " + "%.1f", backRight.getPower());
+        telemetry.addLine()
+                .addData("Randomizer Position: ", randomizerPosition);
         angles=imuForDisplay.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double heading = angles.firstAngle;
         telemetry.addData("Heading: ",angles.firstAngle);

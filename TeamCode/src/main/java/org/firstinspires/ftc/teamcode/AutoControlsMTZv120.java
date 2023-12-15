@@ -15,6 +15,7 @@ import static org.firstinspires.ftc.teamcode.mtzConstantsCS.distanceBetweenScoop
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.distanceBetweenValleys;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawClosedPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawOpenPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.randomizerPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawClosedPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawMaxOpenPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawOpenPosition;
@@ -24,9 +25,7 @@ import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchExtensio
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchWheelDrive;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchWheelStrafe;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerRevolution1150;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.randomizerPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.wristConversionToServo;
-
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
@@ -55,7 +54,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name ="Auto Controls", group = "Bottom")
+@Autonomous(name ="Auto Controls v120", group = "Bottom")
 //@Disabled
 
 /*************************
@@ -85,13 +84,11 @@ import java.util.concurrent.TimeUnit;
  * v118 Removed Old Paths & added turn towards backdrop from backdrop side
  * v119 Added Early Delay Option
  * v120 Changes made at Meet 2
- * v121 Changes made during 12/14 practice
- * v122
  *
  *
  *******************/
 
-public class AutoControlsMTZ extends LinearOpMode {
+public class AutoControlsMTZv120 extends LinearOpMode {
 
 
     /**************
@@ -101,7 +98,7 @@ public class AutoControlsMTZ extends LinearOpMode {
      **************/
     private static final double defaultDriveSpeed = 0.2;
     private static final double defaultTurnSpeed = 0.2;
-    private static int defaultPauseTime = 1000;
+    private static int defaultPauseTime = 100;
 
     /**********************
      * These variables are the constants in path commands
@@ -383,7 +380,7 @@ public class AutoControlsMTZ extends LinearOpMode {
 
 
 
-            RaiseArmByDegrees(20,defaultPauseTime);
+            RaiseArmByDegrees(10,defaultPauseTime);
             wrist.setPosition(wristConversionToServo(180));
             if(pathToRun.contains("Early Delay")){
                 sleep(mtzConstantsCS.earlyDelayPauseTime);
@@ -392,13 +389,11 @@ public class AutoControlsMTZ extends LinearOpMode {
             colorSensePixelLocation(allianceReverser);
 
             //dump pixel
-            /*
             if(randomizerPosition == 1) {
                 Turn(-45, defaultDriveSpeed, defaultPauseTime);
             } else if (randomizerPosition == 3) {
                 Turn(45, defaultDriveSpeed, defaultPauseTime);
             }
-             */
             Drive(-10,defaultDriveSpeed,defaultPauseTime);
             RaiseArmByDegrees(-5,defaultPauseTime);
             Drive(6,defaultDriveSpeed,defaultPauseTime);
@@ -409,7 +404,7 @@ public class AutoControlsMTZ extends LinearOpMode {
             //Drive(-8,defaultDriveSpeed,defaultPauseTime);
 
             if(pathToRun.contains("Audience")) { //drive through the wall side of the rigging
-                if (randomizerPosition == 1) {
+                /*if (randomizerPosition == 1) {
                     Turn(45, defaultDriveSpeed, defaultPauseTime);
                 } else if (randomizerPosition == 3) {
                     Turn(-45, defaultDriveSpeed, defaultPauseTime);
@@ -417,26 +412,30 @@ public class AutoControlsMTZ extends LinearOpMode {
 
 
                 Turn(90 * allianceReverser, defaultTurnSpeed, defaultPauseTime); //Turn towards the backdrop
-                Drive(-8,defaultDriveSpeed,defaultPauseTime);//avoid the rigging with the scoop
                 Strafe(40 * allianceReverser, defaultDriveSpeed, defaultPauseTime); //head towards wall
                 //Strafe(3 * allianceReverser, defaultDriveSpeed / 2, defaultPauseTime); //straighten up on the wall
 
 
                 Strafe(-4 * allianceReverser, defaultDriveSpeed, defaultPauseTime); //move away from the wall
-                Drive(8 + 24 + distanceBetweenStartingPositions, defaultDriveSpeed, defaultPauseTime); //Travel back to backdrop area
+                Drive(24 + distanceBetweenStartingPositions, defaultDriveSpeed, defaultPauseTime); //Travel back to backdrop area
                 Strafe(-22 * allianceReverser, defaultDriveSpeed, defaultPauseTime); //slide in front of backdrop. Strafe isn't working so we just took this one out.
-                Turn(5 * allianceReverser, defaultDriveSpeed, defaultPauseTime);
+                Turn(5 * allianceReverser, defaultDriveSpeed, defaultPauseTime);*/
             } else {
-                if(allianceReverser>0) { //Red
+                if(allianceReverser>0) {
                     if (randomizerPosition == 1) {
-                        Turn(-180, defaultDriveSpeed, defaultPauseTime);
-                    } else if (randomizerPosition == 2) {
+                        Turn(135, defaultDriveSpeed, defaultPauseTime);
+                    } else if (randomizerPosition == 3) {
+                        Turn(45, defaultDriveSpeed, defaultPauseTime);
+                    } else {
+
                         Turn(90, defaultDriveSpeed, defaultPauseTime);
                     }
-                } else { //Blue
-                    if (randomizerPosition == 3) {
-                        Turn(180, defaultDriveSpeed, defaultPauseTime);
-                    } else if (randomizerPosition == 2) {
+                } else {
+                    if (randomizerPosition == 1) {
+                        Turn(-45, defaultDriveSpeed, defaultPauseTime);
+                    } else if (randomizerPosition == 3) {
+                        Turn(-135, defaultDriveSpeed, defaultPauseTime);
+                    } else {
                         Turn(-90, defaultDriveSpeed, defaultPauseTime);
                     }
                 }
@@ -478,12 +477,12 @@ public class AutoControlsMTZ extends LinearOpMode {
 
             //Drop Tag Off
 
-            RaiseArmByDegrees(40,defaultPauseTime);
+            RaiseArmByDegrees(-40,defaultPauseTime);
             wrist.setPosition(wristConversionToServo(140-(armOdometer/ticksPerDegreeArm)+armRotationDegreesAtHome));
             ExtendArm(4,defaultArmExtensionPower,defaultPauseTime);
             leftClaw.setPosition(leftClawOpenPosition);
             rightClaw.setPosition(rightClawMaxOpenPosition);
-            //wrist.setPosition(wristConversionToServo(190-(armOdometer/ticksPerDegreeArm)+armRotationDegreesAtHome));
+            wrist.setPosition(wristConversionToServo(190-(armOdometer/ticksPerDegreeArm)+armRotationDegreesAtHome));
             RaiseArmByDegrees(10,defaultPauseTime);
             Drive(-4,defaultDriveSpeed,defaultPauseTime);
 
@@ -496,7 +495,7 @@ public class AutoControlsMTZ extends LinearOpMode {
             //End Copy
 
         }
-        else if (pathToRun.contains("Arm") && pathToRun.contains("Test")) {
+        else if (pathToRun.contains("Arm")) {
 
                 /******************************************************************
                  *                           Path Branch Arm Test
@@ -537,15 +536,13 @@ public class AutoControlsMTZ extends LinearOpMode {
              * Path Start
              ************/
             RaiseArmByDegrees(10,2000);
-            Drive(24,defaultDriveSpeed/3,5000);
-            Strafe(-24,defaultDriveSpeed/2,5000);
+            Drive(24,defaultDriveSpeed,5000);
+            Strafe(-24,defaultDriveSpeed,10000);
             Turn(-180,defaultTurnSpeed,0);
             ExtendArm(10, defaultArmExtensionPower,2000);
             sleep(2000);
-            RaiseArmByDegrees(90,2000);
-            sleep(2000);
             ExtendArm(-10, defaultArmExtensionPower,2000);
-            RaiseArmByDegrees(armRotationDegreesAtHome,2000);
+            RaiseArmByDegrees(-10,2000);
             /************
              * Path End *
              ***********/
@@ -797,60 +794,42 @@ public class AutoControlsMTZ extends LinearOpMode {
         if (alliance<0){
             targetColor = "Red";
         }
-        Drive(28,defaultDriveSpeed/2,defaultPauseTime);
-        //Strafe(-7.5,defaultDriveSpeed/2,defaultPauseTime);
-        Turn(-90*allianceReverser,defaultTurnSpeed,defaultPauseTime);
-        Drive(8,defaultDriveSpeed/4,defaultPauseTime);
+        Drive(27,defaultDriveSpeed/2,defaultPauseTime);
+        Strafe(-7.5,defaultDriveSpeed/2,defaultPauseTime);
+        Drive(4,defaultDriveSpeed/4,defaultPauseTime);
         //Sample Left Spike
         if (alliance<0){ //Alliance is Red
-            if (rightColorSensor.red()>colorThreshold) {
+            if (leftColorSensor.red()>colorThreshold) {
                 randomizerPosition = 1;
             }
         } else { //Alliance is Blue
-            if (rightColorSensor.blue()>(colorThreshold-100)) {
+            if (leftColorSensor.blue()>(colorThreshold-100)) {
                 randomizerPosition = 1;
             }
         }
         if(randomizerPosition == 2){
             //backup, strafe right, forward
             //Drive(-4,defaultDriveSpeed,defaultPauseTime);
-            //Strafe(4,defaultDriveSpeed/2,defaultPauseTime);
+            Strafe(4,defaultDriveSpeed/2,defaultPauseTime);
             Drive(-4,defaultDriveSpeed/2,defaultPauseTime);
-            //Strafe(9,defaultDriveSpeed/2,defaultPauseTime);
-            Turn(-180*allianceReverser,defaultTurnSpeed,defaultPauseTime);
-            Drive(10,defaultDriveSpeed/4,defaultPauseTime);
+            Strafe(9,defaultDriveSpeed/2,defaultPauseTime);
+            Drive(6,defaultDriveSpeed/4,defaultPauseTime);
 
             //Sample RightLef Spike
             if (alliance<0){ //Alliance is Red
-                if (leftColorSensor.red()>colorThreshold) {
+                if (rightColorSensor.red()>colorThreshold) {
                     randomizerPosition = 3;
                 }
             } else { //Alliance is Blue
-                if (leftColorSensor.blue()>(colorThreshold-100)) {
+                if (rightColorSensor.blue()>(colorThreshold-100)) {
                     randomizerPosition = 3;
                 }
             }
             //return to center of sampling
-            //Strafe(-4,defaultDriveSpeed/2,defaultPauseTime);
-            Drive(-10,defaultDriveSpeed/4,defaultPauseTime);
+            Strafe(-4,defaultDriveSpeed/2,defaultPauseTime);
         } else {
             //return to center of sampling
-            //Strafe(4,defaultDriveSpeed/2,defaultPauseTime);
-            //Turn(-90,defaultTurnSpeed,defaultPauseTime);
-            //Drive(4,defaultDriveSpeed/4,defaultPauseTime);
-        }
-        if(randomizerPosition == 2){
-            //backup, strafe right, forward
-            //Drive(-4,defaultDriveSpeed,defaultPauseTime);
-            //Strafe(4,defaultDriveSpeed/2,defaultPauseTime);
-            Drive(-4,defaultDriveSpeed/2,defaultPauseTime);
-            //Strafe(9,defaultDriveSpeed/2,defaultPauseTime);
-            Turn(-90*allianceReverser,defaultTurnSpeed,defaultPauseTime);
-            //Drive(10,defaultDriveSpeed/4,defaultPauseTime);
-
-            //return to center of sampling
-            //Strafe(-4,defaultDriveSpeed/2,defaultPauseTime);
-            //Drive(-10,defaultDriveSpeed/4,defaultPauseTime);
+            Strafe(4,defaultDriveSpeed/2,defaultPauseTime);
         }
 
     }

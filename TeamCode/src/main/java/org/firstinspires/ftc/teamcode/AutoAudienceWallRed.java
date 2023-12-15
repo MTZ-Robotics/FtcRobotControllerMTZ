@@ -9,7 +9,7 @@ public class AutoAudienceWallRed extends AutoControlsMTZ {
     public void runOpMode() throws InterruptedException {
 
         try {
-            super.autoPaths("Red","Audience Wall",true);
+            super.autoPaths("Red","Audience Park Wall Spin",true);
         } catch (IOException e) {
             e.printStackTrace();
         }

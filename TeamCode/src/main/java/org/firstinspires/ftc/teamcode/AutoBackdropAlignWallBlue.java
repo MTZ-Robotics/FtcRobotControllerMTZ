@@ -3,12 +3,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import java.io.IOException;
 
-@Autonomous(name="Auto Calibrate", group ="z_test")
+@Autonomous(name="Backdrop Align Wall Blue", group ="A_Top")
 //@Disabled
-public class z_AutoCalibrate extends AutoControlsMTZ {
+public class AutoBackdropAlignWallBlue extends AutoControlsMTZ {
     public void runOpMode() throws InterruptedException {
+
         try {
-            super.autoPaths("Blue","Calibrate Test",true);
+            super.autoPaths("Blue","Backdrop Align Park Wall Spin",true);
         } catch (IOException e) {
             e.printStackTrace();
         }

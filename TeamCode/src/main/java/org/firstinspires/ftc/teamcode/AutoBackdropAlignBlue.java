@@ -3,13 +3,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import java.io.IOException;
 
-@Autonomous(name="Audience Sample Red", group ="A_Top")
+@Autonomous(name="Backdrop Align Blue", group ="A_Top")
 //@Disabled
-public class AutoAudienceSampleRed extends AutoControlsMTZ {
+public class AutoBackdropAlignBlue extends AutoControlsMTZ {
     public void runOpMode() throws InterruptedException {
 
         try {
-            super.autoPaths("Red","Audience Sample",true);
+            super.autoPaths("Blue","Backdrop Align",true);
         } catch (IOException e) {
             e.printStackTrace();
         }

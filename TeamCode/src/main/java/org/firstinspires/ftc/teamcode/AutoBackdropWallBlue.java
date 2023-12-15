@@ -9,7 +9,7 @@ public class AutoBackdropWallBlue extends AutoControlsMTZ {
     public void runOpMode() throws InterruptedException {
 
         try {
-            super.autoPaths("Blue","Backdrop Wall",true);
+            super.autoPaths("Blue","Backdrop Park Wall Spin",true);
         } catch (IOException e) {
             e.printStackTrace();
         }

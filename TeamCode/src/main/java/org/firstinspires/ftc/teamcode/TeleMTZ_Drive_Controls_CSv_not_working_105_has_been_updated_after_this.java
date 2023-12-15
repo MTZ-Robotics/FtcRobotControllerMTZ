@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.mtzConstantsCS.MAX_AUTO_TURN;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.SPEED_GAIN;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.STRAFE_GAIN;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.TURN_GAIN;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.USE_WEBCAM;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armExtensionCollapsedLength;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armExtensionInchesAtHome;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armLengthDesired;
@@ -74,13 +75,18 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-@TeleOp(name="TeleMTZ_Drive_CS", group ="ATop")
+@TeleOp(name="TeleMTZ_Drive_CS With Align Doesnt Work", group ="zz_bottom")
 
 //@Disabled
 
@@ -95,15 +101,11 @@ import java.util.List;
  * v103
  * v104 Added Power Ratio to slow arms with wheels
  * v105
- * v106 removed sticky from drive speed adjust with triggers
- * v107 Added Auto Raise to Hang
- * v108 Added AprilTag Alignment back in
- * v109
- *
+ * v106 Added Align To AprilTag
  *
  */
 
-public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
+public class TeleMTZ_Drive_Controls_CSv_not_working_105_has_been_updated_after_this extends LinearOpMode {
 
     /********************************
      * Robot Configuration Flags
@@ -138,7 +140,6 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
     RevBlinkinLedDriver.BlinkinPattern pattern;
     RevBlinkinLedDriver.BlinkinPattern tempLightsPattern;
 
-
     /******************
      * April Tag Alignment Declarations
      */
@@ -147,7 +148,6 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
-
 
     /*************************
      * Motor & Servo Variables
@@ -172,6 +172,7 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
     boolean aboveLevel = false;
     boolean stackingDown;
 
+
     int tagAdditional = 0;
 
     int stackLevel = stackLevelAtHome;
@@ -183,7 +184,6 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
     double stackDegreesDesired;
     String debugString ="none";
 
-
     double wristPositionDesired = wristConversionToServo(armRotationDegreesAtHome) + wristAdjustment;
 
 
@@ -192,7 +192,7 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
      ********/
 
 
-    /****Blue*********           Center Stage R1     Control Pad Map            *******Blue*******/
+    /*************           Center Stage R1     Control Pad Map            **************/
 // Assign Variables & Objects for Control Pads
     double chassisSpeedSlow;                             //Slow Speed
     mtzButtonBehavior chassisBumpLeftTurnStatus = new mtzButtonBehavior();         //Bump Left Turn
@@ -225,8 +225,8 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
     double leftClawClose;                             //Left Claw Close (Sticky)
     mtzButtonBehavior leftClawOpenStatus = new mtzButtonBehavior();         //Left Claw Open (Sticky)
 
-
-
+    mtzButtonBehavior resetAdjustmentsStatus = new mtzButtonBehavior();         //Reset Adjustments
+    mtzButtonBehavior handHomeStatus = new mtzButtonBehavior();         //Hand to Home
 
     mtzButtonBehavior levelUpStatus = new mtzButtonBehavior();         //Move Hand to Next Level Higher
     mtzButtonBehavior wristAdjustLessStatus = new mtzButtonBehavior();         //Slightly Decrease Wrist
@@ -242,16 +242,16 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
     mtzButtonBehavior startButton2Status = new mtzButtonBehavior();         //Pad Select (A & B)
 
 
-    mtzButtonBehavior raiseToHangStatus = new mtzButtonBehavior();         //Raise to Hang
-    mtzButtonBehavior resetHomeStatus = new mtzButtonBehavior();         //Reset Home Position (With Start)
-    mtzButtonBehavior rideHeightStatus = new mtzButtonBehavior();         //Ride Height
-    mtzButtonBehavior returnHomeStatus = new mtzButtonBehavior();         //Drop to Home
 
 
-    double armExtensionStick;                             //Arm Extension Stick
+
+
+
+
+    double handAssist;                             //Ride Height/Drop to 0
 
 // End of Assignment Mapping
-    /****Blue*********           End     Center Stage R1     Control Pad Map            ******Blue********/
+    /*************           End     Center Stage R1     Control Pad Map            **************/
 
 
 
@@ -321,10 +321,6 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
             backRight = hardwareMap.dcMotor.get("backRight");
             frontLeft.setDirection(DcMotor.Direction.REVERSE);
             backLeft.setDirection(DcMotor.Direction.REVERSE);
-            frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
         if(hasAuxMotorsAndServos){
             leftClaw = hardwareMap.servo.get("leftClaw");
@@ -341,7 +337,6 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
             armExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armExtension.setDirection(DcMotor.Direction.REVERSE);
             armExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            planeLaunchTrigger.setDirection(Servo.Direction.REVERSE);
         }
 
 
@@ -364,7 +359,29 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
                 endGameStart
         );
 
-        wristAdjustment = 0.0;
+/***************************************************
+  * Initialize the AprilTag Reader
+ ***************************************************/
+        //Copied from our auto Align class
+        boolean targetFound     = false;    // Set to true when an AprilTag target is detected
+        double  drive           = 0;        // Desired forward power/speed (-1 to +1)
+        double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
+        double  turn            = 0;        // Desired turning power/speed (-1 to +1)
+
+        // Initialize the Apriltag Detection process
+        initAprilTag();
+
+
+        if (USE_WEBCAM)
+            setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
+
+        // Wait for driver to press start
+        //End Copy
+/***************************************************
+ * End Initialize the AprilTag Reader
+ ***************************************************/
+
+
         /************* Press Play Button ***********************/
 
         waitForStart();
@@ -394,11 +411,9 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
              * Gather Button Input *
              **********************/
 
-
-            /****Green*********           Center Stage R1     Controls Update Status           *******Green*******/
-
             if (controlPadMap=="Center Stage R1") {
 
+/*************           Center Stage R1     Controls Update Status           **************/
                 chassisSpeedSlow = gamepad1.left_trigger;             //Slow Speed
                 chassisBumpLeftTurnStatus.update(gamepad1.left_bumper);             //Bump Left Turn
 
@@ -419,10 +434,10 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
                 startButton1Status.update(gamepad1.start);             //Pad Select (A & B)
 
 
-                //aprilTagCenterStatus.update(gamepad1.y);             //Aim to Center AprilTag
-                //aprilTagLeftStatus.update(gamepad1.x);             //Aim to Left AprilTag
-                //aprilTagRightStatus.update(gamepad1.b);             //Aim to Right AprilTag
-                planeLaunchStatus.update(gamepad1.y);             //Launch Plane
+                aprilTagCenterStatus.update(gamepad1.y);             //Aim to Center AprilTag
+                aprilTagLeftStatus.update(gamepad1.x);             //Aim to Left AprilTag
+                aprilTagRightStatus.update(gamepad1.b);             //Aim to Right AprilTag
+                planeLaunchStatus.update(gamepad1.a);             //Launch Plane
 
 
                 driveStick1 = gamepad1.right_stick_y;             //Drive 1
@@ -430,8 +445,8 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
                 leftClawClose = gamepad2.left_trigger;             //Left Claw Close (Sticky)
                 leftClawOpenStatus.update(gamepad2.left_bumper);             //Left Claw Open (Sticky)
 
-
-
+                resetAdjustmentsStatus.update(gamepad2.guide);             //Reset Adjustments
+                handHomeStatus.update(gamepad2.back);             //Hand to Home
 
                 levelUpStatus.update(gamepad2.dpad_up);             //Move Hand to Next Level Higher
                 wristAdjustLessStatus.update(gamepad2.dpad_left);             //Slightly Decrease Wrist
@@ -447,17 +462,16 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
                 startButton2Status.update(gamepad2.start);             //Pad Select (A & B)
 
 
-                raiseToHangStatus.update(gamepad2.y);             //Raise to Hang
-                resetHomeStatus.update(gamepad2.x);             //Reset Home Position (With Start)
-                rideHeightStatus.update(gamepad2.b);             //Ride Height
-                returnHomeStatus.update(gamepad2.a);             //Drop to Home
 
 
-                armExtensionStick = gamepad2.right_stick_y;             //Arm Extension Stick
-
-            }     /*****Green********           End     Center Stage R1     Updates            ******Green********/
 
 
+
+
+                handAssist = gamepad2.right_stick_y;             //Ride Height/Drop to 0
+
+/*************           End     Center Stage R1     Updates            **************/
+        }
             else {
 
                 /***********************************
@@ -470,14 +484,36 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
 
             displayTelemetry();
 
-            if(startButton2Status.isDown && resetHomeStatus.isDown){
+            if(resetAdjustmentsStatus.clickedUp){
                 stackLevelAtHome = stackLevel;
                 stackDistanceAtHome = stackDistance;
                 armRotationDegreesAtHome = armRotationDegrees;
                 armExtensionInchesAtHome =  armExtensionInches;
-                wristAdjustment=0;
             }
 
+            /*************************
+             * Chassis bump controls
+             *************************/
+            if(hasChassisMotors && wantAutoChassisControls) {
+                if (chassisBumpForwardStatus.clickedDown) {
+                    Drive(driveBump, .5, 0);
+                }
+                if (chassisBumpBackStatus.clickedDown) {
+                    Drive(-driveBump, .5, 0);
+                }
+                if (chassisBumpLeftStrafeStatus.clickedDown) {
+                    Strafe(strafeBump, .5, 0);
+                }
+                if (chassisBumpRightStrafeStatus.clickedDown) {
+                    Strafe(-strafeBump, .5, 0);
+                }
+                if (chassisBumpLeftTurnStatus.clickedDown) {
+                    Turn(-turnBump, .5, 0);
+                }
+                if (chassisBumpRightTurnStatus.clickedDown) {
+                    Turn(turnBump, .5, 0);
+                }
+            }
 
             /**********************************************************************************************
              * Speed adjust with triggers                                                                 *
@@ -489,9 +525,6 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
                 powerRatio = driveFastRatio;
             } else if (chassisSpeedSlow > 0) {
                 powerRatio = driveSlowRatio;
-            } else {
-
-                powerRatio = 1.0;
             }
             drivePower = defaultDrivePower*powerRatio;
 
@@ -530,29 +563,8 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
                 backRight.setPower(brPower);
                 frontLeft.setPower(flPower);
                 frontRight.setPower(frPower);
-            }            /*************************
-             * Chassis bump controls
-             *************************/
-            if(hasChassisMotors && wantAutoChassisControls) {
-                if (chassisBumpForwardStatus.clickedDown) {
-                    Drive(driveBump, .5, 0);
-                }
-                if (chassisBumpBackStatus.clickedDown) {
-                    Drive(-driveBump, .5, 0);
-                }
-                if (chassisBumpLeftStrafeStatus.clickedDown) {
-                    Strafe(strafeBump, .5, 0);
-                }
-                if (chassisBumpRightStrafeStatus.clickedDown) {
-                    Strafe(-strafeBump, .5, 0);
-                }
-                if (chassisBumpLeftTurnStatus.clickedDown) {
-                    Turn(-turnBump, .5, 0);
-                }
-                if (chassisBumpRightTurnStatus.clickedDown) {
-                    Turn(turnBump, .5, 0);
-                }
             }
+
 
 
             /*************************
@@ -561,35 +573,30 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
             /*************
              * Arm Controls
              *************/
-            //Arm Raise & Lower
+
             if (handVerticalStick < 0) {
                 arm.setPower(defaultArmPower * powerRatio * (-handVerticalStick));
             } else {
                 arm.setPower(defaultArmLowerPower * powerRatio * (-handVerticalStick));
             }
-            //Arm Extend
-            armExtension.setPower((handHorizontalStick-armExtensionStick)*defaultArmExtensionPower * powerRatio);
+
+            armExtension.setPower(handHorizontalStick*defaultArmExtensionPower * powerRatio);
             if (handVerticalStick!=0){
                 stackLevel = -1;
             }
-            if (handHorizontalStick!=0 || armExtensionStick!=0){
+            if (handHorizontalStick!=0){
                 stackDistance = -1;
             }
 
             //handAssist
-            if(raiseToHangStatus.clickedDown){
-                //Hang Height Desired
-                RaiseArm(90-armRotationDegreesAtHome,1,0);
-                ExtendArm(maxArmExtensionInches,1,0);
-            }
-            if(rideHeightStatus.clickedDown){
-                //Hang Height Desired
+            if(handAssist<=-0.9){
+                //Ride Height Desired
                 stackLevel = handAssistRideHeightLevel;
                 stackDistance = handAssistRideHeightDistance;
                 aboveLevel = handAssistRideHeightAboveLevel;
                 goToStackPosition(false,stackLevel,stackDistance,aboveLevel);
             }
-            if(returnHomeStatus.clickedDown){
+            if(handAssist>=0.9){
                 // Zero Height Desired
                 stackLevel = 0;
                 stackDistance = 0;
@@ -643,13 +650,13 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
              * without stacker controls
              *
              ********************************************/
-            if(armRotationDegrees>15 && armRotationDegrees<50) {//Deliver on the backdrop at the front of the robot
+            if(armRotationDegrees>20 && armRotationDegrees<70) {//Deliver on the backdrop at the front of the robot
                 wristPositionDesired = wristAutoLevelDeliverFront(armRotationDegrees) + wristAdjustment;
                 scoopStage = 2;
                 debugString = "Front "+wristPositionDesired+"";
 
             }
-            else if(armRotationDegrees>50) {//Deliver over the top to the rear
+            else if(armRotationDegrees>70) {//Deliver over the top to the rear
                 wristPositionDesired = wristAutoLevelDeliverRear(armRotationDegrees) + wristAdjustment;
                 scoopStage = 3;
                 debugString = "Rear "+ wristPositionDesired+"";
@@ -707,6 +714,8 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
                 launcherPosition = launcherReleasePosition;
             }
             planeLaunchTrigger.setPosition(launcherPosition);
+
+
 
 
 
@@ -787,7 +796,6 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
                     DisplayDriveTelemetry();
                 }
                 Thread.sleep(pause);
-                RunDriveWithEncoders();
             }
         }
     }
@@ -814,8 +822,6 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
                     DisplayDriveTelemetry();
                 }
                 Thread.sleep(pause);
-
-                RunDriveWithEncoders();
             }
         }
     }
@@ -843,8 +849,6 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
                     DisplayDriveTelemetry();
                 }
                 Thread.sleep(pause);
-
-                RunDriveWithEncoders();
             }
         }
     }
@@ -927,13 +931,11 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
         if(hasAuxMotorsAndServos) {
             if (opModeIsActive()) {
                 raiseByDegrees(degrees);
-                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 ArmPower(power);
                 while (arm.isBusy() || armExtension.isBusy()) {
                     DisplayArmTelemetry();
                 }
             }
-            arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             Thread.sleep(pause);
         }
     }
@@ -956,7 +958,7 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
         return wristConversionToServo(140 - armAngle);
     }
     public double wristAutoLevelDeliverRear(double armAngle){
-        return wristConversionToServo(armAngle + 95); //30 was the initial guess, added 65 when mechanical interference was causing an issue
+        return wristConversionToServo(armAngle + 30);
     }
 
     public void ExtendArm(double desiredArmLength, double power,int pause) throws InterruptedException {
@@ -968,14 +970,12 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
                 armExtensionInches=maxArmExtensionInches;
             }
             if(hasAuxMotorsAndServos) {
-                armExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armExtension.setTargetPosition((int) (armExtensionInches * ticksPerInchExtension));
                 armExtension.setPower(power);
 
                 while (arm.isBusy() || armExtension.isBusy()) {
                     DisplayArmTelemetry();
                 }
-                armExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
         }
         Thread.sleep(pause);
@@ -1008,14 +1008,6 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
             frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-    }
-    public void RunDriveWithEncoders() {
-        if(hasChassisMotors) {
-            frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
     public void RunArmToPosition() {
@@ -1235,7 +1227,8 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
         return;
     }
 
-//Telemetry Methods
+
+    //Telemetry Methods
     public void displayTelemetry() {
         telemetry.clearAll();
         telemetry.addLine()
@@ -1312,5 +1305,73 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
         }
     }
     //End of Telemetry Methods
+
+    /**
+     * Initialize the AprilTag processor.
+     */
+    private void initAprilTag() {
+        // Create the AprilTag processor by using a builder.
+        aprilTag = new AprilTagProcessor.Builder().build();
+
+        // Adjust Image Decimation to trade-off detection-range for detection-rate.
+        // eg: Some typical detection data using a Logitech C920 WebCam
+        // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
+        // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
+        // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second
+        // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second
+        // Note: Decimation can be changed on-the-fly to adapt during a match.
+        aprilTag.setDecimation(2);
+
+        // Create the vision portal by using a builder.
+        if (USE_WEBCAM) {
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                    .addProcessor(aprilTag)
+                    .build();
+        } else {
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(BuiltinCameraDirection.BACK)
+                    .addProcessor(aprilTag)
+                    .build();
+        }
+    }
+
+    /*
+     Manually set the camera gain and exposure.
+     This can only be called AFTER calling initAprilTag(), and only works for Webcams;
+    */
+    private void    setManualExposure(int exposureMS, int gain) {
+        // Wait for the camera to be open, then use the controls
+
+        if (visionPortal == null) {
+            return;
+        }
+
+        // Make sure camera is streaming before we try to set the exposure controls
+        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera", "Waiting");
+            telemetry.update();
+            while (!isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                sleep(20);
+            }
+            telemetry.addData("Camera", "Ready");
+            telemetry.update();
+        }
+
+        // Set camera controls unless we are stopping.
+        if (!isStopRequested())
+        {
+            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                exposureControl.setMode(ExposureControl.Mode.Manual);
+                sleep(50);
+            }
+            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+            sleep(20);
+            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+            gainControl.setGain(gain);
+            sleep(20);
+        }
+    }
     //End of Class
 }

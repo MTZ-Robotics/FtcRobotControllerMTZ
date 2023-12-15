@@ -15,6 +15,7 @@ import static org.firstinspires.ftc.teamcode.mtzConstantsCS.distanceBetweenScoop
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.distanceBetweenValleys;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawClosedPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawOpenPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstantsCS.randomizerPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawClosedPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawMaxOpenPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawOpenPosition;
@@ -24,9 +25,7 @@ import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchExtensio
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchWheelDrive;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchWheelStrafe;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerRevolution1150;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.randomizerPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstantsCS.wristConversionToServo;
-
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
@@ -55,7 +54,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name ="Auto Controls", group = "Bottom")
+@Autonomous(name ="Auto Controls v121", group = "Bottom")
 //@Disabled
 
 /*************************
@@ -86,12 +85,12 @@ import java.util.concurrent.TimeUnit;
  * v119 Added Early Delay Option
  * v120 Changes made at Meet 2
  * v121 Changes made during 12/14 practice
- * v122
+ *
  *
  *
  *******************/
 
-public class AutoControlsMTZ extends LinearOpMode {
+public class AutoControlsMTZv121 extends LinearOpMode {
 
 
     /**************
