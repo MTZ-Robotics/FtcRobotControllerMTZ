@@ -420,6 +420,79 @@ public class AutoControlsMTZv120 extends LinearOpMode {
                 Drive(24 + distanceBetweenStartingPositions, defaultDriveSpeed, defaultPauseTime); //Travel back to backdrop area
                 Strafe(-22 * allianceReverser, defaultDriveSpeed, defaultPauseTime); //slide in front of backdrop. Strafe isn't working so we just took this one out.
                 Turn(5 * allianceReverser, defaultDriveSpeed, defaultPauseTime);*/
+
+                /*Road Runner path to test for Red Backdrop from wall to left spike and go to backdrop and pick up from white pixle stack
+                TrajectorySequence Audience Red RR = drive.trajectorySequenceBuilder(new Pose2d(-37.52, -67.59, Math.toRadians(90.00)))
+                .splineTo(new Vector2d(-36.89, -32.06), Math.toRadians(90.00))
+                .splineTo(new Vector2d(-46.14, -31.43), Math.toRadians(176.10))
+                .splineTo(new Vector2d(55.39, -35.42), Math.toRadians(-1.92))
+                .setReversed(true)
+                .splineTo(new Vector2d(35.00, -57.28), Math.toRadians(223.08))
+                .splineTo(new Vector2d(32.69, -58.34), Math.toRadians(0.00))
+                .splineTo(new Vector2d(-52.45, -56.44), Math.toRadians(178.73))
+                .setReversed(false)
+                .splineTo(new Vector2d(-67.38, -35.84), Math.toRadians(125.92))
+                .splineTo(new Vector2d(-51.19, -58.34), Math.toRadians(270.00))
+                .splineTo(new Vector2d(-51.19, -60.65), Math.toRadians(8.88))
+                .splineTo(new Vector2d(29.54, -61.49), Math.toRadians(-0.60))
+                .setReversed(true)
+                .splineTo(new Vector2d(58.13, -38.15), Math.toRadians(40.16))
+                .setReversed(false)
+                .splineTo(new Vector2d(56.44, -39.84), Math.toRadians(-10.30))
+                    .build()*/
+
+                /*Road Runner path to test for Blue Backdrop from wall to left spike and go to backdrop and pick up from white pixle stack
+                TrajectorySequence Audience Red RR = drive.trajectorySequenceBuilder(new Pose2d(-37.52, 67.59, Math.toRadians(270.00)))
+                .splineTo(new Vector2d(-36.89, 32.06), Math.toRadians(270.00))
+                .splineTo(new Vector2d(-46.14, 31.43), Math.toRadians(183.90))
+                .splineTo(new Vector2d(55.39, 35.42), Math.toRadians(361.92))
+                .setReversed(true)
+                .splineTo(new Vector2d(35.00, 57.28), Math.toRadians(136.92))
+                .splineTo(new Vector2d(32.69, 58.34), Math.toRadians(360.00))
+                .splineTo(new Vector2d(-52.45, 56.44), Math.toRadians(181.27))
+                .setReversed(false)
+                .splineTo(new Vector2d(-67.38, 35.84), Math.toRadians(234.08))
+                .splineTo(new Vector2d(-51.19, 58.34), Math.toRadians(90.00))
+                .splineTo(new Vector2d(-51.19, 60.65), Math.toRadians(351.12))
+                .splineTo(new Vector2d(29.54, 61.49), Math.toRadians(360.60))
+                .setReversed(true)
+                .splineTo(new Vector2d(58.13, 38.15), Math.toRadians(319.84))
+                .setReversed(false)
+                .splineTo(new Vector2d(56.44, 39.84), Math.toRadians(370.30))
+                .build();*/
+
+
+                /*Road Runner path for Red backdrop starting from middle of spikes and go to backdrop and pick up from white pixle stack
+                TrajectorySequence Red backdrop without color sense = drive.trajectorySequenceBuilder(new Pose2d(11.04, -34.58, Math.toRadians(90.00)))
+                .splineTo(new Vector2d(56.86, -34.79), Math.toRadians(-0.26))
+                .setReversed(true)
+                .splineTo(new Vector2d(32.06, -59.60), Math.toRadians(225.00))
+                .setReversed(false)
+                .splineTo(new Vector2d(-42.57, -57.71), Math.toRadians(178.55))
+                .splineTo(new Vector2d(-65.90, -35.00), Math.toRadians(135.78))
+                .splineTo(new Vector2d(-55.18, -54.55), Math.toRadians(-61.26))
+                .splineTo(new Vector2d(20.71, -58.13), Math.toRadians(-2.70))
+                .splineTo(new Vector2d(57.92, -37.94), Math.toRadians(28.47))
+                .setReversed(true)
+                .build();*/
+
+                /*Road Runner path for Red backdrop starting from middle of spikes and go to backdrop and pick up from white pixle stack
+                TrajectorySequence Blue Backdrop without color sense = drive.trajectorySequenceBuilder(new Pose2d(9.78, 32.06, Math.toRadians(270.00)))
+                .splineTo(new Vector2d(56.02, 36.05), Math.toRadians(362.89))
+                .setReversed(true)
+                .splineTo(new Vector2d(28.06, 66.11), Math.toRadians(132.92))
+                .setReversed(false)
+                .splineTo(new Vector2d(-38.36, 59.81), Math.toRadians(180.00))
+                .splineTo(new Vector2d(-54.34, 35.00), Math.toRadians(237.22))
+                .splineTo(new Vector2d(-65.06, 36.26), Math.toRadians(175.76))
+                .splineTo(new Vector2d(-58.34, 47.40), Math.toRadians(418.88))
+                .splineTo(new Vector2d(37.10, 60.86), Math.toRadians(368.02))
+                .splineTo(new Vector2d(32.27, 39.84), Math.toRadians(257.05))
+                .splineTo(new Vector2d(57.71, 34.37), Math.toRadians(3.95))
+                .build();*/
+
+                
+
             } else {
                 if(allianceReverser>0) {
                     if (randomizerPosition == 1) {
