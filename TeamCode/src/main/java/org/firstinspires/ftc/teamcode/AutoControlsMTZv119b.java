@@ -54,7 +54,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name ="Auto Controls v120", group = "Bottom")
+@Autonomous(name ="Auto Controls v119b", group = "Bottom")
 //@Disabled
 
 /*************************
@@ -88,7 +88,7 @@ import java.util.concurrent.TimeUnit;
  *
  *******************/
 
-public class AutoControlsMTZv120 extends LinearOpMode {
+public class AutoControlsMTZv119b extends LinearOpMode {
 
 
     /**************
