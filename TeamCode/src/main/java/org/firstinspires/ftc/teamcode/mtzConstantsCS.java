@@ -112,7 +112,7 @@ public static final int defaultPauseTime = 100;  //Milliseconds after a command
 
 
 
-    public static final double launcherSetPosition = 0.55;
+    public static final double launcherSetPosition = 0.0;
     public static final double launcherReleasePosition = 1.0;
     public static final double leftHookUpPosition = 0.5;
     public static final double rightHookUpPosition = 0.5;

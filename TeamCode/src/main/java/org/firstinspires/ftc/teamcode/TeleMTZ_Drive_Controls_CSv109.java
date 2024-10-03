@@ -80,7 +80,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-@TeleOp(name="TeleMTZ_Drive_CS", group ="ATop")
+@TeleOp(name="TeleMTZ_Drive_CS v109", group ="ATop")
 
 //@Disabled
 
@@ -99,12 +99,11 @@ import java.util.List;
  * v107 Added Auto Raise to Hang
  * v108 Added AprilTag Alignment back in
  * v109 Moved Launcher to Y
- * v110 Changes made at Meet 3
  *
  *
  */
 
-public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
+public class TeleMTZ_Drive_Controls_CSv109 extends LinearOpMode {
 
     /********************************
      * Robot Configuration Flags
@@ -420,10 +419,10 @@ public class TeleMTZ_Drive_Controls_CS extends LinearOpMode {
                 startButton1Status.update(gamepad1.start);             //Pad Select (A & B)
 
 
-                planeLaunchStatus.update(gamepad1.y);             //Launch Plane
-                //aprilTagLeftStatus.update(gamepad1.x);             //Aim to Left AprilTag
-                //aprilTagRightStatus.update(gamepad1.b);             //Aim to Right AprilTag
-                //aprilTagCenterStatus.update(gamepad1.a);             //Aim to Center AprilTag
+                planeLaunchStatus.update(gamepad1.y);             //Aim to Center AprilTag
+                aprilTagLeftStatus.update(gamepad1.x);             //Aim to Left AprilTag
+                aprilTagRightStatus.update(gamepad1.b);             //Aim to Right AprilTag
+                aprilTagCenterStatus.update(gamepad1.a);             //Launch Plane
 
 
                 driveStick1 = gamepad1.right_stick_y;             //Drive 1

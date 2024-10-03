@@ -54,7 +54,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name ="Auto Controls v121", group = "Bottom")
+@Autonomous(name ="Auto Controls v124", group = "Bottom")
 //@Disabled
 
 /*************************
@@ -83,12 +83,14 @@ import java.util.concurrent.TimeUnit;
  * v117 Added Dropping at backdrop and looking for tag on other alliance and camera looks at left or right tag
  * v118 Removed Old Paths & added turn towards backdrop from backdrop side
  * v119 Added Early Delay Option
- * v119b Changes made at Meet 2
+ * v120 Changes made at Meet 2
+ * v121 Changes made during 12/14 practice
+ *
  *
  *
  *******************/
 
-public class AutoControlsMTZv121 extends LinearOpMode {
+public class AutoControlsMTZv124 extends LinearOpMode {
 
 
     /**************
@@ -98,7 +100,7 @@ public class AutoControlsMTZv121 extends LinearOpMode {
      **************/
     private static final double defaultDriveSpeed = 0.2;
     private static final double defaultTurnSpeed = 0.2;
-    private static int defaultPauseTime = 100;
+    private static int defaultPauseTime = 1000;
 
     /**********************
      * These variables are the constants in path commands
@@ -380,7 +382,7 @@ public class AutoControlsMTZv121 extends LinearOpMode {
 
 
 
-            RaiseArmByDegrees(10,defaultPauseTime);
+            RaiseArmByDegrees(20,defaultPauseTime);
             wrist.setPosition(wristConversionToServo(180));
             if(pathToRun.contains("Early Delay")){
                 sleep(mtzConstantsCS.earlyDelayPauseTime);
@@ -389,12 +391,14 @@ public class AutoControlsMTZv121 extends LinearOpMode {
             colorSensePixelLocation(allianceReverser);
 
             //dump pixel
+            /*
             if(randomizerPosition == 1) {
                 Turn(-45, defaultDriveSpeed, defaultPauseTime);
             } else if (randomizerPosition == 3) {
                 Turn(45, defaultDriveSpeed, defaultPauseTime);
             }
-            Drive(-10,defaultDriveSpeed,defaultPauseTime);
+             */
+            //Drive(-10,defaultDriveSpeed,defaultPauseTime);
             RaiseArmByDegrees(-5,defaultPauseTime);
             Drive(6,defaultDriveSpeed,defaultPauseTime);
             wrist.setPosition(wristConversionToServo(120));
@@ -404,7 +408,7 @@ public class AutoControlsMTZv121 extends LinearOpMode {
             //Drive(-8,defaultDriveSpeed,defaultPauseTime);
 
             if(pathToRun.contains("Audience")) { //drive through the wall side of the rigging
-                /*if (randomizerPosition == 1) {
+                if (randomizerPosition == 1) {
                     Turn(45, defaultDriveSpeed, defaultPauseTime);
                 } else if (randomizerPosition == 3) {
                     Turn(-45, defaultDriveSpeed, defaultPauseTime);
@@ -412,30 +416,98 @@ public class AutoControlsMTZv121 extends LinearOpMode {
 
 
                 Turn(90 * allianceReverser, defaultTurnSpeed, defaultPauseTime); //Turn towards the backdrop
+                Drive(-8,defaultDriveSpeed,defaultPauseTime);//avoid the rigging with the scoop
                 Strafe(40 * allianceReverser, defaultDriveSpeed, defaultPauseTime); //head towards wall
                 //Strafe(3 * allianceReverser, defaultDriveSpeed / 2, defaultPauseTime); //straighten up on the wall
 
 
                 Strafe(-4 * allianceReverser, defaultDriveSpeed, defaultPauseTime); //move away from the wall
-                Drive(24 + distanceBetweenStartingPositions, defaultDriveSpeed, defaultPauseTime); //Travel back to backdrop area
+                Drive(8 + 24 + distanceBetweenStartingPositions, defaultDriveSpeed, defaultPauseTime); //Travel back to backdrop area
                 Strafe(-22 * allianceReverser, defaultDriveSpeed, defaultPauseTime); //slide in front of backdrop. Strafe isn't working so we just took this one out.
-                Turn(5 * allianceReverser, defaultDriveSpeed, defaultPauseTime);*/
-            } else {
-                if(allianceReverser>0) {
-                    if (randomizerPosition == 1) {
-                        Turn(135, defaultDriveSpeed, defaultPauseTime);
-                    } else if (randomizerPosition == 3) {
-                        Turn(45, defaultDriveSpeed, defaultPauseTime);
-                    } else {
+                Turn(5 * allianceReverser, defaultDriveSpeed, defaultPauseTime);
 
+                /*Road Runner path to test for Red Backdrop from wall to left spike and go to backdrop and pick up from white pixle stack
+                TrajectorySequence Audience Red RR = drive.trajectorySequenceBuilder(new Pose2d(-37.52, -67.59, Math.toRadians(90.00)))
+                .splineTo(new Vector2d(-36.89, -32.06), Math.toRadians(90.00))
+                .splineTo(new Vector2d(-46.14, -31.43), Math.toRadians(176.10))
+                .splineTo(new Vector2d(55.39, -35.42), Math.toRadians(-1.92))
+                .setReversed(true)
+                .splineTo(new Vector2d(35.00, -57.28), Math.toRadians(223.08))
+                .splineTo(new Vector2d(32.69, -58.34), Math.toRadians(0.00))
+                .splineTo(new Vector2d(-52.45, -56.44), Math.toRadians(178.73))
+                .setReversed(false)
+                .splineTo(new Vector2d(-67.38, -35.84), Math.toRadians(125.92))
+                .splineTo(new Vector2d(-51.19, -58.34), Math.toRadians(270.00))
+                .splineTo(new Vector2d(-51.19, -60.65), Math.toRadians(8.88))
+                .splineTo(new Vector2d(29.54, -61.49), Math.toRadians(-0.60))
+                .setReversed(true)
+                .splineTo(new Vector2d(58.13, -38.15), Math.toRadians(40.16))
+                .setReversed(false)
+                .splineTo(new Vector2d(56.44, -39.84), Math.toRadians(-10.30))
+                    .build()*/
+
+                /*Road Runner path to test for Blue Backdrop from wall to left spike and go to backdrop and pick up from white pixle stack
+                TrajectorySequence Audience Red RR = drive.trajectorySequenceBuilder(new Pose2d(-37.52, 67.59, Math.toRadians(270.00)))
+                .splineTo(new Vector2d(-36.89, 32.06), Math.toRadians(270.00))
+                .splineTo(new Vector2d(-46.14, 31.43), Math.toRadians(183.90))
+                .splineTo(new Vector2d(55.39, 35.42), Math.toRadians(361.92))
+                .setReversed(true)
+                .splineTo(new Vector2d(35.00, 57.28), Math.toRadians(136.92))
+                .splineTo(new Vector2d(32.69, 58.34), Math.toRadians(360.00))
+                .splineTo(new Vector2d(-52.45, 56.44), Math.toRadians(181.27))
+                .setReversed(false)
+                .splineTo(new Vector2d(-67.38, 35.84), Math.toRadians(234.08))
+                .splineTo(new Vector2d(-51.19, 58.34), Math.toRadians(90.00))
+                .splineTo(new Vector2d(-51.19, 60.65), Math.toRadians(351.12))
+                .splineTo(new Vector2d(29.54, 61.49), Math.toRadians(360.60))
+                .setReversed(true)
+                .splineTo(new Vector2d(58.13, 38.15), Math.toRadians(319.84))
+                .setReversed(false)
+                .splineTo(new Vector2d(56.44, 39.84), Math.toRadians(370.30))
+                .build();*/
+
+
+                /*Road Runner path for Red backdrop starting from middle of spikes and go to backdrop and pick up from white pixle stack
+                TrajectorySequence Red backdrop without color sense = drive.trajectorySequenceBuilder(new Pose2d(11.04, -34.58, Math.toRadians(90.00)))
+                .splineTo(new Vector2d(56.86, -34.79), Math.toRadians(-0.26))
+                .setReversed(true)
+                .splineTo(new Vector2d(32.06, -59.60), Math.toRadians(225.00))
+                .setReversed(false)
+                .splineTo(new Vector2d(-42.57, -57.71), Math.toRadians(178.55))
+                .splineTo(new Vector2d(-65.90, -35.00), Math.toRadians(135.78))
+                .splineTo(new Vector2d(-55.18, -54.55), Math.toRadians(-61.26))
+                .splineTo(new Vector2d(20.71, -58.13), Math.toRadians(-2.70))
+                .splineTo(new Vector2d(57.92, -37.94), Math.toRadians(28.47))
+                .setReversed(true)
+                .build();*/
+
+                /*Road Runner path for Red backdrop starting from middle of spikes and go to backdrop and pick up from white pixle stack
+                TrajectorySequence Blue Backdrop without color sense = drive.trajectorySequenceBuilder(new Pose2d(9.78, 32.06, Math.toRadians(270.00)))
+                .splineTo(new Vector2d(56.02, 36.05), Math.toRadians(362.89))
+                .setReversed(true)
+                .splineTo(new Vector2d(28.06, 66.11), Math.toRadians(132.92))
+                .setReversed(false)
+                .splineTo(new Vector2d(-38.36, 59.81), Math.toRadians(180.00))
+                .splineTo(new Vector2d(-54.34, 35.00), Math.toRadians(237.22))
+                .splineTo(new Vector2d(-65.06, 36.26), Math.toRadians(175.76))
+                .splineTo(new Vector2d(-58.34, 47.40), Math.toRadians(418.88))
+                .splineTo(new Vector2d(37.10, 60.86), Math.toRadians(368.02))
+                .splineTo(new Vector2d(32.27, 39.84), Math.toRadians(257.05))
+                .splineTo(new Vector2d(57.71, 34.37), Math.toRadians(3.95))
+                .build();*/
+
+
+            } else {
+                if(allianceReverser>0) { //Red
+                    if (randomizerPosition == 1) {
+                        Turn(-180, defaultDriveSpeed, defaultPauseTime);
+                    } else if (randomizerPosition == 2) {
                         Turn(90, defaultDriveSpeed, defaultPauseTime);
                     }
-                } else {
-                    if (randomizerPosition == 1) {
-                        Turn(-45, defaultDriveSpeed, defaultPauseTime);
-                    } else if (randomizerPosition == 3) {
-                        Turn(-135, defaultDriveSpeed, defaultPauseTime);
-                    } else {
+                } else { //Blue
+                    if (randomizerPosition == 3) {
+                        Turn(180, defaultDriveSpeed, defaultPauseTime);
+                    } else if (randomizerPosition == 2) {
                         Turn(-90, defaultDriveSpeed, defaultPauseTime);
                     }
                 }
@@ -477,12 +549,12 @@ public class AutoControlsMTZv121 extends LinearOpMode {
 
             //Drop Tag Off
 
-            RaiseArmByDegrees(-40,defaultPauseTime);
+            RaiseArmByDegrees(40,defaultPauseTime);
             wrist.setPosition(wristConversionToServo(140-(armOdometer/ticksPerDegreeArm)+armRotationDegreesAtHome));
             ExtendArm(4,defaultArmExtensionPower,defaultPauseTime);
             leftClaw.setPosition(leftClawOpenPosition);
             rightClaw.setPosition(rightClawMaxOpenPosition);
-            wrist.setPosition(wristConversionToServo(190-(armOdometer/ticksPerDegreeArm)+armRotationDegreesAtHome));
+            //wrist.setPosition(wristConversionToServo(190-(armOdometer/ticksPerDegreeArm)+armRotationDegreesAtHome));
             RaiseArmByDegrees(10,defaultPauseTime);
             Drive(-4,defaultDriveSpeed,defaultPauseTime);
 
@@ -495,7 +567,7 @@ public class AutoControlsMTZv121 extends LinearOpMode {
             //End Copy
 
         }
-        else if (pathToRun.contains("Arm")) {
+        else if (pathToRun.contains("Arm") && pathToRun.contains("Test")) {
 
                 /******************************************************************
                  *                           Path Branch Arm Test
@@ -536,13 +608,15 @@ public class AutoControlsMTZv121 extends LinearOpMode {
              * Path Start
              ************/
             RaiseArmByDegrees(10,2000);
-            Drive(24,defaultDriveSpeed,5000);
-            Strafe(-24,defaultDriveSpeed,10000);
+            Drive(24,defaultDriveSpeed/3,5000);
+            Strafe(-24,defaultDriveSpeed/2,5000);
             Turn(-180,defaultTurnSpeed,0);
             ExtendArm(10, defaultArmExtensionPower,2000);
             sleep(2000);
+            RaiseArmByDegrees(90,2000);
+            sleep(2000);
             ExtendArm(-10, defaultArmExtensionPower,2000);
-            RaiseArmByDegrees(-10,2000);
+            RaiseArmByDegrees(armRotationDegreesAtHome,2000);
             /************
              * Path End *
              ***********/
@@ -794,42 +868,60 @@ public class AutoControlsMTZv121 extends LinearOpMode {
         if (alliance<0){
             targetColor = "Red";
         }
-        Drive(27,defaultDriveSpeed/2,defaultPauseTime);
-        Strafe(-7.5,defaultDriveSpeed/2,defaultPauseTime);
-        Drive(4,defaultDriveSpeed/4,defaultPauseTime);
+        Drive(28,defaultDriveSpeed/2,defaultPauseTime);
+        //Strafe(-7.5,defaultDriveSpeed/2,defaultPauseTime);
+        Turn(-90*allianceReverser,defaultTurnSpeed,defaultPauseTime);
+        Drive(8,defaultDriveSpeed/4,defaultPauseTime);
         //Sample Left Spike
         if (alliance<0){ //Alliance is Red
-            if (leftColorSensor.red()>colorThreshold) {
+            if (rightColorSensor.red()>colorThreshold) {
                 randomizerPosition = 1;
             }
         } else { //Alliance is Blue
-            if (leftColorSensor.blue()>(colorThreshold-100)) {
+            if (rightColorSensor.blue()>(colorThreshold-100)) {
                 randomizerPosition = 1;
             }
         }
         if(randomizerPosition == 2){
             //backup, strafe right, forward
             //Drive(-4,defaultDriveSpeed,defaultPauseTime);
-            Strafe(4,defaultDriveSpeed/2,defaultPauseTime);
+            //Strafe(4,defaultDriveSpeed/2,defaultPauseTime);
             Drive(-4,defaultDriveSpeed/2,defaultPauseTime);
-            Strafe(9,defaultDriveSpeed/2,defaultPauseTime);
-            Drive(6,defaultDriveSpeed/4,defaultPauseTime);
+            //Strafe(9,defaultDriveSpeed/2,defaultPauseTime);
+            Turn(-180*allianceReverser,defaultTurnSpeed,defaultPauseTime);
+            Drive(10,defaultDriveSpeed/4,defaultPauseTime);
 
             //Sample RightLef Spike
             if (alliance<0){ //Alliance is Red
-                if (rightColorSensor.red()>colorThreshold) {
+                if (leftColorSensor.red()>colorThreshold) {
                     randomizerPosition = 3;
                 }
             } else { //Alliance is Blue
-                if (rightColorSensor.blue()>(colorThreshold-100)) {
+                if (leftColorSensor.blue()>(colorThreshold-100)) {
                     randomizerPosition = 3;
                 }
             }
             //return to center of sampling
-            Strafe(-4,defaultDriveSpeed/2,defaultPauseTime);
+            //Strafe(-4,defaultDriveSpeed/2,defaultPauseTime);
+            Drive(-10,defaultDriveSpeed/4,defaultPauseTime);
         } else {
             //return to center of sampling
-            Strafe(4,defaultDriveSpeed/2,defaultPauseTime);
+            //Strafe(4,defaultDriveSpeed/2,defaultPauseTime);
+            //Turn(-90,defaultTurnSpeed,defaultPauseTime);
+            //Drive(4,defaultDriveSpeed/4,defaultPauseTime);
+        }
+        if(randomizerPosition == 2){
+            //backup, strafe right, forward
+            //Drive(-4,defaultDriveSpeed,defaultPauseTime);
+            //Strafe(4,defaultDriveSpeed/2,defaultPauseTime);
+            Drive(-4,defaultDriveSpeed/2,defaultPauseTime);
+            //Strafe(9,defaultDriveSpeed/2,defaultPauseTime);
+            Turn(-90*allianceReverser,defaultTurnSpeed,defaultPauseTime);
+            //Drive(10,defaultDriveSpeed/4,defaultPauseTime);
+
+            //return to center of sampling
+            //Strafe(-4,defaultDriveSpeed/2,defaultPauseTime);
+            //Drive(-10,defaultDriveSpeed/4,defaultPauseTime);
         }
 
     }

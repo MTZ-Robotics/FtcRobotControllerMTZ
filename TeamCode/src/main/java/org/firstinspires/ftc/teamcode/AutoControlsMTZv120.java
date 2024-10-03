@@ -408,7 +408,7 @@ public class AutoControlsMTZv120 extends LinearOpMode {
                     Turn(45, defaultDriveSpeed, defaultPauseTime);
                 } else if (randomizerPosition == 3) {
                     Turn(-45, defaultDriveSpeed, defaultPauseTime);
-                }
+                }*/
 
 
                 Turn(90 * allianceReverser, defaultTurnSpeed, defaultPauseTime); //Turn towards the backdrop
@@ -419,7 +419,7 @@ public class AutoControlsMTZv120 extends LinearOpMode {
                 Strafe(-4 * allianceReverser, defaultDriveSpeed, defaultPauseTime); //move away from the wall
                 Drive(24 + distanceBetweenStartingPositions, defaultDriveSpeed, defaultPauseTime); //Travel back to backdrop area
                 Strafe(-22 * allianceReverser, defaultDriveSpeed, defaultPauseTime); //slide in front of backdrop. Strafe isn't working so we just took this one out.
-                Turn(5 * allianceReverser, defaultDriveSpeed, defaultPauseTime);*/
+                Turn(5 * allianceReverser, defaultDriveSpeed, defaultPauseTime);
 
                 /*Road Runner path to test for Red Backdrop from wall to left spike and go to backdrop and pick up from white pixle stack
                 TrajectorySequence Audience Red RR = drive.trajectorySequenceBuilder(new Pose2d(-37.52, -67.59, Math.toRadians(90.00)))
@@ -867,8 +867,8 @@ public class AutoControlsMTZv120 extends LinearOpMode {
         if (alliance<0){
             targetColor = "Red";
         }
-        Drive(27,defaultDriveSpeed/2,defaultPauseTime);
-        Strafe(-7.5,defaultDriveSpeed/2,defaultPauseTime);
+        Drive(20,defaultDriveSpeed,defaultPauseTime);
+        //Strafe(-7.5,defaultDriveSpeed/2,defaultPauseTime);
         Drive(4,defaultDriveSpeed/4,defaultPauseTime);
         //Sample Left Spike
         if (alliance<0){ //Alliance is Red
