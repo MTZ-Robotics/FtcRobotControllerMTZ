@@ -4,10 +4,7 @@
 android.useAndroidX=true
 
 # We no longer need to auto-convert third-party libraries to use AndroidX, which slowed down the build
-#Was fasle in FTC code, but updated to True for commonality with NeoPixels
-android.enableJetifier=true
+android.enableJetifier=false
 
 # Allow Gradle to use up to 1 GB of RAM
 org.gradle.jvmargs=-Xmx1024M
-
-android.disableAutomaticComponentCreation=true
