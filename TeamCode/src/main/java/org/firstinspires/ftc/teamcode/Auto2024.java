@@ -3,13 +3,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import java.io.IOException;
 
-@Autonomous(name="Audience Delay Red", group ="A_Top")
+@Autonomous(name="2024", group ="A_Top")
 //@Disabled
-public class AutoAudienceDelayRed extends AutoControlsMTZ {
+public class Auto2024 extends AutoControlsMTZ_PushBot {
     public void runOpMode() throws InterruptedException {
-
         try {
-            super.autoPaths("Red","Audience Early Delay Spin",true);
+            super.autoPaths("Red","Auto2024",true);
         } catch (IOException e) {
             e.printStackTrace();
         }

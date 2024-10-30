@@ -48,7 +48,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+//import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.io.IOException;
 import java.util.List;
@@ -190,7 +190,7 @@ public class AutoControlsMTZ extends LinearOpMode {
     /**
      * The variable to store our instance of the TensorFlow Object Detection processor.
      */
-    private TfodProcessor tfod;
+    //private TfodProcessor tfod;
 
 
     //End TensorFlow Set-up
@@ -636,6 +636,39 @@ public class AutoControlsMTZ extends LinearOpMode {
              * Path End *
              ***********/
         }
+
+        else if (pathToRun.contains("auto2024")) {
+
+            /******************************************************************
+             *                           Path Branch Calibrate
+             *****************************************************************/
+
+            Logging.log("Running Path Auto 2024");
+
+            /************************************
+             * Path set up -- Add to each path
+             ***********************************/
+            //Robot Setup Notes
+            telemetry.log().add("Robot Starts on human player side of center");
+            waitForStart();
+            /************
+             * Path Start
+             ************/
+
+            Drive(24,defaultDriveSpeed/3,5000);
+            Strafe(-24,defaultDriveSpeed/2,5000);
+            Turn(-180,defaultTurnSpeed,0);
+            ExtendArm(10, defaultArmExtensionPower,2000);
+            sleep(2000);
+            RaiseArmByDegrees(90,2000);
+            sleep(2000);
+            ExtendArm(-10, defaultArmExtensionPower,2000);
+            RaiseArmByDegrees(armRotationDegreesAtHome,2000);
+            /************
+             * Path End *
+             ***********/
+        }
+
         /*********************************************************************
          *                              Next Path
          ********************************************************************/

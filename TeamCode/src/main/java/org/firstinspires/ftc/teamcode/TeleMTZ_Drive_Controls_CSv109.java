@@ -457,6 +457,68 @@ public class TeleMTZ_Drive_Controls_CSv109 extends LinearOpMode {
 
             }     /*****Green********           End     Center Stage R1     Updates            ******Green********/
 
+            if (controlPadMap=="pushBot2") {
+
+                chassisSpeedSlow = gamepad1.left_trigger;             //Slow Speed
+                chassisBumpLeftTurnStatus.update(gamepad1.left_bumper);             //Bump Left Turn
+
+
+
+
+                chassisBumpForwardStatus.update(gamepad1.dpad_up);             //Bump Forward
+                chassisBumpLeftStrafeStatus.update(gamepad1.dpad_left);             //Bump Left Strafe
+                chassisBumpRightStrafeStatus.update(gamepad1.dpad_right);             //Bump Right Strafe
+                chassisBumpBackStatus.update(gamepad1.dpad_down);             //Bump Backwards
+
+
+                driveStick2 = gamepad1.left_stick_y;             //Drive 2
+                turnStick = gamepad1.left_stick_x;             //Turn
+                chassisSpeedFast = gamepad1.right_trigger;             //High Speed
+                chassisBumpRightTurnStatus.update(gamepad1.right_bumper);             //Bump Right Turn
+
+                startButton1Status.update(gamepad1.start);             //Pad Select (A & B)
+
+
+                /*planeLaunchStatus.update(gamepad1.y);             //Aim to Center AprilTag
+                aprilTagLeftStatus.update(gamepad1.x);             //Aim to Left AprilTag
+                aprilTagRightStatus.update(gamepad1.b);             //Aim to Right AprilTag
+                aprilTagCenterStatus.update(gamepad1.a);             //Launch Plane
+
+                 */
+
+
+                driveStick1 = gamepad1.right_stick_y;             //Drive 1
+                strafeStick = gamepad1.right_stick_x;             //Strafe
+                leftClawClose = gamepad2.left_trigger;             //Left Claw Close (Sticky)
+                leftClawOpenStatus.update(gamepad2.left_bumper);             //Left Claw Open (Sticky)
+
+
+
+
+                /*levelUpStatus.update(gamepad2.dpad_up);             //Move Hand to Next Level Higher
+                wristAdjustLessStatus.update(gamepad2.dpad_left);             //Slightly Decrease Wrist
+                wristAdjustMoreStatus.update(gamepad2.dpad_right);             //Slightly Increase Wrist
+                levelDownStatus.update(gamepad2.dpad_down);             //Move Hand to Next Level Lower
+
+
+                handVerticalStick = gamepad2.left_stick_y;             //Hand Vertical Move
+                handHorizontalStick = gamepad2.left_stick_x;             //Hand Horizontal Move
+                rightClawClose = gamepad2.right_trigger;             //Right Claw Close (Sticky)
+                rightClawOpenStatus.update(gamepad2.right_bumper);             //Right Claw Open (Sticky)
+
+                startButton2Status.update(gamepad2.start);             //Pad Select (A & B)
+
+
+                raiseToHangStatus.update(gamepad2.y);             //Raise to Hang
+                resetHomeStatus.update(gamepad2.x);             //Reset Home Position (With Start)
+                rideHeightStatus.update(gamepad2.b);             //Ride Height
+                returnHomeStatus.update(gamepad2.a);             //Drop to Home
+
+
+                armExtensionStick = gamepad2.right_stick_y;             //Arm Extension Stick*/
+
+            }     /*****Green********           End     Center Stage R1     Updates            ******Green********/
+
 
             else {
 
