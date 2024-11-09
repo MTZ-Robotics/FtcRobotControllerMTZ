@@ -19,7 +19,7 @@ import java.util.List;
  * v302 Added wrist adjustment
  *
  ***********************************************/
-public class mtzConstantsCS {
+public class mtzConstants_ItD {
 // Adjustments for efficiency
     public static final double driveEfficiency = .868;
     public static final double strafeEfficiency = 1.15;
@@ -105,10 +105,10 @@ public static final int defaultPauseTime = 100;  //Milliseconds after a command
     public static final double rightClawMaxClosedPosition = .25;
 
 
-    public static double rightClawOpenPosition = 0.87;
-    public static double rightClawClosedPosition = 1.0;
-    public static double leftClawOpenPosition = .5;
-    public static double leftClawClosedPosition = .35;
+    public static double rightClawOpenPosition = .4;
+    public static double rightClawClosedPosition = 0;
+    public static double leftClawOpenPosition = .7;
+    public static double leftClawClosedPosition = .3;
 
 
 

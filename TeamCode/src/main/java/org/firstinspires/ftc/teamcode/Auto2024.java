@@ -3,12 +3,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import java.io.IOException;
 
-@Autonomous(name="2024", group ="A_Top")
+@Autonomous(name="auto2024", group ="A_Top")
 //@Disabled
-public class Auto2024 extends AutoControlsMTZ_PushBot {
+public class Auto2024 extends AutoControlsMTZ {
     public void runOpMode() throws InterruptedException {
         try {
-            super.autoPaths("Red","Auto2024",true);
+            super.autoPaths("Red","auto2024",true);
         } catch (IOException e) {
             e.printStackTrace();
         }

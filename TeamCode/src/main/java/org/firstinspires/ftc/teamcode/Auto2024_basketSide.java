@@ -3,13 +3,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import java.io.IOException;
 
-@Autonomous(name="Audience Red", group ="A_Top")
+@Autonomous(name="auto2024 Basket Side", group ="A_Top")
 //@Disabled
-public class AutoAudienceRed extends AutoControlsMTZ {
+public class Auto2024_basketSide extends AutoControlsMTZ {
     public void runOpMode() throws InterruptedException {
-
         try {
-            super.autoPaths("Red","Audience",true);
+            //Blue will reverse the turns and strafes
+            super.autoPaths("Blue","auto2024",true);
         } catch (IOException e) {
             e.printStackTrace();
         }

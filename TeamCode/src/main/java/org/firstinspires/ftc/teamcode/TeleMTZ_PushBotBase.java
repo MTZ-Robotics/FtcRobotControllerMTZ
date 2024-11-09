@@ -1,88 +1,30 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.MAX_AUTO_SPEED;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.MAX_AUTO_STRAFE;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.MAX_AUTO_TURN;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.SPEED_GAIN;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.STRAFE_GAIN;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.TURN_GAIN;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armExtensionCollapsedLength;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armExtensionInchesAtHome;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armLengthDesired;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armPivotHeight;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armRotationDegreesAtHome;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.cameraBearingOffsetLeftTagLeftPixelLeftSide;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.cameraBearingOffsetRightTagRightPixelRightSide;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmAssistLevel;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmExtensionPower;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmLowerPower;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmPower;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultDriveSpeed;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultPauseTime;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.distanceBetweenScoopPositions;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.distanceBetweenValleys;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.driveBump;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.driveFastRatio;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.driveSlowRatio;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.endGameOver;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.endGameStart;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.endGameWarning;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.endGameWarning2;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.findStackDistance;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.findStackLevel;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.greenWarningTime;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightAboveLevel;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightDistance;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightLevel;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.launcherReleasePosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.launcherSetPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.maxArmDegrees;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.maxArmExtensionInches;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.maxWristPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.minArmDegrees;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.minArmExtensionInches;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.minWristPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.prorate;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.redWarningTime;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.scoopStage;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackDistanceArray;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackDistanceAtHome;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackHeightAboveLevelArray;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackHeightOnLevelArray;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackLevelAtHome;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.strafeBump;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerDegreeArm;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerDegreeTurnChassis;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchExtension;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchWheelDrive;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchWheelStrafe;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.turnBump;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.wristAdjustment;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.wristBump;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.wristConversionToServo;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.yellowWarningTime;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.armExtensionInchesAtHome;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.armRotationDegreesAtHome;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.defaultArmAssistLevel;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.defaultDriveSpeed;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.driveFastRatio;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.driveSlowRatio;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.endGameStart;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.greenWarningTime;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.launcherSetPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.redWarningTime;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.stackDistanceAtHome;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.stackLevelAtHome;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.wristAdjustment;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.wristConversionToServo;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.yellowWarningTime;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-
-import java.util.List;
 
 @TeleOp(name="TeleMTZ_PushBotBase", group ="Test")
 
-//@Disabled
+@Disabled
 
 /****
  * This class is intended to be a sub class to run the robot with the controllers.

@@ -1,55 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.MAX_AUTO_SPEED;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.MAX_AUTO_STRAFE;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.MAX_AUTO_TURN;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.SPEED_GAIN;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.STRAFE_GAIN;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.TURN_GAIN;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armRotationDegreesAtHome;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.cameraBearingOffsetLeftTagLeftPixelLeftSide;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.cameraBearingOffsetRightTagRightPixelRightSide;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmExtensionPower;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmPower;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.distanceBetweenScoopPositions;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.distanceBetweenValleys;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.randomizerPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerDegreeArm;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerDegreeTurnChassis;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchExtension;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchWheelDrive;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchWheelStrafe;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerRevolution1150;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.wristConversionToServo;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.randomizerPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.ticksPerDegreeTurnChassis;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.ticksPerInchWheelDrive;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.ticksPerInchWheelStrafe;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.ticksPerRevolution1150;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Autonomous(name ="Auto Controls Push Bot", group = "Bottom")
 //@Disabled

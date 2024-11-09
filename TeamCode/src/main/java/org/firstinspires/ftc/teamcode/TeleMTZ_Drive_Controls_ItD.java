@@ -1,70 +1,60 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.MAX_AUTO_SPEED;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.MAX_AUTO_STRAFE;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.MAX_AUTO_TURN;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.SPEED_GAIN;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.STRAFE_GAIN;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.TURN_GAIN;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armExtensionCollapsedLength;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armExtensionInchesAtHome;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armLengthDesired;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armPivotHeight;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armRotationDegreesAtHome;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.cameraBearingOffsetLeftTagLeftPixelLeftSide;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.cameraBearingOffsetRightTagRightPixelRightSide;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmAssistLevel;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmExtensionPower;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmLowerPower;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmPower;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultDriveSpeed;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultPauseTime;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.distanceBetweenScoopPositions;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.distanceBetweenValleys;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.driveBump;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.driveFastRatio;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.driveSlowRatio;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.endGameOver;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.endGameStart;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.endGameWarning;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.endGameWarning2;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.findStackDistance;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.findStackLevel;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.greenWarningTime;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightAboveLevel;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightDistance;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.handAssistRideHeightLevel;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.launcherReleasePosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.launcherSetPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.maxArmDegrees;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.maxArmExtensionInches;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.maxWristPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.minArmDegrees;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.minArmExtensionInches;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.minWristPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.prorate;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.redWarningTime;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.scoopStage;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackDistanceArray;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackDistanceAtHome;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackHeightAboveLevelArray;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackHeightOnLevelArray;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.stackLevelAtHome;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.strafeBump;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerDegreeArm;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerDegreeTurnChassis;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchExtension;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchWheelDrive;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchWheelStrafe;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.turnBump;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.wristAdjustment;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.wristBump;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.wristConversionToServo;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.yellowWarningTime;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.armExtensionCollapsedLength;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.armExtensionInchesAtHome;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.armLengthDesired;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.armPivotHeight;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.armRotationDegreesAtHome;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.defaultArmAssistLevel;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.defaultArmExtensionPower;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.defaultArmLowerPower;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.defaultArmPower;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.defaultDriveSpeed;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.defaultPauseTime;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.driveBump;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.driveFastRatio;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.driveSlowRatio;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.endGameOver;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.endGameStart;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.endGameWarning;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.endGameWarning2;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.findStackDistance;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.findStackLevel;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.greenWarningTime;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.handAssistRideHeightAboveLevel;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.handAssistRideHeightDistance;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.handAssistRideHeightLevel;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.launcherReleasePosition;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.launcherSetPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.leftClawClosedPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.leftClawOpenPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.maxArmDegrees;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.maxArmExtensionInches;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.maxWristPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.minArmDegrees;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.minArmExtensionInches;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.minWristPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.prorate;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.redWarningTime;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.rightClawClosedPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.rightClawOpenPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.scoopStage;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.stackDistanceArray;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.stackDistanceAtHome;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.stackHeightAboveLevelArray;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.stackHeightOnLevelArray;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.stackLevelAtHome;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.strafeBump;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.ticksPerDegreeArm;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.ticksPerDegreeTurnChassis;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.ticksPerInchExtension;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.ticksPerInchWheelDrive;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.ticksPerInchWheelStrafe;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.turnBump;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.wristAdjustment;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.wristBump;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.wristConversionToServo;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.yellowWarningTime;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -72,15 +62,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-
-import java.util.List;
-
-@TeleOp(name="TeleMTZ_Drive_CS v109", group ="ATop")
+@TeleOp(name="TeleMTZ_Drive_ItD", group ="Core")
 
 //@Disabled
 
@@ -99,11 +82,12 @@ import java.util.List;
  * v107 Added Auto Raise to Hang
  * v108 Added AprilTag Alignment back in
  * v109 Moved Launcher to Y
+ * v110 Switched to Into the Deep
  *
  *
  */
 
-public class TeleMTZ_Drive_Controls_CSv109 extends LinearOpMode {
+public class TeleMTZ_Drive_Controls_ItD extends LinearOpMode {
 
     /********************************
      * Robot Configuration Flags
@@ -137,17 +121,6 @@ public class TeleMTZ_Drive_Controls_CSv109 extends LinearOpMode {
     RevBlinkinLedDriver blinkinLedDriver;
     RevBlinkinLedDriver.BlinkinPattern pattern;
     RevBlinkinLedDriver.BlinkinPattern tempLightsPattern;
-
-
-    /******************
-     * April Tag Alignment Declarations
-     */
-
-    private static int DESIRED_TAG_ID = 0;     // Choose the tag you want to approach or set to -1 for ANY tag.
-    private VisionPortal visionPortal;               // Used to manage the video source.
-    private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
-    private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
-
 
     /*************************
      * Motor & Servo Variables
@@ -260,6 +233,8 @@ public class TeleMTZ_Drive_Controls_CSv109 extends LinearOpMode {
     //This is the default opMode call for generically running the opMode in this class directly from the phone without calling it from a super class
     public void runOpMode() throws InterruptedException{
         /******************************************************
+         * Default
+         *
          * These default settings will be used if THIS opMode is selected from the driver station.
          * Typically this opMode is not called since this class is used by super classes to call the controlRobot method with specific variables.
          * It is helpful to use this opMode for testing the controlRobot method
@@ -397,7 +372,7 @@ public class TeleMTZ_Drive_Controls_CSv109 extends LinearOpMode {
 
 /****Green*********           Center Stage R1     Controls Update Status           *******Green*******/
 
-            if (controlPadMap=="Center Stage R1") {
+            if (controlPadMap=="Center Stage R1" || true) { //Added True to make it always select this option
 
                 chassisSpeedSlow = gamepad1.left_trigger;             //Slow Speed
                 chassisBumpLeftTurnStatus.update(gamepad1.left_bumper);             //Bump Left Turn
@@ -457,7 +432,7 @@ public class TeleMTZ_Drive_Controls_CSv109 extends LinearOpMode {
 
             }     /*****Green********           End     Center Stage R1     Updates            ******Green********/
 
-            if (controlPadMap=="pushBot2") {
+            else if (controlPadMap=="pushBot2") {
 
                 chassisSpeedSlow = gamepad1.left_trigger;             //Slow Speed
                 chassisBumpLeftTurnStatus.update(gamepad1.left_bumper);             //Bump Left Turn
@@ -479,7 +454,8 @@ public class TeleMTZ_Drive_Controls_CSv109 extends LinearOpMode {
                 startButton1Status.update(gamepad1.start);             //Pad Select (A & B)
 
 
-                /*planeLaunchStatus.update(gamepad1.y);             //Aim to Center AprilTag
+                /*
+                planeLaunchStatus.update(gamepad1.y);             //Aim to Center AprilTag
                 aprilTagLeftStatus.update(gamepad1.x);             //Aim to Left AprilTag
                 aprilTagRightStatus.update(gamepad1.b);             //Aim to Right AprilTag
                 aprilTagCenterStatus.update(gamepad1.a);             //Launch Plane
@@ -495,7 +471,8 @@ public class TeleMTZ_Drive_Controls_CSv109 extends LinearOpMode {
 
 
 
-                /*levelUpStatus.update(gamepad2.dpad_up);             //Move Hand to Next Level Higher
+                /*
+                levelUpStatus.update(gamepad2.dpad_up);             //Move Hand to Next Level Higher
                 wristAdjustLessStatus.update(gamepad2.dpad_left);             //Slightly Decrease Wrist
                 wristAdjustMoreStatus.update(gamepad2.dpad_right);             //Slightly Increase Wrist
                 levelDownStatus.update(gamepad2.dpad_down);             //Move Hand to Next Level Lower
@@ -515,7 +492,8 @@ public class TeleMTZ_Drive_Controls_CSv109 extends LinearOpMode {
                 returnHomeStatus.update(gamepad2.a);             //Drop to Home
 
 
-                armExtensionStick = gamepad2.right_stick_y;             //Arm Extension Stick*/
+                armExtensionStick = gamepad2.right_stick_y;             //Arm Extension Stick
+                */
 
             }     /*****Green********           End     Center Stage R1     Updates            ******Green********/
 
@@ -575,11 +553,11 @@ public class TeleMTZ_Drive_Controls_CSv109 extends LinearOpMode {
                 tagAdditional = 3;
             }
             if(aprilTagLeftStatus.clickedDown){
-                alignToAprilTag(1+tagAdditional,false,true,true);
+                //alignToAprilTag(1+tagAdditional,false,true,true);
             } else if(aprilTagCenterStatus.clickedDown){
-                alignToAprilTag(2+tagAdditional,false,true,true);
+                //alignToAprilTag(2+tagAdditional,false,true,true);
             } else if (aprilTagRightStatus.clickedDown){
-                alignToAprilTag(3+tagAdditional,true,true,true);
+                //alignToAprilTag(3+tagAdditional,true,true,true);
             }
 
             /**************************************
@@ -663,7 +641,7 @@ public class TeleMTZ_Drive_Controls_CSv109 extends LinearOpMode {
             /************************
              * Stacker Controls
              ***********************/
-            armRotationDegrees = (arm.getCurrentPosition() / mtzConstantsCS.ticksPerDegreeArm) + armRotationDegreesAtHome;
+            armRotationDegrees = (arm.getCurrentPosition() / mtzConstants_ItD.ticksPerDegreeArm) + armRotationDegreesAtHome;
             armExtensionInches = armExtension.getCurrentPosition() / ticksPerInchExtension - armExtensionInchesAtHome;
 
 
@@ -934,13 +912,13 @@ public class TeleMTZ_Drive_Controls_CSv109 extends LinearOpMode {
             // Check if the stone is getting set down on a level and go slow if so
             if (aboveLevel) {
                 vertDesired = stackHeightAboveLevelArray[stackLevel];
-                armSpeed = mtzConstantsCS.defaultArmLowerPower;
+                armSpeed = mtzConstants_ItD.defaultArmLowerPower;
             } else {
                 vertDesired = stackHeightOnLevelArray[stackLevel];
-                armSpeed = mtzConstantsCS.defaultArmLowerPower / 3;
+                armSpeed = mtzConstants_ItD.defaultArmLowerPower / 3;
             }
             if (!stackingDown) {
-                armSpeed = mtzConstantsCS.defaultArmPower;
+                armSpeed = mtzConstants_ItD.defaultArmPower;
             }
 
             vertRequired = vertDesired - armPivotHeight;
@@ -1124,7 +1102,7 @@ public class TeleMTZ_Drive_Controls_CSv109 extends LinearOpMode {
     }
     public void raiseByDegrees(double degrees) {
         if(hasAuxMotorsAndServos){
-            arm.setTargetPosition((int)((degrees + armRotationDegreesAtHome) * mtzConstantsCS.ticksPerDegreeArm));
+            arm.setTargetPosition((int)((degrees + armRotationDegreesAtHome) * mtzConstants_ItD.ticksPerDegreeArm));
         }
     }
 
@@ -1147,155 +1125,6 @@ public class TeleMTZ_Drive_Controls_CSv109 extends LinearOpMode {
     }
 //End Power Methods
 
-    /*******************************
-     * Moves Robot for AutoAlign
-     * @param x strafe
-     * @param y Drive
-     * @param yaw Turn
-     */
-    public void moveRobot(double x, double y, double yaw) {
-        // Calculate wheel powers.
-        double leftFrontPower    =  x -y -yaw;
-        double rightFrontPower   =  x +y +yaw;
-        double leftBackPower     =  x +y -yaw;
-        double rightBackPower    =  x -y +yaw;
-
-        // Normalize wheel powers to be less than 1.0
-        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-        max = Math.max(max, Math.abs(leftBackPower));
-        max = Math.max(max, Math.abs(rightBackPower));
-
-        if (max > 1.0) {
-            leftFrontPower /= max;
-            rightFrontPower /= max;
-            leftBackPower /= max;
-            rightBackPower /= max;
-        }
-
-        // Send powers to the wheels.
-        frontLeft.setPower(leftFrontPower);
-        frontRight.setPower(rightFrontPower);
-        backLeft.setPower(leftBackPower);
-        backRight.setPower(rightBackPower);
-    }
-
-    /**************************************
-     * alignToAprilTag
-     * @param tagID
-     * @param leftOfCamera
-     * @param leftOfMountain
-     * @param leftPixelInScoop
-     * @throws InterruptedException
-     */
-    public void alignToAprilTag(int tagID, boolean leftOfCamera,boolean leftOfMountain, boolean leftPixelInScoop) throws InterruptedException {
-
-        boolean targetFound     = false;    // Set to true when an AprilTag target is detected
-        double  drive           = 0;        // Desired forward power/speed (-1 to +1)
-        double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
-        double  turn            = 0;        // Desired turning power/speed (-1 to +1)
-        boolean stillAligning = true;
-        double sweepCounter = 0;
-        double maxSweep = 5;
-        int sweepDirection = 1;
-        double headingOffset = 0;
-        DESIRED_TAG_ID = tagID;
-        targetFound = false;
-        desiredTag  = null;
-        if (leftOfCamera){
-            headingOffset = cameraBearingOffsetLeftTagLeftPixelLeftSide;
-            if(!leftOfMountain) {
-                headingOffset = headingOffset + distanceBetweenValleys;
-            }
-
-            if(!leftPixelInScoop){
-                headingOffset = headingOffset - distanceBetweenScoopPositions;
-            }
-        } else {
-            DESIRED_TAG_ID = tagID+1;
-            headingOffset = cameraBearingOffsetRightTagRightPixelRightSide;
-            if(leftOfMountain) {
-                headingOffset = headingOffset - distanceBetweenValleys;
-            }
-
-            if(leftPixelInScoop){
-                headingOffset = headingOffset + distanceBetweenScoopPositions;
-            }
-        }
-
-        while (aprilTagCenterStatus.isDown || aprilTagLeftStatus.isDown || aprilTagRightStatus.isDown)   // Loop to find the tag and drive to it
-        {
-            // Step through the list of detected tags and look for a matching tag
-            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-            for (AprilTagDetection detection : currentDetections) {
-                // Look to see if we have size info on this tag.
-                if (detection.metadata != null) {
-                    //  Check to see if we want to track towards this tag.
-                    if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
-                        // Yes, we want to use this tag.
-                        targetFound = true;
-                        desiredTag = detection;
-                        break;  // don't look any further.
-                    } else {
-                        // This tag is in the library, but we do not want to track it right now.
-                        telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
-                    }
-                } else {
-                    // This tag is NOT in the library, so we don't have enough information to track to it.
-                    telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
-                }
-            }
-
-            // Tell the driver what we see, and what to do.
-            if (targetFound) {
-                telemetry.addData("\n>","HOLD Left-Bumper to Drive to Target\n");
-                telemetry.addData("Found", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
-                telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
-                telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
-                telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
-            } else {
-                telemetry.addData("\n>","Sweeping\n");
-            }
-
-            // If we have found the desired target, Drive to target Automatically .
-            if (targetFound) {
-
-                // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-                double  rangeError      = (desiredTag.ftcPose.range - mtzConstantsCS.backdropAprilTagDESIRED_DISTANCE);
-                double  headingError    = desiredTag.ftcPose.bearing + mtzConstantsCS.cameraBearingOffsetLeftTagLeftPixelLeftSide;
-                double  yawError        = desiredTag.ftcPose.yaw;
-
-                if (rangeError <mtzConstantsCS.alignConfidence && headingError<mtzConstantsCS.alignConfidence && yawError <mtzConstantsCS.alignConfidence){
-                    return;
-                }
-                // Use the speed and turn "gains" to calculate how we want the robot to move.
-                drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-                strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-
-                telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
-            } else {
-
-                // turn to find tag
-                if (Math.abs(sweepCounter)<maxSweep) {
-                    turn = -.1 * sweepDirection;
-                    sweepCounter = sweepCounter + sweepDirection;
-                }
-                else {
-                    sweepDirection = -1 * sweepDirection;
-                    turn = -.1 * sweepDirection;
-                    sweepCounter = sweepCounter + sweepDirection;
-                }
-                telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
-            }
-            telemetry.update();
-
-            // Apply desired axes motions to the drivetrain.
-            moveRobot(drive, strafe, turn);
-            sleep(10);
-        }
-        telemetry.addLine("Something went wrong with the alignment");
-        return;
-    }
 
 //Telemetry Methods
     public void displayTelemetry() {
@@ -1364,7 +1193,7 @@ public class TeleMTZ_Drive_Controls_CSv109 extends LinearOpMode {
     }
     public void DisplayArmTelemetry() {
         if(hasAuxMotorsAndServos) {
-            double armDegrees = arm.getCurrentPosition() / mtzConstantsCS.ticksPerDegreeArm;
+            double armDegrees = arm.getCurrentPosition() / mtzConstants_ItD.ticksPerDegreeArm;
             telemetry.clear();
             telemetry.addLine()
                     .addData("Arm Degrees ", (int) armDegrees + "  Power: " + "%.1f", arm.getPower());

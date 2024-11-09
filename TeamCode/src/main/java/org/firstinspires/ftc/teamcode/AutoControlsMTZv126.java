@@ -1,35 +1,34 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.MAX_AUTO_SPEED;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.MAX_AUTO_STRAFE;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.MAX_AUTO_TURN;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.SPEED_GAIN;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.STRAFE_GAIN;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.TURN_GAIN;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.armRotationDegreesAtHome;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.cameraBearingOffsetLeftTagLeftPixelLeftSide;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.cameraBearingOffsetRightTagRightPixelRightSide;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmExtensionPower;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.defaultArmPower;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.distanceBetweenScoopPositions;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.distanceBetweenValleys;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.leftClawOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.randomizerPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawClosedPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawMaxOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.rightClawOpenPosition;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerDegreeArm;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerDegreeTurnChassis;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchExtension;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchWheelDrive;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerInchWheelStrafe;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.ticksPerRevolution1150;
-import static org.firstinspires.ftc.teamcode.mtzConstantsCS.wristConversionToServo;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.MAX_AUTO_SPEED;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.MAX_AUTO_STRAFE;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.MAX_AUTO_TURN;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.SPEED_GAIN;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.STRAFE_GAIN;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.TURN_GAIN;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.armRotationDegreesAtHome;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.cameraBearingOffsetLeftTagLeftPixelLeftSide;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.cameraBearingOffsetRightTagRightPixelRightSide;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.defaultArmExtensionPower;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.distanceBetweenScoopPositions;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.distanceBetweenValleys;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.leftClawClosedPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.leftClawOpenPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.randomizerPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.rightClawClosedPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.rightClawOpenPosition;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.ticksPerDegreeArm;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.ticksPerDegreeTurnChassis;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.ticksPerInchExtension;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.ticksPerInchWheelDrive;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.ticksPerInchWheelStrafe;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.ticksPerRevolution1150;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.wristConversionToServo;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -48,14 +47,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-//import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name ="Auto Controls v125", group = "Bottom")
-//@Disabled
+@Autonomous(name ="Auto Controls v126", group = "Bottom")
+@Disabled
 
 /*************************
  * This class is intended to be a sub class to run the robot autonomously.
@@ -89,12 +87,13 @@ import java.util.concurrent.TimeUnit;
  * v123 Changes made during 12Jan2024
  * v124 Changes made during 12Jan2024
  * v125
+ * v126 Changes made during Meet 3
  *
  *
  *
  *******************/
 
-public class AutoControlsMTZv125 extends LinearOpMode {
+public class AutoControlsMTZv126 extends LinearOpMode {
 
 
     /**************
@@ -104,7 +103,7 @@ public class AutoControlsMTZv125 extends LinearOpMode {
      **************/
     private static final double defaultDriveSpeed = 0.2;
     private static final double defaultTurnSpeed = 0.2;
-    private static int defaultPauseTime = 1000;
+    private static int defaultPauseTime = 10;
 
     /**********************
      * These variables are the constants in path commands
@@ -116,6 +115,9 @@ public class AutoControlsMTZv125 extends LinearOpMode {
     private static final double pi = 3.1415;
     private static final double conversionTicksToInches = (ticksPerRevolution * gearReduction) / (pi * wheelDiameterInches);
     private static final double armDistanceAdjustment = 39.4;
+
+    private static final double defaultArmPower = 0.3;
+
     //private static final double strafeDistanceAdjustment = 1.15;
 
     //private static final double driveDistanceAdjustment = .85;
@@ -350,7 +352,7 @@ public class AutoControlsMTZv125 extends LinearOpMode {
          ****************************************************************************/
 
 
-        if(!pathToRun.contains("Test")){
+        if(pathToRun.contains("Test")){
 
             /******************************************************************
              *                           Path Branch Align
@@ -389,20 +391,27 @@ public class AutoControlsMTZv125 extends LinearOpMode {
             RaiseArmByDegrees(20,defaultPauseTime);
             wrist.setPosition(wristConversionToServo(180));
             if(pathToRun.contains("Early Delay")){
-                sleep(mtzConstantsCS.earlyDelayPauseTime);
+                sleep(mtzConstants_ItD.earlyDelayPauseTime);
             }
 
             colorSensePixelLocation(allianceReverser);
 
             //dump pixel
-            /*
+
             if(randomizerPosition == 1) {
                 Turn(-45, defaultDriveSpeed, defaultPauseTime);
             } else if (randomizerPosition == 3) {
                 Turn(45, defaultDriveSpeed, defaultPauseTime);
             }
-             */
+
             //Drive(-10,defaultDriveSpeed,defaultPauseTime);
+            /*******************************
+             *
+             * Check Here
+             * 
+             * Check all Raise arm negatives
+             * Raise Arm by degrees probably goes to a global degrees, not relative
+             */
             RaiseArmByDegrees(-4,defaultPauseTime);
             Drive(2,defaultDriveSpeed,defaultPauseTime);
             wrist.setPosition(wristConversionToServo(120));
@@ -501,7 +510,7 @@ public class AutoControlsMTZv125 extends LinearOpMode {
                 .build();*/
 
 
-            } else {
+            } else {/*
                 if(allianceReverser>0) { //Red
                     if (randomizerPosition == 1) {
                         Turn(-180, defaultDriveSpeed, defaultPauseTime);
@@ -530,6 +539,7 @@ public class AutoControlsMTZv125 extends LinearOpMode {
                 /*************************
                  * Align with Camera
                  */
+            /*
                 int backdropTag = randomizerPosition;
                 if (allianceReverser > 0) {
                     backdropTag = randomizerPosition + 3;
@@ -541,6 +551,7 @@ public class AutoControlsMTZv125 extends LinearOpMode {
                  * Old Align by Distance
                  */
                 //Old Align by distance
+                /*
                 Strafe(-2,defaultDriveSpeed,defaultPauseTime);
                 if(randomizerPosition==1){
                     Strafe(-6,defaultDriveSpeed,defaultPauseTime);
@@ -570,19 +581,20 @@ public class AutoControlsMTZv125 extends LinearOpMode {
 
             //End Copy
 
+            */
         }
-        else if (pathToRun.contains("Arm") && pathToRun.contains("Test")) {
+        /*else if (pathToRun.contains("Arm") && pathToRun.contains("Test")) {
 
                 /******************************************************************
                  *                           Path Branch Arm Test
                  *****************************************************************/
 
-                Logging.log("Running Path Branch Arm Test");
+                /*Logging.log("Running Path Branch Arm Test");
                 /************************************
                  * Path set up -- Add to each path
                  ***********************************/
                 //Robot Setup Notes
-                telemetry.log().add("Line up notes should be entered in. ");
+                /*telemetry.log().add("Line up notes should be entered in. ");
                 waitForStart();
 
             //arm.setPower();
@@ -590,7 +602,7 @@ public class AutoControlsMTZv125 extends LinearOpMode {
             RaiseArmByDegrees(10, defaultPauseTime);
             sleep(20000);
             RaiseArmByDegrees(-10, defaultPauseTime);
-
+            */
 
         }
 
@@ -625,6 +637,50 @@ public class AutoControlsMTZv125 extends LinearOpMode {
              * Path End *
              ***********/
         }
+
+        else if (pathToRun.contains("auto2024")) {
+
+            /******************************************************************
+             *                           Path Branch 2024
+             *****************************************************************/
+
+            Logging.log("Running Path Auto 2024");
+
+            /************************************
+             * Path set up -- Add to each path
+             ***********************************/
+            //Robot Setup Notes
+            telemetry.log().add("Left side lines up center of field");
+            waitForStart();
+            /************
+             * Path Start
+             ************/
+
+            RaiseArmByDegrees(60,1000);
+            Drive(17.5,defaultDriveSpeed,1000);
+            RaiseArmByDegrees(-2,1000);
+            rightClaw.setPosition(rightClawOpenPosition);
+            leftClaw.setPosition(leftClawOpenPosition);
+            Drive(-6,defaultDriveSpeed,1000);
+            RaiseArmByDegrees(98,1000);
+            Strafe(24,defaultDriveSpeed,1000);
+            Drive(34,defaultDriveSpeed,1000);
+            Turn(89,defaultTurnSpeed,1000);
+            Drive(6.5,defaultDriveSpeed,1000);
+            Strafe(46,defaultDriveSpeed,1000);
+            Strafe(-46,defaultDriveSpeed,1000);
+            Drive(6.5,defaultDriveSpeed,1000);
+            Strafe(46,defaultDriveSpeed,1000);
+            Strafe(-48,defaultDriveSpeed,1000);
+            Drive(7,defaultDriveSpeed,1000);
+            Drive(1.5,defaultDriveSpeed/2.5,1000);
+            Strafe(46,defaultDriveSpeed,1000);
+          
+            /************
+             * Path End *
+             ***********/
+        }
+
         /*********************************************************************
          *                              Next Path
          ********************************************************************/
@@ -763,11 +819,11 @@ public class AutoControlsMTZv125 extends LinearOpMode {
             if (targetFound) {
 
                 // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-                double  rangeError      = (desiredTag.ftcPose.range - mtzConstantsCS.backdropAprilTagDESIRED_DISTANCE);
-                double  headingError    = desiredTag.ftcPose.bearing + mtzConstantsCS.cameraBearingOffsetLeftTagLeftPixelLeftSide;
+                double  rangeError      = (desiredTag.ftcPose.range - mtzConstants_ItD.backdropAprilTagDESIRED_DISTANCE);
+                double  headingError    = desiredTag.ftcPose.bearing + mtzConstants_ItD.cameraBearingOffsetLeftTagLeftPixelLeftSide;
                 double  yawError        = desiredTag.ftcPose.yaw;
 
-                if (rangeError <mtzConstantsCS.alignConfidence && headingError<mtzConstantsCS.alignConfidence && yawError <mtzConstantsCS.alignConfidence){
+                if (rangeError < mtzConstants_ItD.alignConfidence && headingError< mtzConstants_ItD.alignConfidence && yawError < mtzConstants_ItD.alignConfidence){
 
                     drive  = 0;
                     turn   = 0;
