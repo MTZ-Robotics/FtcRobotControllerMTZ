@@ -383,25 +383,25 @@ public class AutoControlsMTZ extends LinearOpMode {
              * Path Start
              ************/
 
-            RaiseArmByDegrees(60,1000);
-            Drive(17.5,defaultDriveSpeed,1000);
-            RaiseArmByDegrees(-2,1000);
+            RaiseArmByDegrees(60,100);
+            Drive(16.5,defaultDriveSpeed,100);
+            RaiseArmByDegrees(-2,100);
             rightClaw.setPosition(rightClawOpenPosition);
             leftClaw.setPosition(leftClawOpenPosition);
-            Drive(-6,defaultDriveSpeed,1000);
-            RaiseArmByDegrees(98,1000);
-            Strafe(allianceReverser*24,defaultDriveSpeed,1000);
-            Drive(34,defaultDriveSpeed,1000);
-            Turn(allianceReverser*89,defaultTurnSpeed,1000);
-            Drive(6.5,defaultDriveSpeed,1000);
-            Strafe(allianceReverser*46,defaultDriveSpeed,1000);
-            Strafe(allianceReverser*-46,defaultDriveSpeed,1000);
-            Drive(6.5,defaultDriveSpeed,1000);
-            Strafe(allianceReverser*46,defaultDriveSpeed,1000);
-            Strafe(allianceReverser*-48,defaultDriveSpeed,1000);
-            Drive(7,defaultDriveSpeed,1000);
-            Drive(1.5,defaultDriveSpeed/2.5,1000);
-            Strafe(allianceReverser*48,defaultDriveSpeed,1000);
+            Drive(-6,defaultDriveSpeed,100);
+            RaiseArmByDegrees(98,100);
+            Strafe(allianceReverser*24,defaultDriveSpeed,100);
+            Drive(30,defaultDriveSpeed,100);
+            Turn(allianceReverser*146,defaultTurnSpeed,100);
+            Drive(11,defaultDriveSpeed, 100);
+            Strafe(allianceReverser*42,defaultDriveSpeed,100);
+            Strafe(allianceReverser*-42,defaultDriveSpeed,100);
+            Drive(11,defaultDriveSpeed,100);
+            Strafe(allianceReverser*42,defaultDriveSpeed,100);
+            Strafe(allianceReverser*-42,defaultDriveSpeed,100);
+            Drive(12,defaultDriveSpeed,100);
+            Drive(3,defaultDriveSpeed/2.5,100);
+            Strafe(allianceReverser*48,defaultDriveSpeed,100);
 
             /************
              * Path End *

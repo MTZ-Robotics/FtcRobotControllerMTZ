@@ -415,7 +415,7 @@ public class TeleMTZ_Drive_Controls_ItD extends LinearOpMode {
 
 
                 handVerticalStick = gamepad2.left_stick_y;             //Hand Vertical Move
-                handHorizontalStick = gamepad2.left_stick_x;             //Hand Horizontal Move
+                //handHorizontalStick = gamepad2.left_stick_x;             //Hand Horizontal Move
                 rightClawClose = gamepad2.right_trigger;             //Right Claw Close (Sticky)
                 rightClawOpenStatus.update(gamepad2.right_bumper);             //Right Claw Open (Sticky)
 
