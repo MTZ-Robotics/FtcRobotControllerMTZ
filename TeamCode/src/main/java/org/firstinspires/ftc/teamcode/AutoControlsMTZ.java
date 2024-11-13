@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.armRotationDegreesAtHome;
 import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.defaultArmExtensionPower;
+import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.distanceBetweenValleys;
 import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.leftClawClosedPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.leftClawOpenPosition;
 import static org.firstinspires.ftc.teamcode.mtzConstants_ItD.randomizerPosition;
@@ -407,7 +408,49 @@ public class AutoControlsMTZ extends LinearOpMode {
              * Path End *
              ***********/
         }
+        else if (pathToRun.contains("auto2024v2")) {
 
+            /******************************************************************
+             *                           Path Branch 2024
+             *****************************************************************/
+
+            Logging.log("Running Path Auto 2024");
+
+            /************************************
+             * Path set up -- Add to each path
+             ***********************************/
+            //Robot Setup Notes
+            telemetry.log().add("Left side lines up center of field");
+            waitForStart();
+            /************
+             * Path Start
+             ************/
+
+            RaiseArmByDegrees(85,100);
+            ExtendArm(4.5, defaultArmExtensionPower, 100);
+            Drive(18,defaultDriveSpeed,100);
+            ExtendArm(-3.5, defaultArmExtensionPower, 100);
+            rightClaw.setPosition(rightClawOpenPosition);
+            leftClaw.setPosition(leftClawOpenPosition);
+            Drive(-6,defaultDriveSpeed,100);
+            RaiseArmByDegrees(98,100);
+            Strafe(allianceReverser*24,defaultDriveSpeed,100);
+            Drive(30,defaultDriveSpeed,100);
+            Turn(allianceReverser*146,defaultTurnSpeed,100);
+            Drive(11,defaultDriveSpeed, 100);
+            Strafe(allianceReverser*42,defaultDriveSpeed,100);
+            Strafe(allianceReverser*-42,defaultDriveSpeed,100);
+            Drive(11,defaultDriveSpeed,100);
+            Strafe(allianceReverser*42,defaultDriveSpeed,100);
+            Strafe(allianceReverser*-42,defaultDriveSpeed,100);
+            Drive(12,defaultDriveSpeed,100);
+            Drive(3,defaultDriveSpeed/2.5,100);
+            Strafe(allianceReverser*48,defaultDriveSpeed,100);
+
+            /************
+             * Path End *
+             ***********/
+        }
         /*********************************************************************
          *                              Next Path
          ********************************************************************/
